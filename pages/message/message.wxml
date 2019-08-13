@@ -1,0 +1,14 @@
+<view class="page" hover-class="none" hover-stop-propagation="false">
+    <view class="page__bd" hover-class="none" hover-stop-propagation="false">
+        <view class="weui-cells weui-cells_after-title">
+            <navigator url="/pages/article/article" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">科技1写的柜面系统整体UI优化方案关联了我的自助柜面切换交易过慢</view>
+                <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+            </navigator>
+            <navigator url="/pages/article/article" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">需求1写的页面切换优化关联了我的自助柜面切换交易过慢</view>
+                <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+            </navigator>
+        </view>
+    </view>
+</view>

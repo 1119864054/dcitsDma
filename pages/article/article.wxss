@@ -1,0 +1,15 @@
+/* page {
+    background-color: #FFFFFF;
+} */
+
+.bottom-bar {
+    position: fixed;
+    bottom: 0px;
+    width: 750rpx;
+}
+
+.tap {
+    background-color: #ededed
+}
+
+    

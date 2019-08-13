@@ -1,0 +1,1 @@
+<wux-fab-button buttons="{{buttons}}" direction="vertical" theme="dark" bind:click="onTapToNewArticle" />

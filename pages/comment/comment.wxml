@@ -1,0 +1,42 @@
+<view class="page">
+    <view class="page__bd">
+        <scroll-view scroll-y style="padding-bottom:70px" bindscrolltoupper="upper" bindscrolltolower="lower" bindscroll="scroll" scroll-into-view="{{toView}}" scroll-top="{{scrollTop}}">
+            <view class="weui-panel">
+                <view class="weui-panel weui-panel_access">
+                    <view class="weui-panel__bd">
+                        <block wx:for="{{comment}}" wx:for-index="idx" wx:key="_id" wx:for-item="item" data-idx="{{idx}}">
+                            <view class="weui-media-box weui-media-box_text">
+                                <view class="weui-media-box__title weui-media-box__title_in-text">
+                                    <image src="{{item.avatar}}" />
+                                    <view class="" selectable="false" space="false" decode="false">
+                                        {{item.username}}
+                                    </view>
+                                </view>
+                                <view class="weui-media-box__desc">{{item.content}}</view>
+                                <view class="weui-media-box__info">
+                                    <view class="weui-media-box__info__meta">
+                                        {{item.username}}
+                                    </view>
+                                    <view class="weui-media-box__info__meta weui-media-box__info__meta_extra">
+                                        {{item.date}}
+                                    </view>
+                                </view>
+                            </view>
+                        </block>
+                    </view>
+                </view>
+            </view>
+        </scroll-view>
+    </view>
+</view>
+<view class="page">
+    <view class="page__bd">
+        <wux-cell-group class="add-comment">
+            <wux-cell>
+                <textarea value="{{ value }}" fixed='{{true}}' style="height:60px" cursorSpacing="100" maxlength="30" placeholder="请输入（限30字）..." bindinput='getContent' bindblur="getContent" bindconfirm="getContent" />
+                <view style="color:#8090b5">{{current}}/30</view>
+                <button bind:tap="onTapToSubmit">提交</button>
+            </wux-cell>
+        </wux-cell-group>
+    </view>
+</view>
