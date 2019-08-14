@@ -9,7 +9,7 @@ var dbArticle = new DBArticle();
 Page({
 
   data: {
-
+    loading: false
   },
 
   onLoad: function (options) {
@@ -22,15 +22,12 @@ Page({
             lang: 'zh_CN',
             timeout: 10000,
             success: (res) => {
-              console.log('获取用户信息成功 userInfo', res)
+              console.log('[login] [获取用户信息userInfo] 成功 ', res)
               app.globalData.userInfo = res.userInfo
-              // this.login()
+              this.login()
             },
             fail: () => {
-              console.log('获取用户信息失败')
-            },
-            complete: () => {
-              console.log('登录')
+              console.error('[login] [获取用户信息userInfo] 失败')
             }
           });
         }
@@ -43,28 +40,20 @@ Page({
       app.globalData.logged = true
       app.globalData.userInfo = e.detail.userInfo
     }
-    console.log('已登录', e.detail.userInfo)
+    console.log('登录成功', e.detail.userInfo)
     this.login()
   },
 
   async login(e) {
-    wx.showLoading({
-      title: '登录中',
+    this.setData({
+      loading: true
     })
     await this.onGetOpenid()
-    await dbArticle.checkUserIsExistAndAddUser()
-    wx.hideLoading();
+    await dbArticle.addUser()
+    await dbArticle.updateUser()
+    await dbArticle.getUser()
     wx.switchTab({
-      url: '/pages/suggestion/suggestion',
-      success: (result) => {
-        console.log("jump success");
-      },
-      fail: () => {
-        console.log("jump failed");
-      },
-      complete: () => {
-        console.log("jump complete");
-      }
+      url: '/pages/suggestion/suggestion'
     });
   },
 
@@ -75,12 +64,12 @@ Page({
         name: 'login',
         data: {},
         success: res => {
-          console.log('[云函数] [login] user openid: ', res.result.openid)
+          console.log('[云函数login] [login] [获取openid] 成功: ', res.result.openid)
           app.globalData.openid = res.result.openid
           resolve()
         },
         fail: err => {
-          console.error('[云函数] [login] 调用失败', err)
+          console.error('[云函数login] [login] [获取openid] 失败: ', err)
           reject()
         }
       })

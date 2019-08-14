@@ -35,26 +35,31 @@ Page({
    */
   onLoad: function (options) {
     console.log('article options', options)
-    var articleId = options.articleId
-    var articleType = options.articleType
-    var articleData = dbArticle.getArticleByIdFromCache(articleId, articleType)
-    console.log('articleData', articleData)
-    var articleTypeZh = util.getArticleTypeZh(articleType)
+    let articleId = options.articleId
+    let articleType = options.articleType
+
+    let articleData = dbArticle.getArticleByIdFromCache(articleId, articleType)
+
+    let articleTypeZh = util.getArticleTypeZh(articleType)
     console.log('articleTypeZh', articleTypeZh)
-    this.setData({
-      author: articleData.author,
-      articleImg: articleData.articleImg,
-      avatar: articleData.avatar,
-      content: articleData.content,
-      date: articleData.date,
-      title: articleData.title,
-      articleTypeZh: articleTypeZh,
-      articleId: articleId,
-      articleType: articleType
+
+    dbArticle.getUser(this.data.userId).then(res => {
+      this.setData({
+        author: res.username,
+        articleImg: articleData.articleImg,
+        avatar: res.avatar,
+        content: articleData.content,
+        date: articleData.date,
+        title: articleData.title,
+        articleTypeZh: articleTypeZh,
+        articleId: articleId,
+        articleType: articleType
+      })
     })
 
     this.refresh()
   },
+  
   previewImage: function (e) {
     console.log(e)
     wx.previewImage({

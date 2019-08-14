@@ -5,9 +5,9 @@
       <view class="weui-media-box__desc">{{detail}}</view>
       <view class="weui-media-box__info">
         <view class="weui-media-box__info__meta">
-          <image src="{{avatar}}" style="width: 13px;height: 13px;vertical-align:middle;" />
+          <image src="{{userInfo.avatar}}" style="width: 13px;height: 13px;vertical-align:middle;" />
         </view>
-        <view class="weui-media-box__info__meta">{{author}}</view>
+        <view class="weui-media-box__info__meta">{{userInfo.username}}</view>
         <view class="weui-media-box__info__meta weui-media-box__info__meta_extra">{{date}}</view>
       </view>
     </view>

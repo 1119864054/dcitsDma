@@ -1,28 +1,49 @@
+import {
+  Util
+} from '../util/util.js';
+
 const db = wx.cloud.database()
 const _ = db.command
 const app = getApp()
+
+var util = new Util()
 
 class DBArticle {
   constructor() {
 
   }
 
-  getAllArticleData(storageKeyName) {
-    console.log('storageKeyName', storageKeyName)
+  //添加到缓存
+  setCache(key, value) {
     try {
-      var result = wx.getStorageSync(storageKeyName);
-    } catch (error) {
+      wx.setStorageSync(key, value)
+      console.log('[DBArticle] [' + key + '] [同步缓存记录] 成功')
+    } catch (err) {
+      console.error('[DBArticle] [' + key + '] [同步缓存记录] 失败：', err)
+    }
+  }
+
+  //从缓存读取数据
+  getCache(storageKeyName) {
+    try {
+      let result = wx.getStorageSync(storageKeyName);
+      console.log('[DBArticle] [' + storageKeyName + '] [查询缓存记录] 成功：', result)
+      return result;
+    } catch (err) {
       console.error('[DBArticle] [' + storageKeyName + '] [查询缓存记录] 失败：', err)
     }
-    console.log('result', result.length, result)
-    if (!result.length || !result) {
+  }
+
+  //从数据库读取文章列表
+  getAllArticleData(storageKeyName) {
+    return new Promise((resolve, reject) => {
       db.collection(storageKeyName)
         .orderBy('date', 'desc')
         .get()
         .then(res => {
-          result = res.data
+          let result = res.data
           console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', result)
-          wx.setStorageSync(storageKeyName, result)
+          resolve(result)
         })
         .catch(err => {
           wx.showToast({
@@ -30,90 +51,59 @@ class DBArticle {
             title: '查询记录失败'
           })
           console.error('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 失败：', err)
+          reject()
         })
-    }
-    return result;
+    })
   }
 
-  //新增文章
-  addNewArticle(storageKeyName, title, content, username, images, avatar, relation) {
+  //新增文章到数据库
+  addNewArticle(storageKeyName, title, content, images, relation) {
+    let id = app.globalData.id
     db.collection(storageKeyName).add({
       data: {
-        articleId: "",
-        date: new Date().toLocaleString(),
+        date: util.formatTime(new Date()),
         title: title,
-        author: username,
+        userId: id,
         articleImg: images,
-        avatar: avatar,
         detail: content.length > 40 ? content.substring(0, 40).concat('...') : content,
         content: content
       }
     })
       .then(res => {
         //关联关系
-        if (storageKeyName == 'demand') {
+        if (storageKeyName == app.globalData.demandKey) {
           for (let i = 0; i < relation.length; i++) {
             db.collection('SDRelation').add({
               data: {
                 suggestionId: relation[i],
                 demandId: res._id,
-                date: new Date().toLocaleString(),
+                date: util.formatTime(new Date()),
               }
             }).then(res => {
-              console.log('[DBArticle] [新增relation] 成功: ', res._id)
+              console.log('[DBArticle] [新增sdrelation] 成功: ', res._id)
             }).catch(err => {
-              console.error('[DBArticle] [新增relation] 失败: ', err)
+              console.error('[DBArticle] [新增sdrelation] 失败: ', err)
             })
           }
-        } else if (storageKeyName == 'technology') {
+        } else if (storageKeyName == app.globalData.technologyKey) {
           for (let i = 0; i < relation.length; i++) {
             db.collection('DTRelation').add({
               data: {
                 demandId: relation[i],
                 technologyId: res._id,
-                date: new Date().toLocaleString(),
+                date: util.formatTime(new Date()),
               }
             }).then(res => {
-              console.log('[DBArticle] [新增relation] 成功: ', res._id)
+              console.log('[DBArticle] [新增dtrelation] 成功: ', res._id)
             }).catch(err => {
-              console.error('[DBArticle] [新增relation] 失败: ', err)
+              console.error('[DBArticle] [新增dtrelation] 失败: ', err)
             })
           }
         }
-        //我的文章
-        db.collection('user').doc(app.globalData.id)
-          .update({
-            data: {
-              articleList: _.push([res._id])
-            }
-          }).then(res => {
-            console.log('[DBArticle] [更新articleList] 成功: ', res)
-            db.collection('user').where({
-              _id: app.globalData.id
-            }).get().then(res => {
-              wx.setStorageSync('userInfo', res.data)
-              console.log('[DBArticle] [更新userInfo] 缓存成功: ', res)
-            }).catch(err => {
-              console.error('[DBArticle] [更新userInfo] 缓存失败: ', err)
-            })
-          }).catch(err => {
-            console.error('[DBArticle] [更新articleList] 失败: ', err)
-          })
         //缓存
-        db.collection(storageKeyName)
-          .orderBy('date', 'desc')
-          .get()
-          .then(res => {
-            wx.setStorageSync(storageKeyName, res.data)
-            console.log('[DBArticle] [' + storageKeyName + '] [同步缓存] 成功: ', res.data)
-          })
-          .catch(err => {
-            wx.showToast({
-              icon: 'none',
-              title: '查询记录失败'
-            })
-            console.error('[DBArticle] [' + storageKeyName + '] [查询记录] 失败：', err)
-          })
+        this.getAllArticleData(storageKeyName).then(res => {
+          this.setCache(storageKeyName, res)
+        })
         console.log('[DBArticle] [' + storageKeyName + '] [新增文章] 成功: _id=', res._id)
       })
       .catch(err => {
@@ -127,76 +117,104 @@ class DBArticle {
 
   //根据文章ID从缓存读取文章
   getArticleByIdFromCache(articleId, articleType) {
-    try {
-      var articleData = wx.getStorageSync(articleType)
-      console.log('[DBArticle] [查询缓存文章] 成功: ', articleData)
-      for (var i = 0; i < articleData.length; i++) {
-        if (articleData[i]._id == articleId) {
-          console.log('[DBArticle] [根据文章ID查询缓存文章] 成功: ', articleData[i])
-          return articleData[i]
-        }
+    let articleData = this.getCache(articleType)
+    for (let i = 0; i < articleData.length; i++) {
+      if (articleData[i]._id == articleId) {
+        console.log('[DBArticle] [根据文章ID查询缓存文章] 成功: ', articleData[i])
+        return articleData[i]
       }
-    } catch (err) {
-      console.error('[DBArticle] [查询缓存文章] 失败：', err)
     }
+  }
 
+  //根据用户ID从数据库读取文章
+  getArticleByIdFromDB(userId, articleType) {
+    return new Promise((resolve, reject) => {
+      db.collection(articleType).where({
+        userId: userId
+      }).orderBy('date', 'desc')
+        .get().then(res => {
+          console.log('[DBArticle] [根据userId查询article信息] 成功: ', res.data)
+          resolve(res.data)
+        }).catch(err=>{
+          console.error('[DBArticle] [根据userId查询article信息] 失败: ', err)
+          reject()
+        })
+    })
 
   }
 
-  //用户
-  checkUserIsExistAndAddUser() {
-    var openid = app.globalData.openid;
-    var userInfo = app.globalData.userInfo;
-    var result = wx.getStorageSync('userInfo');
-    console.log('[DBArticle] [userInfo] [查询缓存]', result)
-    if (!result) {
-      return new Promise((resolve, reject) => {
-        db.collection('user').where({
-          _openid: openid
-        }).get().then(res => {
-          console.log('res---------------', res)
-          if (!res.data.length) {
-            db.collection('user').add({
-              data: {
-                username: userInfo.nickName,
-                articleList: [],
-                avatar: userInfo.avatarUrl,
-                favor: [],
-                comment: [],
-                message: []
-              }
-            }).then(res => {
-              console.log('[DBArticle] [未查询到用户->添加用户] 成功', res)
-              db.collection('user').where({
-                _id: res._id
-              }).get().then(res => {
-                app.globalData.id = res.data[0]._id
-                wx.setStorageSync('userInfo', res.data);
-                console.log('[DBArticle] [未查询到用户->添加用户->查询用户] 成功', res.data)
-                resolve()
-              }).catch(err => {
-                console.error('[DBArticle] [未查询到用户->添加用户->查询用户] 失败：', err)
-                reject()
-              })
-            }).catch(err => {
-              console.error('[DBArticle] [未查询到用户->添加用户] 失败：', err)
-              reject()
-            })
-          } else {
-            app.globalData.id = res.data[0]._id
-            wx.setStorageSync('userInfo', res.data);
-            console.log('[DBArticle] [查询用户] 成功', res.data)
-            resolve()
+  //添加用户
+  addUser() {
+    let openid = app.globalData.openid;
+    let userInfo = app.globalData.userInfo;
+
+    return new Promise((resolve, reject) => {
+      db.collection('user').where({
+        _openid: openid
+      }).get().then(res => {
+        console.log('[DBArticle] [根据openid查询user信息] 成功: ', res)
+        if (!res.data.length || !res) {
+          db.collection('user').add({
+            data: {
+              username: userInfo.nickName,
+              avatar: userInfo.avatarUrl,
+              date: util.formatTime(new Date()),
+              sign: '个性签名'
+            }
+          }).then(res => {
+            console.log('[DBArticle] [未查询到用户->添加用户] 成功', res)
+            app.globalData.id = res._id
+          }).catch(err => {
+            console.error('[DBArticle] [未查询到用户->添加用户] 失败：', err)
+            reject()
+          })
+        } else {
+          app.globalData.id = res.data[0]._id
+          console.log('[DBArticle] [查询用户] 成功', res.data[0])
+          resolve()
+        }
+      }).catch(err => {
+        console.error('[DBArticle] [查询用户] 失败：', err)
+        reject()
+      })
+    })
+  }
+
+  //更新用户
+  updateUser(sign = '个性签名') {
+    let userInfo = app.globalData.userInfo;
+    return new Promise((resolve, reject) => {
+      db.collection('user').doc(app.globalData.id)
+        .update({
+          data: {
+            username: userInfo.nickName,
+            avatar: userInfo.avatarUrl,
+            sign: sign
           }
+        }).then(res => {
+          console.log('[DBArticle] [更新用户] 成功: ', res)
+          resolve()
         }).catch(err => {
-          console.error('[DBArticle] [查询用户] 失败：', err)
+          console.error('[DBArticle] [更新用户] 失败: ', err)
           reject()
         })
+    })
+  }
+
+  //获取用户信息
+  getUser(id = app.globalData.id) {
+    return new Promise((resolve, reject) => {
+      db.collection('user').where({
+        _id: id
+      }).get().then(res => {
+        console.log('[DBArticle] [查询用户] 成功: ', res.data[0])
+        app.globalData.userInfoDB = res.data[0]
+        resolve(res.data[0])
+      }).catch(err => {
+        console.error('[DBArticle] [查询用户] 失败: ', err)
+        reject()
       })
-    } else {
-      app.globalData.id = result[0]._id
-    }
-    return result;
+    })
   }
 
   //我的收藏
@@ -251,7 +269,7 @@ class DBArticle {
           username: userInfo.nickName,
           avatar: userInfo.avatarUrl,
           content: content,
-          date: new Date().toLocaleString(),
+          date: util.formatTime(new Date()),
         }
       }).then(res => {
         console.log('[DBArticle] [添加comment] 成功: ', res)

@@ -122,7 +122,7 @@ Page({
     async tapToSubmit() {
         await this.uploadImage()
 
-        dbArticle.addNewArticle(this.data.articleType, this.data.title, this.data.content, app.globalData.userInfo.nickName, this.data.imagesCloudId, app.globalData.userInfo.avatarUrl, this.data.relation)
+        dbArticle.addNewArticle(this.data.articleType, this.data.title, this.data.content, this.data.imagesCloudId, this.data.relation)
 
         var that = this
         wx.switchTab({

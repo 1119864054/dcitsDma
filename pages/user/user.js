@@ -5,34 +5,20 @@ const app = getApp()
 
 Page({
 
-  /**
-   * 页面的初始数据
-   */
   data: {
-    userInfo: ''
+    userInfoDB: app.globalData.userInfoDB
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
   onLoad: function (options) {
-    this.refresh()
-    console.log(this.data.userInfo)
-  },
-
-  onShow:function(){
-    this.refresh()
+    this.setData({
+      userInfoDB: app.globalData.userInfoDB
+    })
   },
 
   onTapLogout: function (e) {
     app.globalData.logged = false;
     wx.redirectTo({
-      url: '/pages/login/login',
-      success: (result) => {
-
-      },
-      fail: () => { },
-      complete: () => { }
+      url: '/pages/login/login'
     });
   },
 
@@ -45,25 +31,17 @@ Page({
     }
   },
 
-  onPullDownRefresh: function () {
-    this.refresh()
+  async onPullDownRefresh() {
+    await dbArticle.getUser(app.globalData.id)
+    this.setData({
+      userInfoDB: app.globalData.userInfoDB
+    })
     wx.stopPullDownRefresh()
   },
 
-  refresh: function () {
-    this.setData({
-      userInfo: dbArticle.checkUserIsExistAndAddUser()[0]
-    })
-  },
   onTapToMyArticle: function () {
     wx.navigateTo({
-      url: '/pages/myArticle/myArticle',
-      success: (result) => {
-
-      },
-      fail: () => { },
-      complete: () => { }
+      url: '/pages/myArticle/myArticle'
     });
-
   }
 })

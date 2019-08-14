@@ -8,7 +8,7 @@ var dbArticle = new DBArticle();
 Page({
 
   data: {
-    technology:''
+    technology: ''
   },
 
   onLoad: function (options) {
@@ -16,15 +16,23 @@ Page({
   },
 
   onShow: function (options) {
-    
+    let technologyCache = dbArticle.getCache(app.globalData.technologyKey)
+    this.setData({
+      technology: technologyCache
+    })
   },
+
   onPullDownRefresh: function () {
     this.refresh()
-    wx.stopPullDownRefresh()
   },
-  refresh: function(){
-    this.setData({
-      technology: dbArticle.getAllArticleData(app.globalData.technologyKey)
-    });
+
+  refresh: function () {
+    dbArticle.getAllArticleData(app.globalData.technologyKey).then(res => {
+      this.setData({
+        technology: res
+      })
+      dbArticle.setCache(app.globalData.technologyKey, res)
+      wx.stopPullDownRefresh()
+    })
   }
 })

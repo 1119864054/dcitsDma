@@ -1,6 +1,12 @@
 <view class="page" xmlns:wx="http://www.w3.org/1999/xhtml">
+  <view class="page__hd">
+    <view class="page__title">WE</view>
+    <view class="page__desc">
+      We're here to put a dent in the universe. Otherwise why else even be here?
+    </view>
+  </view>
   <view class="page__bd">
-    <view class="weui-cells__title">表单</view>
+    <!-- <view class="weui-cells__title">表单</view>
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell ">
         <view class="weui-cell__hd">
@@ -19,10 +25,10 @@
         </view>
       </view>
     </view>
-    <view class="weui-cells__tips">底部说明文字底部说明文字</view>
+    <view class="weui-cells__tips">底部说明文字底部说明文字</view> -->
     <view class="weui-btn-area">
-      <button class="weui-btn" type="primary" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">
-        登录
+      <button loading="{{loading}}" class="weui-btn" type="primary" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">
+        微信快捷登录
       </button>
     </view>
   </view>

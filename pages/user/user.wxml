@@ -4,11 +4,11 @@
       <view class="weui-panel__bd">
         <navigator url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
           <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-            <image class="weui-media-box__thumb" src="{{userInfo.avatar}}" />
+            <image class="weui-media-box__thumb" src="{{userInfoDB.avatar}}" />
           </view>
           <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-            <view class="weui-media-box__title">{{userInfo.username}}</view>
-            <view class="weui-media-box__desc">个性签名</view>
+            <view class="weui-media-box__title">{{userInfoDB.username}}</view>
+            <view class="weui-media-box__desc">{{userInfoDB.sign}}</view>
           </view>
         </navigator>
       </view>
@@ -45,8 +45,8 @@
       </navigator>
     </view>
     <view class="weui-btn-area">
-      <button class="weui-btn" type="default" catch:tap="onTapClearCache">清除缓存</button>
-      <button class="weui-btn" type="warn" catch:tap="onTapLogout">退出登录</button>
+      <button class="weui-btn" type="default" catch:tap="onTapClearCache">清除数据缓存</button>
+      <button disabled="{{true}}" class="weui-btn" type="warn" catch:tap="onTapLogout">退出登录</button>
     </view>
   </view>
 </view>

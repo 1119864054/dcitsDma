@@ -38,103 +38,63 @@ Page({
       }
     });
   },
+
   tabClick: function (e) {
     this.setData({
       sliderOffset: e.currentTarget.offsetLeft,
       activeIndex: e.currentTarget.id
     });
-    // if (this.data.activeIndex == 0) {
-    //   this.setData({
-    //     mySuggestion:[]
-    //   })
-    //   this.getMySuggestion();
-    // }
-    // else if (this.data.activeIndex == 1) {
-    //   this.setData({
-    //     myDemand:[]
-    //   })
-    //   this.getMyDemand();
-    // }
-    // else {
-    //   this.setData({
-    //     myTechnology:[]
-    //   })
-    //   this.getMyTechnology();
-    // }
   },
 
   onTapToArticle: function (event) {
     wx.navigateTo({
-      url: '/pages/article/article',
-      success: (result) => {
-
-      },
-      fail: () => { },
-      complete: () => { }
+      url: '/pages/article/article'
     });
   },
 
   getMySuggestion: function (e) {
-    var articleList = wx.getStorageSync('userInfo')[0].articleList;
-    var suggestions = dbArticle.getAllArticleData(app.globalData.suggestionKey)
-    for (var i = 0; i < articleList.length; i++) {
-      for (var j = 0; j < suggestions.length; j++) {
-        if (articleList[i] == suggestions[j]._id) {
-          this.setData({
-            mySuggestion: this.data.mySuggestion.concat(suggestions[j])
-          })
-        }
-      }
-    }
+    dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.suggestionKey).then(res => {
+      this.setData({
+        mySuggestion: res
+      })
+    })
     console.log('mySuggestion', this.data.mySuggestion)
   },
 
   getMyDemand: function (e) {
-    var articleList = wx.getStorageSync('userInfo')[0].articleList;
-    var demands = dbArticle.getAllArticleData(app.globalData.demandKey)
-    for (var i = 0; i < articleList.length; i++) {
-      for (var j = 0; j < demands.length; j++) {
-        if (articleList[i] == demands[j]._id) {
-          this.setData({
-            myDemand: this.data.myDemand.concat(demands[j])
-          })
-        }
-      }
-    }
+    dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.demandKey).then(res => {
+      this.setData({
+        myDemand: res
+      })
+    })
     console.log('myDemand', this.data.myDemand)
   },
 
   getMyTechnology: function (e) {
-    var articleList = wx.getStorageSync('userInfo')[0].articleList;
-    var technologys = dbArticle.getAllArticleData(app.globalData.technologyKey)
-    for (var i = 0; i < articleList.length; i++) {
-      for (var j = 0; j < technologys.length; j++) {
-        if (articleList[i] == technologys[j]._id) {
-          this.setData({
-            myTechnology: this.data.myTechnology.concat(technologys[j])
-          })
-        }
-      }
-    }
+    dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.technologyKey).then(res => {
+      this.setData({
+        myTechnology: res
+      })
+    })
     console.log('myTechnology', this.data.myTechnology)
   },
 
   onPullDownRefresh: function () {
     if (this.data.activeIndex == 0) {
       this.setData({
-        mySuggestion:[]
+        mySuggestion: []
       })
       this.getMySuggestion();
     }
     else if (this.data.activeIndex == 1) {
       this.setData({
-        myDemand:[]
+        myDemand: []
       })
       this.getMyDemand();
     }
     else {
       this.setData({
-        myTechnology:[]
+        myTechnology: []
       })
       this.getMyTechnology();
     }

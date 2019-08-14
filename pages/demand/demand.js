@@ -16,15 +16,23 @@ Page({
   },
 
   onShow: function (options) {
-
+    let demandCache = dbArticle.getCache(app.globalData.demandKey)
+    this.setData({
+      demand: demandCache
+    })
   },
+
   onPullDownRefresh: function () {
     this.refresh()
-    wx.stopPullDownRefresh()
   },
+
   refresh: function () {
-    this.setData({
-      demand: dbArticle.getAllArticleData(app.globalData.demandKey)
-    });
+    dbArticle.getAllArticleData(app.globalData.demandKey).then(res => {
+      this.setData({
+        demand: res
+      })
+      dbArticle.setCache(app.globalData.demandKey, res)
+      wx.stopPullDownRefresh()
+    })
   }
 })

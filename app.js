@@ -1,16 +1,9 @@
-import {
-  LaunchSync
-} from '/util/LaunchSync.js';
-
 App({
 
-  globalData: {
-
-  },
   /**
    * 当小程序初始化完成时，会触发 onLaunch（全局只触发一次）
    */
-  onLaunch: function() {
+  onLaunch: function () {
     console.log("App.js onLaunch");
 
     if (!wx.cloud) {
@@ -31,34 +24,31 @@ App({
       suggestionKey: 'suggestion',
       demandKey: 'demand',
       technologyKey: 'technology',
-      logged: false,
+      openid: '',
+      id: '',
+      userInfo: '',
+      userInfoDB: '',
     }
-
-    var launchSync = new LaunchSync();
-    launchSync.Clear();
-    launchSync.Sync(this.globalData.suggestionKey);
-    launchSync.Sync(this.globalData.demandKey);
-    launchSync.Sync(this.globalData.technologyKey);
   },
 
   /**
    * 当小程序启动，或从后台进入前台显示，会触发 onShow
    */
-  onShow: function(options) {
+  onShow: function (options) {
 
   },
 
   /**
    * 当小程序从前台进入后台，会触发 onHide
    */
-  onHide: function() {
+  onHide: function () {
 
   },
 
   /**
    * 当小程序发生脚本错误，或者 api 调用失败时，会触发 onError 并带上错误信息
    */
-  onError: function(msg) {
+  onError: function (msg) {
 
   }
 })

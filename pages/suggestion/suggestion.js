@@ -8,7 +8,7 @@ var dbArticle = new DBArticle();
 Page({
 
   data: {
-    suggestion:''
+    suggestion: ''
   },
 
   onLoad: function (options) {
@@ -16,15 +16,23 @@ Page({
   },
 
   onShow: function (options) {
-    
+    let suggestionCache = dbArticle.getCache(app.globalData.suggestionKey)
+    this.setData({
+      suggestion: suggestionCache
+    })
   },
+
   onPullDownRefresh: function () {
     this.refresh()
-    wx.stopPullDownRefresh()
   },
-  refresh: function(){
-    this.setData({
-      suggestion: dbArticle.getAllArticleData(app.globalData.suggestionKey)
-    });
+
+  refresh: function () {
+    dbArticle.getAllArticleData(app.globalData.suggestionKey).then(res => {
+      this.setData({
+        suggestion: res
+      })
+      dbArticle.setCache(app.globalData.suggestionKey, res)
+      wx.stopPullDownRefresh()
+    })
   }
 })

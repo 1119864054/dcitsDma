@@ -1,49 +1,50 @@
-// components/articleItem/articleItem.js
+import {
+  DBArticle
+} from '../../db/DBArticle.js';
+
+var dbArticle = new DBArticle();
+
 Component({
   /**
    * 组件的属性列表
    */
   properties: {
     title: {
-      type: String,
-      value: ''
+      type:String, 
+      value:''
     },
     detail: {
-      type: String,
-      value: ''
+      type:String, 
+      value:''
     },
-    author: {
-      type: String,
-      value: ''
+    userId: {
+      type:String, 
+      value:''
     },
     date: {
-      type: String,
-      value: ''
-    },
-    avatar: {
-      type: String,
-      value: ''
+      type:String, 
+      value:''
     },
     articleId: {
-      type: String,
-      value: '',
+      type:String, 
+      value:''
     },
     articleType: {
-      type: String,
-      value: '',
-    }
+      type:String, 
+      value:''
+    },
   },
 
   /**
    * 组件的初始数据
    */
   data: {
-
+    userInfo: ''
   },
 
   lifetimes: {
     attached: function () {
-
+      this.getUserById()
     },
     detached: function () {
       // 在组件实例被从页面节点树移除时执行
@@ -59,15 +60,16 @@ Component({
    */
   methods: {
     onTapToArticle: function (e) {
-      console.log('组件 id————————', this.data.articleId)
       wx.navigateTo({
-        url: '/pages/article/article?articleId=' + this.data.articleId + '&articleType=' + this.data.articleType,
-        success: (result) => {
-
-        },
-        fail: () => { },
-        complete: () => { }
+        url: '/pages/article/article?articleId=' + this.data.articleId + '&articleType=' + this.data.articleType
       });
+    },
+    getUserById: function () {
+      dbArticle.getUser(this.data.userId).then(res => {
+        this.setData({
+          userInfo: res
+        })
+      })
     }
   }
 })
