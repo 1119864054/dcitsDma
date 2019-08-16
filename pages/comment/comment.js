@@ -9,46 +9,46 @@ const app = getApp();
 Page({
 
   data: {
-    articleId: '',
-    content: '',
     comment: [],
-    value: '',
-    current: 0
+    articleId: '',
   },
 
   onLoad: function (options) {
     this.setData({
       articleId: options.articleId
     })
-    this.refresh()
   },
 
+  onShow:function(){
+    this.refresh()
+  },
 
   onPullDownRefresh: function () {
     this.refresh()
     wx.stopPullDownRefresh()
   },
 
-  onTapToSubmit: function () {
-    dbArticle.addComment(this.data.articleId, this.data.content).then(()=>{
-      this.refresh()
-    })
-  },
-
-  getContent: function (e) {
-    this.setData({
-      content: e.detail.value,
-      current: e.detail.value.length
-    })
+  onTapToAddComment: function () {
+    wx.navigateTo({
+      url: '/pages/addComment/addComment?articleId=' + this.data.articleId
+    });
   },
 
   refresh: function () {
-    dbArticle.getComment(this.data.articleId).then(res => {
-      this.setData({
-        comment: res.data,
-        current: 0,
-        value: ''
-      })
+    this.setData({
+      comment: []
+    })
+    dbArticle.getComment(this.data.articleId).then(res1 => {
+      let comment = res1.data
+      for (let i = 0; i < comment.length; i++) {
+        dbArticle.getUser(comment[i].userId).then(res2 => {
+          comment[i].username = res2.username
+          comment[i].avatar = res2.avatar
+          this.setData({
+            comment: this.data.comment.concat(comment[i])
+          })
+        })
+      }
     })
   }
 })

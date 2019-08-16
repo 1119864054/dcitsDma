@@ -1,0 +1,16 @@
+<view class="page" xmlns:wx="http://www.w3.org/1999/xhtml">
+    <view class="page__bd">
+        <view class="weui-cells__title">添加评论</view>
+        <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell">
+                <view class="weui-cell__bd">
+                    <textarea value="{{ value }}" bindinput='getContent' bindblur="getContent" bindconfirm="getContent" maxlength="30" class="weui-textarea" placeholder="请输入..." style="height: 3.3em" />
+                    <view class="weui-textarea-counter">{{current}}/30</view>
+                </view>
+            </view>
+        </view>
+        <view class="weui-btn-area">
+            <button class="weui-btn" type="primary" bindtap="onTapToSubmit">确定</button>
+        </view>
+    </view>
+</view>

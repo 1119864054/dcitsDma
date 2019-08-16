@@ -10,7 +10,7 @@ Page({
   data: {
     articleId: '',
     articleType: '',
-    relatino: [],
+    relation: [],
     relationDetail: []
   },
 
@@ -26,23 +26,29 @@ Page({
       this.setData({
         relation: res.data
       })
-
+      let relation = this.data.relation
       if (options.articleType == 'demand') {
-        let relation = this.data.relation
         for (let i = 0; i < relation.length; i++) {
-          console.log(relation[i].suggestionId)
-          let suggestion = dbArticle.getArticleByIdFromCache(relation[i].suggestionId, 'suggestion')
-          this.setData({
-            relationDetail: this.data.relationDetail.concat(suggestion)
+          dbArticle.getArticleByAIdFromDB(relation[i].suggestionId, 'suggestion').then(res1 => {
+            let relationDetail = res1[0]
+            dbArticle.getUser(relationDetail.userId).then(res2 => {
+              relationDetail.author = res2.username
+              this.setData({
+                relationDetail: this.data.relationDetail.concat(relationDetail)
+              })
+            })
           })
         }
       } else if (options.articleType == 'technology') {
-        let relation = this.data.relation
         for (let i = 0; i < relation.length; i++) {
-          console.log(relation[i].demandId)
-          let demand = dbArticle.getArticleByIdFromCache(relation[i].demandId, 'demand')
-          this.setData({
-            relationDetail: this.data.relationDetail.concat(demand)
+          dbArticle.getArticleByAIdFromDB(relation[i].denamdId, 'demand').then(res1 => {
+            let relationDetail = res1[0]
+            dbArticle.getUser(relationDetail.userId).then(res2 => {
+              relationDetail.author = res2.username
+              this.setData({
+                relationDetail: this.data.relationDetail.concat(relationDetail)
+              })
+            })
           })
         }
       }

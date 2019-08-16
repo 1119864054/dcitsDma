@@ -18,7 +18,7 @@ Page({
     sliderLeft: 0,
     mySuggestion: [],
     myDemand: [],
-    myTechnology: []
+    myTechnology: [],
   },
 
   /**

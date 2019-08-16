@@ -46,20 +46,22 @@ Page({
     dbArticle.getUser(this.data.userId).then(res => {
       this.setData({
         author: res.username,
-        articleImg: articleData.articleImg,
         avatar: res.avatar,
-        content: articleData.content,
-        date: articleData.date,
-        title: articleData.title,
-        articleTypeZh: articleTypeZh,
-        articleId: articleId,
-        articleType: articleType
       })
     })
 
+    this.setData({
+      content: articleData.content,
+      articleImg: articleData.articleImg,
+      date: articleData.date,
+      title: articleData.title,
+      articleTypeZh: articleTypeZh,
+      articleId: articleId,
+      articleType: articleType
+    })
     this.refresh()
   },
-  
+
   previewImage: function (e) {
     console.log(e)
     wx.previewImage({
@@ -70,39 +72,31 @@ Page({
 
   onTapToComment: function (event) {
     wx.navigateTo({
-      url: '/pages/comment/comment?articleId=' + this.data.articleId,
-      success: (result) => {
-
-      },
-      fail: () => { },
-      complete: () => { }
+      url: '/pages/comment/comment?articleId=' + this.data.articleId
     });
   },
 
   onTapToRelate: function (event) {
     wx.navigateTo({
-      url: '/pages/relation/relation?articleId=' + this.data.articleId + '&articleType=' + this.data.articleType,
-      success: (result) => {
-
-      },
-      fail: () => { },
-      complete: () => { }
+      url: '/pages/relation/relation?articleId=' + this.data.articleId + '&articleType=' + this.data.articleType
     });
   },
 
   onTapFavor: function (e) {
-    if (dbArticle.isFavor(this.data.articleId)) {
-      wx.showToast({
-        title: '已收藏',
-        icon: 'none',
-      });
-    } else {
-      dbArticle.addFavor(this.data.articleId)
-      this.setData({
-        isFavor: 1,
-        isFavorTxt: '已收藏'
-      })
-    }
+    dbArticle.isFavor(this.data.articleId).then(res => {
+      if (res) {
+        wx.showToast({
+          title: '已收藏',
+          icon: 'none',
+        });
+      } else {
+        dbArticle.addFavor(this.data.articleId, this.data.articleType)
+        this.setData({
+          isFavor: 1,
+          isFavorTxt: '已收藏'
+        })
+      }
+    })
   },
 
   onPullDownRefresh: function () {
@@ -111,16 +105,18 @@ Page({
   },
 
   refresh: function (e) {
-    if (dbArticle.isFavor(this.data.articleId)) {
-      this.setData({
-        isFavor: 1,
-        isFavorTxt: '已收藏'
-      })
-    } else {
-      this.setData({
-        isFavor: 0,
-        isFavorTxt: '收藏'
-      })
-    }
+    dbArticle.isFavor(this.data.articleId).then(res => {
+      if (res) {
+        this.setData({
+          isFavor: 1,
+          isFavorTxt: '已收藏'
+        })
+      } else {
+        this.setData({
+          isFavor: 0,
+          isFavorTxt: '收藏'
+        })
+      }
+    })
   }
 })

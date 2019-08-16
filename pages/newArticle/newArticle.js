@@ -73,7 +73,7 @@ Page({
     },
     async uploadImage() {
         wx.showLoading({
-            title: '上传中',
+            title: '上传图片',
         })
 
         var that = this
@@ -121,23 +121,21 @@ Page({
     },
     async tapToSubmit() {
         await this.uploadImage()
-
-        dbArticle.addNewArticle(this.data.articleType, this.data.title, this.data.content, this.data.imagesCloudId, this.data.relation)
-
+        wx.showLoading({
+            title: '上传文章',
+        })
+        await dbArticle.addNewArticle(this.data.articleType, this.data.title, this.data.content, this.data.imagesCloudId, this.data.relation)
+        wx.hideLoading();
         var that = this
         wx.switchTab({
             url: '/pages/' + that.data.articleType + '/' + that.data.articleType,
             success: (result) => {
                 wx.showToast({
-                    title: '新增' + that.data.articleTypeZh.substring(0, 2) + '成功'
+                    title: '新增' + that.data.articleTypeZh.substring(0, 2) + '成功',
+                    duration: 3000,
                 })
             },
-            fail: () => {
-                wx.showToast({
-                    icon: 'cancel',
-                    title: '新增' + that.data.articleTypeZh.substring(0, 2) + '失败'
-                })
-            }
         });
+
     }
 });

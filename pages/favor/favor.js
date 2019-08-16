@@ -43,80 +43,48 @@ Page({
       sliderOffset: e.currentTarget.offsetLeft,
       activeIndex: e.currentTarget.id
     });
-    // if (this.data.activeIndex == 0) {
-    //   this.setData({
-    //     favorSuggestion:[]
-    //   })
-    //   this.getFavorSuggestion();
-    // }
-    // else if (this.data.activeIndex == 1) {
-    //   this.setData({
-    //     favorDemand:[]
-    //   })
-    //   this.getFavorDemand();
-    // }
-    // else {
-    //   this.setData({
-    //     favorTechnology:[]
-    //   })
-    //   this.getFavorTechnology();
-    // }
   },
 
   onTapToArticle: function (event) {
     wx.navigateTo({
-      url: '/pages/article/article',
-      success: (result) => {
-
-      },
-      fail: () => { },
-      complete: () => { }
+      url: '/pages/article/article'
     });
   },
 
   getFavorSuggestion: function (e) {
-    var favor = wx.getStorageSync('userInfo')[0].favor;
-    var suggestions = dbArticle.getAllArticleData(app.globalData.suggestionKey)
-    for (var i = 0; i < favor.length; i++) {
-      for (var j = 0; j < suggestions.length; j++) {
-        if (favor[i] == suggestions[j]._id) {
+    dbArticle.getFavor(app.globalData.suggestionKey).then(res1=>{
+      for(let i=0; i<res1.length;i++){
+        dbArticle.getArticleByAIdFromDB(res1[i].articleId, app.globalData.suggestionKey).then(res2=>{
           this.setData({
-            favorSuggestion: this.data.favorSuggestion.concat(suggestions[j])
+            favorSuggestion:this.data.favorSuggestion.concat(res2)
           })
-        }
+        })
       }
-    }
-    console.log('favorSuggestion', this.data.favorSuggestion)
+    })
   },
 
   getFavorDemand: function (e) {
-    var favor = wx.getStorageSync('userInfo')[0].favor;
-    var demands = dbArticle.getAllArticleData(app.globalData.demandKey)
-    for (var i = 0; i < favor.length; i++) {
-      for (var j = 0; j < demands.length; j++) {
-        if (favor[i] == demands[j]._id) {
+    dbArticle.getFavor(app.globalData.demandKey).then(res1=>{
+      for(let i=0; i<res1.length;i++){
+        dbArticle.getArticleByAIdFromDB(res1[i].articleId, app.globalData.demandKey).then(res2=>{
           this.setData({
-            favorDemand: this.data.favorDemand.concat(demands[j])
+            favorDemand:this.data.favorDemand.concat(res2)
           })
-        }
+        })
       }
-    }
-    console.log('favorDemand', this.data.favorDemand)
+    })
   },
 
   getFavorTechnology: function (e) {
-    var favor = wx.getStorageSync('userInfo')[0].favor;
-    var technologys = dbArticle.getAllArticleData(app.globalData.technologyKey)
-    for (var i = 0; i < favor.length; i++) {
-      for (var j = 0; j < technologys.length; j++) {
-        if (favor[i] == technologys[j]._id) {
+    dbArticle.getFavor(app.globalData.technologyKey).then(res1=>{
+      for(let i=0; i<res1.length;i++){
+        dbArticle.getArticleByAIdFromDB(res1[i].articleId, app.globalData.technologyKey).then(res2=>{
           this.setData({
-            favorTechnology: this.data.favorTechnology.concat(technologys[j])
+            favorTechnology:this.data.favorTechnology.concat(res2)
           })
-        }
+        })
       }
-    }
-    console.log('favorTechnology', this.data.favorTechnology)
+    })
   },
 
   onPullDownRefresh: function () {

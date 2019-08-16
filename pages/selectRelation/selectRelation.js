@@ -16,15 +16,22 @@ Page({
       this.setData({
         articleType: 'suggestion'
       })
-    }else if(options.articleType == 'technology'){
+    } else if (options.articleType == 'technology') {
       this.setData({
         articleType: 'demand'
       })
     }
 
-    let articleList = dbArticle.getAllArticleData(this.data.articleType)
-    this.setData({
-      articleList: articleList
+    dbArticle.getAllArticleData(this.data.articleType).then(res1 => {
+      let articleList = res1
+      for (let i = 0; i < articleList.length; i++) {
+        dbArticle.getUser(articleList[i].userId).then(res2 => {
+          articleList[i].author = res2.username
+          this.setData({
+            articleList: this.data.articleList.concat(articleList[i])
+          })
+        })
+      }
     })
   },
   onChange(field, e) {
@@ -41,12 +48,11 @@ Page({
     console.log('checkbox发生change事件，携带value值为：', e.detail.value)
   },
 
-  onChange1(e) {
+  onTapChange(e) {
     this.onChange('value', e)
   },
 
   submit() {
-    console.log('form发生了submit事件，携带数据为：', this.data.value)
     let pages = getCurrentPages();
     let prevPage = pages[pages.length - 2];
     console.log(prevPage)

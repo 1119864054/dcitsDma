@@ -135,12 +135,26 @@ class DBArticle {
         .get().then(res => {
           console.log('[DBArticle] [根据userId查询article信息] 成功: ', res.data)
           resolve(res.data)
-        }).catch(err=>{
+        }).catch(err => {
           console.error('[DBArticle] [根据userId查询article信息] 失败: ', err)
           reject()
         })
     })
+  }
 
+  //根据文章ID从数据库读取文章
+  getArticleByAIdFromDB(articleId, articleType) {
+    return new Promise((resolve, reject) => {
+      db.collection(articleType).where({
+        _id: articleId
+      }).get().then(res => {
+        console.log('[DBArticle] [根据articleId查询article信息] 成功: ', res.data)
+        resolve(res.data)
+      }).catch(err => {
+        console.error('[DBArticle] [根据articleId查询article信息] 失败: ', err)
+        reject()
+      })
+    })
   }
 
   //添加用户
@@ -164,6 +178,7 @@ class DBArticle {
           }).then(res => {
             console.log('[DBArticle] [未查询到用户->添加用户] 成功', res)
             app.globalData.id = res._id
+            resolve()
           }).catch(err => {
             console.error('[DBArticle] [未查询到用户->添加用户] 失败：', err)
             reject()
@@ -217,57 +232,70 @@ class DBArticle {
     })
   }
 
-  //我的收藏
+  //是否收藏
   isFavor(articleId) {
-    try {
-      var res = wx.getStorageSync('userInfo')
-      if (res) {
-        console.log('[DBArticle] [userInfo] 查询成功: ', res)
-        var favor = res[0].favor
-        for (var i = 0; i < favor.length; i++) {
-          if (articleId == favor[i]) {
-            return true;
-          }
+    let userId = app.globalData.id
+    return new Promise((resolve, reject) => {
+      db.collection('favor').where({
+        articleId: articleId,
+        userId: userId
+      }).get().then(res => {
+        console.log('[DBArticle] [查询favor] 成功: ', res)
+        if (!res.data || !res.data.length) {
+          resolve(false)
+        } else {
+          resolve(true)
         }
-        return false;
-      }
-    } catch (err) {
-      console.error('[DBArticle] [userInfo] 查询失败: ', err)
-    }
+      }).catch(err => {
+        console.error('[DBArticle] [查询favor] 失败: ', err)
+        reject()
+      })
+    })
   }
 
   //添加收藏
-  addFavor(articleId) {
-    db.collection('user').doc(app.globalData.id)
-      .update({
-        data: {
-          favor: _.push([articleId])
-        }
-      }).then(res => {
-        console.log('[DBArticle] [更新favor] 成功: ', res)
-        db.collection('user').where({
-          _id: app.globalData.id
-        }).get().then(res => {
-          wx.setStorageSync('userInfo', res.data)
-          console.log('[DBArticle] [更新userInfo] 缓存成功: ', res)
+  addFavor(articleId, articleType) {
+    let userId = app.globalData.id
+    db.collection('favor').add({
+      data: {
+        articleId: articleId,
+        userId: userId,
+        date: util.formatTime(new Date()),
+        articleType: articleType
+      }
+    }).then(res => {
+      console.log('[DBArticle] [添加favor] 成功: ', res)
+    }).catch(err => {
+      console.error('[DBArticle] [添加favor] 失败: ', err)
+    })
+  }
+
+  //我的收藏
+  getFavor(articleType) {
+    let userId = app.globalData.id
+    return new Promise((resolve, reject) => {
+      db.collection('favor').where({
+        articleType: articleType,
+        userId: userId
+      }).orderBy('date', 'desc')
+        .get().then(res => {
+          console.log('[DBArticle] [查询favor] 成功: ', res)
+          resolve(res.data)
         }).catch(err => {
-          console.error('[DBArticle] [更新userInfo] 缓存失败: ', err)
+          console.error('[DBArticle] [查询favor] 失败: ', err)
+          reject()
         })
-      }).catch(err => {
-        console.error('[DBArticle] [更新favor] 失败: ', err)
-      })
+    })
   }
 
   //添加评论
   addComment(articleId, content) {
+    let userId = app.globalData.id
     return new Promise((resolve, reject) => {
-      var userInfo = app.globalData.userInfo
       db.collection('comment').add({
         data: {
           articleId: articleId,
-          userId: app.globalData.id,
-          username: userInfo.nickName,
-          avatar: userInfo.avatarUrl,
+          userId: userId,
           content: content,
           date: util.formatTime(new Date()),
         }
@@ -287,7 +315,6 @@ class DBArticle {
       db.collection('comment')
         .where({
           articleId: articleId,
-          userId: app.globalData.id
         })
         .orderBy('date', 'desc')
         .get().then(res => {
@@ -302,10 +329,11 @@ class DBArticle {
 
   //获取我的评论
   getMyComment() {
+    let userId = app.globalData.id
     return new Promise((resolve, reject) => {
       db.collection('comment')
         .where({
-          userId: app.globalData.id
+          userId: userId
         })
         .orderBy('date', 'desc')
         .get().then(res => {

@@ -28,21 +28,3 @@
   list-style: none;
   overflow: hidden;
 }
-
-.add-comment {
-  position: fixed;
-  bottom: 0px;
-  width: 750rpx;
-}
-
-.add-comment .submit-button {
-  width: 25%;
-}
-
-.add-comment .submit-button button{
-    text-align: center
-  }
-
-.add-comment .input-comment {
-  width: 75%;
-}
