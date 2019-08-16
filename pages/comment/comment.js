@@ -11,15 +11,17 @@ Page({
   data: {
     comment: [],
     articleId: '',
+    articleType: ''
   },
 
   onLoad: function (options) {
     this.setData({
-      articleId: options.articleId
+      articleId: options.articleId,
+      articleType: options.articleType
     })
   },
 
-  onShow:function(){
+  onShow: function () {
     this.refresh()
   },
 
@@ -30,7 +32,7 @@ Page({
 
   onTapToAddComment: function () {
     wx.navigateTo({
-      url: '/pages/addComment/addComment?articleId=' + this.data.articleId
+      url: '/pages/addComment/addComment?articleId=' + this.data.articleId + '&articleType=' + this.data.articleType
     });
   },
 

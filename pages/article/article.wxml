@@ -18,7 +18,7 @@
                         <view class="weui-article__p">{{content}}</view>
                         <view class="weui-article__p">
                             <block wx:for="{{articleImg}}" wx:key="*this" wx:for-index="idx" wx:for-item="item" data-idx="{{idx}}">
-                                <image bindtap="previewImage" id="{{item}}" class="weui-article__img" src="{{item}}" mode="aspectFit" style="height: 180px" />
+                                <image bindtap="previewImage" id="{{item}}" class="weui-article__img" src="{{item}}" mode="widthFix" style="width:100%;" />
                             </block>
                         </view>
                     </view>

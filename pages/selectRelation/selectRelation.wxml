@@ -2,7 +2,7 @@
     <view class="page__bd">
         <wux-checkbox-group title="" value="{{value}}" bind:change="onTapChange">
             <block wx:for="{{articleList}}" wx:key="_id">
-                <wux-checkbox title="{{item.title}}" extra="{{item.author}}" value="{{item._id}}" />
+                <wux-checkbox title="{{item.title}}" extra="{{item.author}}" value="{{[item._id,item.userId]}}" />
             </block>
         </wux-checkbox-group>
         <view class="btn-area">

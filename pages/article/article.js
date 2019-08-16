@@ -40,6 +40,13 @@ Page({
 
     let articleData = dbArticle.getArticleByIdFromCache(articleId, articleType)
 
+    let articleImg = dbArticle.getCache(articleId + '_image_cache')
+    console.log(articleImg)
+    if (!articleImg || !articleImg.length) {
+      articleImg = articleData.articleImg
+      util.getImageCached(articleId, articleData.articleImg)
+    }
+
     let articleTypeZh = util.getArticleTypeZh(articleType)
     console.log('articleTypeZh', articleTypeZh)
 
@@ -52,7 +59,7 @@ Page({
 
     this.setData({
       content: articleData.content,
-      articleImg: articleData.articleImg,
+      articleImg: articleImg,
       date: articleData.date,
       title: articleData.title,
       articleTypeZh: articleTypeZh,
@@ -72,7 +79,7 @@ Page({
 
   onTapToComment: function (event) {
     wx.navigateTo({
-      url: '/pages/comment/comment?articleId=' + this.data.articleId
+      url: '/pages/comment/comment?articleId=' + this.data.articleId + '&articleType=' + this.data.articleType
     });
   },
 

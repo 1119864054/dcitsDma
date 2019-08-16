@@ -73,28 +73,58 @@ class DBArticle {
         //关联关系
         if (storageKeyName == app.globalData.demandKey) {
           for (let i = 0; i < relation.length; i++) {
+            let idArray = relation[i].split(',')
             db.collection('SDRelation').add({
               data: {
-                suggestionId: relation[i],
+                suggestionId: idArray[0],
                 demandId: res._id,
                 date: util.formatTime(new Date()),
               }
             }).then(res => {
               console.log('[DBArticle] [新增sdrelation] 成功: ', res._id)
+              db.collection('message').add({
+                data: {
+                  relationId: res._id,
+                  relationType: 'SDRelation',
+                  date: util.formatTime(new Date()),
+                  checked: false,
+                  beRelated: idArray[1],
+                  relate: id,
+                }
+              }).then(res => {
+                console.log('[DBArticle] [新增message] 成功: ', res._id)
+              }).catch(err => {
+                console.error('[DBArticle] [新增message] 失败: ', err)
+              })
             }).catch(err => {
               console.error('[DBArticle] [新增sdrelation] 失败: ', err)
             })
           }
         } else if (storageKeyName == app.globalData.technologyKey) {
           for (let i = 0; i < relation.length; i++) {
+            let idArray = relation[i].split(',')
             db.collection('DTRelation').add({
               data: {
-                demandId: relation[i],
+                demandId: idArray[0],
                 technologyId: res._id,
                 date: util.formatTime(new Date()),
               }
             }).then(res => {
               console.log('[DBArticle] [新增dtrelation] 成功: ', res._id)
+              db.collection('message').add({
+                data: {
+                  relationId: res._id,
+                  relationType: 'DTRelation',
+                  date: util.formatTime(new Date()),
+                  checked: false,
+                  beRelated: idArray[1],
+                  relate: id,
+                }
+              }).then(res => {
+                console.log('[DBArticle] [新增message] 成功: ', res._id)
+              }).catch(err => {
+                console.error('[DBArticle] [新增message] 失败: ', err)
+              })
             }).catch(err => {
               console.error('[DBArticle] [新增dtrelation] 失败: ', err)
             })
@@ -289,7 +319,7 @@ class DBArticle {
   }
 
   //添加评论
-  addComment(articleId, content) {
+  addComment(articleId, content, articleType) {
     let userId = app.globalData.id
     return new Promise((resolve, reject) => {
       db.collection('comment').add({
@@ -298,6 +328,7 @@ class DBArticle {
           userId: userId,
           content: content,
           date: util.formatTime(new Date()),
+          articleType: articleType
         }
       }).then(res => {
         console.log('[DBArticle] [添加comment] 成功: ', res)
@@ -376,6 +407,53 @@ class DBArticle {
             reject()
           })
       }
+    })
+  }
+
+  //根据relationId获取关联关系
+  getRelationById(relationId, relationType) {
+    return new Promise((resolve, reject) => {
+      db.collection(relationType)
+        .where({
+          _id: relationId
+        }).get()
+        .then(res => {
+          console.log('[DBArticle] [查询' + relationType + '] 成功: ', res)
+          resolve(res)
+        }).catch(err => {
+          console.error('[DBArticle] [查询' + relationType + '] 失败: ', err)
+          reject()
+        })
+    })
+  }
+
+  //获取关联消息
+  getMessage() {
+    let id = app.globalData.id
+    return new Promise((resolve, reject) => {
+      db.collection('message').where({
+        beRelated: id
+      }).orderBy('date', 'desc').get()
+        .then(res => {
+          console.log('[DBArticle] [查询message] 成功: ', res)
+          resolve(res)
+        }).catch(err => {
+          console.error('[DBArticle] [查询message] 失败: ', err)
+          reject()
+        })
+    })
+  }
+
+  //消息已读
+  checkMessage(messageId) {
+    db.collection('message').doc(messageId).update({
+      data: {
+        checked: true
+      }
+    }).then(res => {
+      console.log('[DBArticle] [更新message] 成功: ', res)
+    }).catch(err => {
+      console.error('[DBArticle] [更新message] 失败: ', err)
     })
   }
 }

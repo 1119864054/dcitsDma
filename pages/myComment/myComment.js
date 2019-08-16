@@ -10,7 +10,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    comment:[]
+    comment: []
   },
 
   /**
@@ -25,11 +25,28 @@ Page({
     wx.stopPullDownRefresh()
   },
 
-  refresh: function () {
-    dbArticle.getMyComment().then(res => {
-      this.setData({
-        comment: res.data
-      })
+  onTapToArticle: function (e) {
+    let articleId = e.currentTarget.dataset.articleId
+    let articleType = e.currentTarget.dataset.articleType
+    wx.navigateTo({
+      url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType
+    });
+  },
+
+  refresh() {
+    this.setData({
+      comment: []
+    })
+    dbArticle.getMyComment().then(res1 => {
+      let comment = res1.data
+      for (let i = 0; i < comment.length; i++) {
+        dbArticle.getArticleByAIdFromDB(comment[i].articleId, comment[i].articleType).then(res2 => {
+          comment[i].title = res2[0].title
+          this.setData({
+            comment: this.data.comment.concat(comment[i])
+          })
+        })
+      }
     })
   }
 })

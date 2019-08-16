@@ -5,19 +5,15 @@
                 <view class="weui-panel weui-panel_access">
                     <view class="weui-panel__bd">
                         <block wx:for="{{comment}}" wx:for-index="idx" wx:key="_id" wx:for-item="item" data-idx="{{idx}}">
-                            <view class="weui-media-box weui-media-box_text">
+                            <view class="weui-media-box weui-media-box_text" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' bind:tap="onTapToArticle">
                                 <view class="weui-media-box__title weui-media-box__title_in-text">
-                                    <image src="{{item.avatar}}" />
                                     <view class="" selectable="false" space="false" decode="false">
-                                        {{item.username}}
+                                        文章标题：{{item.title}}
                                     </view>
                                 </view>
                                 <view class="weui-media-box__desc">{{item.content}}</view>
                                 <view class="weui-media-box__info">
                                     <view class="weui-media-box__info__meta">
-                                        {{item.username}}
-                                    </view>
-                                    <view class="weui-media-box__info__meta weui-media-box__info__meta_extra">
                                         {{item.date}}
                                     </view>
                                 </view>
