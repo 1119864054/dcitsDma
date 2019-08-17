@@ -3,5 +3,5 @@
     "article-item":"../../components/articleItem/articleItem",
     "my-fab-button":"../../components/myFabButton/myFabButton"
   },
-  "navigationBarTitleText": "技术天地"
+  "navigationBarTitleText": "项目需求"
 }

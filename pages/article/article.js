@@ -41,7 +41,6 @@ Page({
     let articleData = dbArticle.getArticleByIdFromCache(articleId, articleType)
 
     let articleImg = dbArticle.getCache(articleId + '_image_cache')
-    console.log(articleImg)
     if (!articleImg || !articleImg.length) {
       articleImg = articleData.articleImg
       util.getImageCached(articleId, articleData.articleImg)

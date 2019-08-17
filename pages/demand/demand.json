@@ -3,5 +3,5 @@
     "article-item":"../../components/articleItem/articleItem",
     "my-fab-button":"../../components/myFabButton/myFabButton"
   },
-  "navigationBarTitleText": "需求版"
+  "navigationBarTitleText": "业务需求"
 }

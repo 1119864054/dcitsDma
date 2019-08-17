@@ -22,12 +22,6 @@
     "backgroundColor": "#EDEDED",
     "enablePullDownRefresh": true
   },
-  "networkTimeout": {
-    "request": 10000,
-    "connectSocket": 10000,
-    "uploadFile": 10000,
-    "downloadFile": 10000
-  },
   "tabBar": {
     "borderStyle": "white",
     "selectedColor": "#666666",
@@ -37,19 +31,19 @@
     "list": [
       {
         "pagePath": "pages/suggestion/suggestion",
-        "text": "意见箱",
+        "text": "需求意见箱",
         "iconPath": "images/tabbar/suggestion.png",
         "selectedIconPath": "images/tabbar/suggestion_selected.png"
       },
       {
         "pagePath": "pages/demand/demand",
-        "text": "需求版",
+        "text": "业务需求",
         "iconPath": "images/tabbar/demand.png",
         "selectedIconPath": "images/tabbar/demand_selected.png"
       },
       {
         "pagePath": "pages/technology/technology",
-        "text": "技术天地",
+        "text": "项目需求",
         "iconPath": "images/tabbar/technology.png",
         "selectedIconPath": "images/tabbar/technology_selected.png"
       },
