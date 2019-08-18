@@ -10,6 +10,8 @@ import {
 var dbArticle = new DBArticle();
 var util = new Util();
 
+var myData = [];
+
 Page({
 
   /**
@@ -26,7 +28,6 @@ Page({
     date: '',
     title: '',
     articleTypeZh: '',
-    articleId: '',
     articleType: ''
   },
 
@@ -49,22 +50,21 @@ Page({
     let articleTypeZh = util.getArticleTypeZh(articleType)
     console.log('articleTypeZh', articleTypeZh)
 
-    dbArticle.getUser(this.data.userId).then(res => {
+    dbArticle.getUser(articleData.userId).then(res => {
       this.setData({
         author: res.username,
         avatar: res.avatar,
+        content: articleData.content,
+        articleImg: articleImg,
+        date: articleData.date,
+        title: articleData.title,
+        articleTypeZh: articleTypeZh,
+        articleType: articleType,
       })
     })
+    myData.articleId = articleId;
+    myData.articleType = articleType;
 
-    this.setData({
-      content: articleData.content,
-      articleImg: articleImg,
-      date: articleData.date,
-      title: articleData.title,
-      articleTypeZh: articleTypeZh,
-      articleId: articleId,
-      articleType: articleType
-    })
     this.refresh()
   },
 
@@ -78,25 +78,25 @@ Page({
 
   onTapToComment: function (event) {
     wx.navigateTo({
-      url: '/pages/comment/comment?articleId=' + this.data.articleId + '&articleType=' + this.data.articleType
+      url: '/pages/comment/comment?articleId=' + myData.articleId + '&articleType=' + myData.articleType
     });
   },
 
   onTapToRelate: function (event) {
     wx.navigateTo({
-      url: '/pages/relation/relation?articleId=' + this.data.articleId + '&articleType=' + this.data.articleType
+      url: '/pages/relation/relation?articleId=' + myData.articleId + '&articleType=' + myData.articleType
     });
   },
 
   onTapFavor: function (e) {
-    dbArticle.isFavor(this.data.articleId).then(res => {
+    dbArticle.isFavor(myData.articleId).then(res => {
       if (res) {
         wx.showToast({
           title: '已收藏',
           icon: 'none',
         });
       } else {
-        dbArticle.addFavor(this.data.articleId, this.data.articleType)
+        dbArticle.addFavor(myData.articleId, myData.articleType)
         this.setData({
           isFavor: 1,
           isFavorTxt: '已收藏'
@@ -111,7 +111,7 @@ Page({
   },
 
   refresh: function (e) {
-    dbArticle.isFavor(this.data.articleId).then(res => {
+    dbArticle.isFavor(myData.articleId).then(res => {
       if (res) {
         this.setData({
           isFavor: 1,

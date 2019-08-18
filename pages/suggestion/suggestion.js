@@ -12,14 +12,15 @@ Page({
   },
 
   onLoad: function (options) {
-    this.refresh()
-  },
-
-  onShow: function (options) {
     let suggestionCache = dbArticle.getCache(app.globalData.suggestionKey)
     this.setData({
       suggestion: suggestionCache
     })
+    this.refresh()
+  },
+
+  onShow: function (options) {
+
   },
 
   onPullDownRefresh: function () {

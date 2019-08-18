@@ -4,8 +4,6 @@ import {
 
 var dbArticle = new DBArticle();
 
-const app = getApp();
-
 Page({
 
   data: {

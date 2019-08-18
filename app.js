@@ -26,8 +26,10 @@ App({
       technologyKey: 'technology',
       openid: '',
       id: '',
-      userInfo: '',
-      userInfoDB: '',
+      username: '',
+      avatar: '',
+      sign: '',
+      logged: false,
     }
   },
 

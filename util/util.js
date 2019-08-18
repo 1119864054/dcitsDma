@@ -10,13 +10,13 @@ class Util {
   getArticleTypeZh(articleType) {
     var articleTypeZh = '';
     if (articleType == 'suggestion') {
-      articleTypeZh = '意见箱'
+      articleTypeZh = '需求意见箱'
     }
     if (articleType == 'demand') {
-      articleTypeZh = '需求版'
+      articleTypeZh = '业务需求'
     }
     if (articleType == 'technology') {
-      articleTypeZh = '技术天地'
+      articleTypeZh = '项目需求'
     }
     return articleTypeZh;
   }
@@ -30,7 +30,7 @@ class Util {
     var minute = date.getMinutes()
     var second = date.getSeconds()
 
-    return [year, month, day].map(this.formatNumber).join('/') + ' ' + [hour, minute, second].map(this.formatNumber).join(':')
+    return [year, month, day].map(this.formatNumber).join('-') + ' ' + [hour, minute, second].map(this.formatNumber).join(':')
   }
 
   formatNumber(n) {

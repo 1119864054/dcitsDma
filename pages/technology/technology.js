@@ -12,14 +12,15 @@ Page({
   },
 
   onLoad: function (options) {
-    this.refresh()
-  },
-
-  onShow: function (options) {
     let technologyCache = dbArticle.getCache(app.globalData.technologyKey)
     this.setData({
       technology: technologyCache
     })
+    this.refresh()
+  },
+
+  onShow: function (options) {
+    
   },
 
   onPullDownRefresh: function () {

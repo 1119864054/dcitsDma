@@ -190,7 +190,8 @@ class DBArticle {
   //添加用户
   addUser() {
     let openid = app.globalData.openid;
-    let userInfo = app.globalData.userInfo;
+    let username = app.globalData.username;
+    let avatar = app.globalData.avatar;
 
     return new Promise((resolve, reject) => {
       db.collection('user').where({
@@ -200,8 +201,8 @@ class DBArticle {
         if (!res.data.length || !res) {
           db.collection('user').add({
             data: {
-              username: userInfo.nickName,
-              avatar: userInfo.avatarUrl,
+              username: username,
+              avatar: avatar,
               date: util.formatTime(new Date()),
               sign: '个性签名'
             }
@@ -227,13 +228,15 @@ class DBArticle {
 
   //更新用户
   updateUser(sign = '个性签名') {
-    let userInfo = app.globalData.userInfo;
+    let username = app.globalData.username;
+    let avatar = app.globalData.avatar;
+
     return new Promise((resolve, reject) => {
       db.collection('user').doc(app.globalData.id)
         .update({
           data: {
-            username: userInfo.nickName,
-            avatar: userInfo.avatarUrl,
+            username: username,
+            avatar: avatar,
             sign: sign
           }
         }).then(res => {
@@ -253,7 +256,6 @@ class DBArticle {
         _id: id
       }).get().then(res => {
         console.log('[DBArticle] [查询用户] 成功: ', res.data[0])
-        app.globalData.userInfoDB = res.data[0]
         resolve(res.data[0])
       }).catch(err => {
         console.error('[DBArticle] [查询用户] 失败: ', err)

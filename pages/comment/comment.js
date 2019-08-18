@@ -6,6 +6,8 @@ var dbArticle = new DBArticle();
 
 const app = getApp();
 
+var myData = [];
+
 Page({
 
   data: {
@@ -15,10 +17,8 @@ Page({
   },
 
   onLoad: function (options) {
-    this.setData({
-      articleId: options.articleId,
-      articleType: options.articleType
-    })
+    myData.articleId = options.articleId;
+    myData.articleType = options.articleType;
   },
 
   onShow: function () {
@@ -26,28 +26,36 @@ Page({
   },
 
   onPullDownRefresh: function () {
+    this.setData({
+      comment: []
+    })
     this.refresh()
     wx.stopPullDownRefresh()
   },
 
   onTapToAddComment: function () {
-    wx.navigateTo({
-      url: '/pages/addComment/addComment?articleId=' + this.data.articleId + '&articleType=' + this.data.articleType
-    });
+    if (app.globalData.logged) {
+      wx.navigateTo({
+        url: '/pages/addComment/addComment?articleId=' + myData.articleId + '&articleType=' + myData.articleType
+      });
+    } else {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none',
+      });
+
+    }
   },
 
   refresh: function () {
-    this.setData({
-      comment: []
-    })
-    dbArticle.getComment(this.data.articleId).then(res1 => {
+    dbArticle.getComment(myData.articleId).then(res1 => {
       let comment = res1.data
       for (let i = 0; i < comment.length; i++) {
         dbArticle.getUser(comment[i].userId).then(res2 => {
           comment[i].username = res2.username
           comment[i].avatar = res2.avatar
           this.setData({
-            comment: this.data.comment.concat(comment[i])
+            comment: myData.comment.concat(comment[i])
           })
         })
       }

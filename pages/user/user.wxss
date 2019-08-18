@@ -1,0 +1,11 @@
+.login {
+    font-size: 32rpx;
+    color: #007aff;
+    background-color: white;
+    background-size: cover;
+    text-align: left
+}
+
+.login::after {
+    border: none;
+}

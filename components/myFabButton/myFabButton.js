@@ -1,4 +1,5 @@
 // components/myFabButton/myFabButton.js
+const app = getApp();
 Component({
   /**
    * 组件的属性列表
@@ -9,15 +10,15 @@ Component({
       value: [{
         label: '新建意见',
         appParameter: 'suggestion',
-        icon:'../../images/fabbutton/suggestion.svg'
+        icon: '../../images/fabbutton/suggestion.svg'
       }, {
         label: '新建需求',
         appParameter: 'demand',
-        icon:'../../images/fabbutton/demand.svg'
+        icon: '../../images/fabbutton/demand.svg'
       }, {
         label: '新建技术',
         appParameter: 'technology',
-        icon:'../../images/fabbutton/technology.svg'
+        icon: '../../images/fabbutton/technology.svg'
       }]
     }
   },
@@ -34,16 +35,30 @@ Component({
    */
   methods: {
     onTapToNewArticle(e) {
-      var articleType = e.detail.value.appParameter;
-      console.log(articleType)
-      wx.navigateTo({
-        url: '/pages/newArticle/newArticle?articleType=' + articleType,
-        success: (result) => {
+      if (app.globalData.logged) {
+        let articleType = e.detail.value.appParameter;
+        console.log(articleType)
+        wx.navigateTo({
+          url: '/pages/newArticle/newArticle?articleType=' + articleType,
+          success: (result) => {
 
-        },
-        fail: () => { },
-        complete: () => { }
-      });
+          },
+          fail: () => { },
+          complete: () => { }
+        });
+      }
+      else {
+        wx.switchTab({
+          url: '/pages/user/user',
+          success: () => {
+            wx.showToast({
+              title: '请先登录',
+              icon: 'none',
+            });
+          }
+        });
+
+      }
     }
   }
 })

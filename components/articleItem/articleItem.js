@@ -10,28 +10,28 @@ Component({
    */
   properties: {
     title: {
-      type:String, 
-      value:''
+      type: String,
+      value: ''
     },
     detail: {
-      type:String, 
-      value:''
+      type: String,
+      value: ''
     },
     userId: {
-      type:String, 
-      value:''
+      type: String,
+      value: ''
     },
     date: {
-      type:String, 
-      value:''
+      type: String,
+      value: ''
     },
     articleId: {
-      type:String, 
-      value:''
+      type: String,
+      value: ''
     },
     articleType: {
-      type:String, 
-      value:''
+      type: String,
+      value: ''
     },
   },
 
@@ -65,11 +65,21 @@ Component({
       });
     },
     getUserById: function () {
-      dbArticle.getUser(this.data.userId).then(res => {
+      let userInfo = dbArticle.getCache(this.data.userId)
+      if (userInfo && (new Date().getTime() - userInfo.timeStamp) < 1800000) {
         this.setData({
-          userInfo: res
+          userInfo: userInfo
         })
-      })
+      } else {
+        dbArticle.getUser(this.data.userId).then(res => {
+          res.timeStamp = new Date().getTime()
+          dbArticle.setCache(this.data.userId, res)
+          this.setData({
+            userInfo: res
+          })
+        })
+      }
+
     }
   }
 })
