@@ -1,0 +1,20 @@
+<view class="page" hover-class="none" hover-stop-propagation="false">
+    <view class="page__bd" hover-class="none" hover-stop-propagation="false">
+        <view class="weui-cells weui-cells_after-title">
+            <block wx:for="{{message}}" wx:key="_id">
+                <view class="weui-cell weui-cell_access" hover-class="weui-cell_active" data-message-id='{{item._id}}' bind:tap="onTapCheck">
+                    <view class="weui-cell__bd">
+                        <text class="weui-cell_link">{{item.author}}</text>
+                        写的
+                        <text class="weui-cell_link" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' bind:tap="onTapToArticle">{{item.article}}</text>
+                        关联了我的
+                        <text class="weui-cell_link" data-article-id='{{item.myArticleId}}' data-article-type='{{item.myArticleType}}' bind:tap="onTapToArticle">{{item.myArticle}}</text>
+                    </view>
+                    <view class="weui-cell__ft weui-cell__ft_in-access" style="font-size: 0">
+                        <view hidden="{{item.checked}}" class="weui-badge weui-badge_dot" style="margin-left: 5px;margin-right: 5px;"></view>
+                    </view>
+                </view>
+            </block>
+        </view>
+    </view>
+</view>

@@ -1,0 +1,56 @@
+<view class="page">
+  <view class="page__bd">
+    <view class="weui-panel weui-panel_access">
+      <view class="weui-panel__bd">
+        <view class="weui-media-box weui-media-box_appmsg">
+          <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+            <image class="weui-media-box__thumb" src="{{avatar}}" />
+          </view>
+          <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+            <button hidden="{{logged}}" class="login" bindtap="onGetOpenid" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">
+              {{username}}
+            </button>
+            <view class="weui-media-box__title" hidden="{{!logged}}">{{username}}</view>
+            <view class="weui-media-box__desc">{{sign}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="weui-cells__title">功能列表</view>
+    <view class="weui-cells weui-cells_after-title">
+      <navigator url="/pages/myArticle/myArticle" class="weui-cell weui-cell_access" hover-class="weui-cell_active" hover-stay-time="100">
+        <view class="weui-cell__hd">
+          <image src="/images/person/article.svg" style="margin-right: 16px;vertical-align: middle;width:20px; height: 20px;"></image>
+        </view>
+        <view class="weui-cell__bd">我的文章</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">{{userInfo.articleList.length}}</view>
+      </navigator>
+      <navigator url="/pages/favor/favor" class="weui-cell weui-cell_example weui-cell_access" hover-class="weui-cell_active" hover-stay-time="100">
+        <view class="weui-cell__hd">
+          <image src="/images/person/favor.svg" style="margin-right: 16px;vertical-align: middle;width:20px; height: 20px;"></image>
+        </view>
+        <view class="weui-cell__bd">我的收藏</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">{{userInfo.favor.length}}</view>
+      </navigator>
+      <navigator url="/pages/message/message" class="weui-cell weui-cell_example weui-cell_access" hover-class="weui-cell_active" hover-stay-time="100">
+        <view class="weui-cell__hd">
+          <image src="/images/person/message.svg" style="margin-right: 16px;vertical-align: middle;width:20px; height: 20px;"></image>
+        </view>
+        <view class="weui-cell__bd">我的消息</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access" style="font-size: 0">
+          <view hidden="{{checked}}" class="weui-badge weui-badge_dot" style="margin-left: 5px;margin-right: 5px;"></view>
+        </view>
+      </navigator>
+      <navigator url="/pages/myComment/myComment" class="weui-cell weui-cell_example weui-cell_access" hover-class="weui-cell_active" hover-stay-time="100">
+        <view class="weui-cell__hd">
+          <image src="/images/person/comment.svg" style="margin-right: 16px;vertical-align: middle;width:20px; height: 20px;"></image>
+        </view>
+        <view class="weui-cell__bd">我的评论</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </navigator>
+    </view>
+    <view class="weui-btn-area">
+      <button class="weui-btn" type="default" catch:tap="onTapClearCache">清除数据缓存</button>
+    </view>
+  </view>
+</view>

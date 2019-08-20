@@ -1,0 +1,36 @@
+<view class="page">
+  <view class="page__bd">
+    <view class="weui-tab">
+      <view class="weui-navbar">
+        <block wx:for="{{tabs}}" wx:key="*this">
+          <view id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" bindtap="tabClick">
+            <view class="weui-navbar__title">{{item}}</view>
+          </view>
+        </block>
+      </view>
+      <view class="weui-tab__panel">
+        <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
+          <block wx:for="{{favorSuggestion}}" wx:for-index="idx" wx:key="_id" wx:for-item="item" data-idx="{{idx}}">
+            <view class="weui-panel weui-panel_access">
+              <article-item articleType="suggestion" timeStamp="{{item.timeStamp}}" articleId="{{item._id}}" title="{{item.title}}" detail="{{item.detail}}" userId="{{item.userId}}" date="{{item.date}}"></article-item>
+            </view>
+          </block>
+        </view>
+        <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
+          <block wx:for="{{favorDemand}}" wx:for-index="idx" wx:key="_id" wx:for-item="item" data-idx="{{idx}}">
+            <view class="weui-panel weui-panel_access">
+              <article-item articleType="demand" timeStamp="{{item.timeStamp}}" articleId="{{item._id}}" title="{{item.title}}" detail="{{item.detail}}" userId="{{item.userId}}" date="{{item.date}}"></article-item>
+            </view>
+          </block>
+        </view>
+        <view class="weui-tab__content" hidden="{{activeIndex != 2}}">
+          <block wx:for="{{favorTechnology}}" wx:for-index="idx" wx:key="_id" wx:for-item="item" data-idx="{{idx}}">
+            <view class="weui-panel weui-panel_access">
+              <article-item articleType="technology" timeStamp="{{item.timeStamp}}" articleId="{{item._id}}" title="{{item.title}}" detail="{{item.detail}}" userId="{{item.userId}}" date="{{item.date}}"></article-item>
+            </view>
+          </block>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

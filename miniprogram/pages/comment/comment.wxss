@@ -1,0 +1,30 @@
+/* pages/comment/comment.wxss */
+
+.weui-media-box__title {
+  margin-bottom: 0px;
+  display: flex;
+  flex-direction: row;
+  height: 30px;
+}
+
+.weui-media-box__title image {
+  width: 20px;
+  height: 20px;
+  margin-right: 16px;
+  vertical-align: middle;
+}
+
+.weui-media-box {
+  padding: 10px;
+  position: relative;
+}
+
+.weui-media-box__info {
+  margin-top: 7px;
+  padding-bottom: 0px;
+  font-size: 11px;
+  color: #cecece;
+  line-height: 1em;
+  list-style: none;
+  overflow: hidden;
+}

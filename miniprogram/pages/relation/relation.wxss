@@ -1,0 +1,9 @@
+/* pages/relate/relate.wxss */
+.table-hd{
+    background: #dfdfdf;
+}
+
+.table-hd view{
+    color: #000000;
+    font-size: 20px
+}

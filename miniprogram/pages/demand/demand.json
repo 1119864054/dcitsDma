@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "article-item":"../../components/articleItem/articleItem",
+    "my-fab-button":"../../components/myFabButton/myFabButton"
+  },
+  "navigationBarTitleText": "业务需求"
+}
