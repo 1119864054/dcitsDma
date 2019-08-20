@@ -6,12 +6,6 @@ var dbArticle = new DBArticle();
 const app = getApp();
 var sliderWidth = 96;
 
-var myData = {
-  mySuggestion: [],
-  myDemand: [],
-  myTechnology: [],
-}
-
 Page({
 
   /**
@@ -76,36 +70,49 @@ Page({
   },
 
   async getMyArticle() {
-    myData.mySuggestion = await dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.suggestionKey)
-    console.log('myData.mySuggestion', myData.mySuggestion)
-    dbArticle.setCache('mySuggestion', myData.mySuggestion)
-    for (let i = 0; i < myData.mySuggestion.length; i++) {
-      dbArticle.setCache(myData.mySuggestion[i]._id, myData.mySuggestion[i])
+    wx.showLoading({
+      title: '加载中',
+      mask: true,
+    });
+
+    let mySuggestion = dbArticle.getCache('mySuggestion')
+    if (!mySuggestion) {
+      mySuggestion = await dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.suggestionKey)
+      dbArticle.setCache('mySuggestion', mySuggestion)
+    }
+    for (let i = 0; i < mySuggestion.length; i++) {
+      dbArticle.setCache(mySuggestion[i]._id, mySuggestion[i])
     }
 
-    myData.myDemand = await dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.demandKey)
-    console.log('myData.myDemand', myData.myDemand)
-    dbArticle.setCache('myDemand', myData.myDemand)
-    for (let i = 0; i < myData.myDemand.length; i++) {
-      dbArticle.setCache(myData.myDemand[i]._id, myData.myDemand[i])
+    let myDemand = dbArticle.getCache('myDemand')
+    if (!myDemand) {
+      myDemand = await dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.demandKey)
+      dbArticle.setCache('myDemand', myDemand)
+    }
+    for (let i = 0; i < myDemand.length; i++) {
+      dbArticle.setCache(myDemand[i]._id, myDemand[i])
     }
 
-    myData.myTechnology = await dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.technologyKey)
-    console.log('myData.myTechnology', myData.myTechnology)
-    dbArticle.setCache('myTechnology', myData.myTechnology)
-    for (let i = 0; i < myData.myTechnology.length; i++) {
-      dbArticle.setCache(myData.myTechnology[i]._id, myData.myTechnology[i])
+    let myTechnology = dbArticle.getCache('myTechnology')
+    if (!myTechnology) {
+      myTechnology = await dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.technologyKey)
+      dbArticle.setCache('myTechnology', myTechnology)
+    }
+    for (let i = 0; i < myTechnology.length; i++) {
+      dbArticle.setCache(myTechnology[i]._id, myTechnology[i])
     }
 
     this.setData({
-      mySuggestion: myData.mySuggestion,
-      myDemand: myData.myDemand,
-      myTechnology: myData.myTechnology
+      mySuggestion: mySuggestion,
+      myDemand: myDemand,
+      myTechnology: myTechnology
     })
+
+    wx.hideLoading();
   },
 
   onPullDownRefresh: function () {
-    this.getMyArticle()
     wx.stopPullDownRefresh()
+    this.getMyArticle()
   }
 })

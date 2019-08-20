@@ -27,8 +27,7 @@
     "color": "#999999",
     "backgroundColor": "#ffffff",
     "position": "bottom",
-    "list": [
-      {
+    "list": [{
         "pagePath": "pages/suggestion/suggestion",
         "text": "需求意见箱",
         "iconPath": "images/tabbar/suggestion.png",

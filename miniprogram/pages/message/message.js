@@ -22,11 +22,15 @@ Page({
     this.setData({
       message: message
     })
-    wx.startPullDownRefresh()
     this.getMessage()
   },
 
   async getMessage() {
+    wx.showLoading({
+      title: '加载中',
+      mask: true,
+    });
+      
     let res1 = await dbArticle.getMessage()
     let message = res1.data
     console.log('message', message)
@@ -116,7 +120,7 @@ Page({
     this.setData({
       message: message
     })
-    wx.stopPullDownRefresh()
+    wx.hideLoading();
   },
 
   onTapCheck: function (e) {
@@ -152,6 +156,7 @@ Page({
   },
 
   onPullDownRefresh: function () {
+    wx.stopPullDownRefresh()
     this.getMessage()
   },
 })

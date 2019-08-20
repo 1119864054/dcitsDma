@@ -15,7 +15,7 @@ class DBArticle {
 
   //添加到缓存
   setCache(key, value) {
-    value.timeStamp = new Date().getTime()
+    value.createTime = new Date().getTime()
     try {
       wx.setStorageSync(key, value)
       console.log('[DBArticle] [' + key + '] [同步缓存记录] 成功')

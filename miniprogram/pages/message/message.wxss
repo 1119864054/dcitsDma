@@ -7,3 +7,8 @@
 .weui-loading__wrp:last-child {
     background-color: rgba(0, 0, 0, .1);
 }
+
+.weui-cell_link{
+    border-bottom-style: solid;
+    border-bottom-width: 2px
+}

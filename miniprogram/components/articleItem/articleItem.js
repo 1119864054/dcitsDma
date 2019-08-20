@@ -70,7 +70,7 @@ Component({
     },
     getUserById: function () {
       let userInfo = dbArticle.getCache(this.data.userId)
-      if (userInfo && (new Date().getTime() - userInfo.timeStamp) < 3600000) {
+      if (userInfo && (new Date().getTime() - userInfo.createTime) < 3600000) {
         this.setData({
           userInfo: userInfo
         })

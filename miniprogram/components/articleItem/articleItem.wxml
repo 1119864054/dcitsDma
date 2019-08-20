@@ -9,7 +9,7 @@
         </view>
         <view class="weui-media-box__info__meta">{{userInfo.username}}</view>
         <view class="weui-media-box__info__meta weui-media-box__info__meta_extra">
-          <wux-timeago to="{{timeStamp}}" lang="zh_CN" refreshable />
+          创建于 <wux-timeago to="{{timeStamp}}" lang="zh_CN" refreshable />
         </view>
       </view>
     </view>

@@ -21,12 +21,12 @@ Page({
     this.setData({
       myComment: myComment
     })
-    this.refresh()
+    this.getMyComment()
   },
 
   onPullDownRefresh: function () {
-    this.refresh()
     wx.stopPullDownRefresh()
+    this.getMyComment()
   },
 
   onTapToArticle: function (e) {
@@ -48,7 +48,12 @@ Page({
 
   },
 
-  async refresh() {
+  async getMyComment() {
+    wx.showLoading({
+      title: '加载中',
+      mask: true,
+    });
+
     let res = await dbArticle.getMyComment()
     let myComment = res.data
     for (let i = 0; i < myComment.length; i++) {
@@ -68,5 +73,6 @@ Page({
       myComment: myComment
     })
     dbArticle.setCache('myComment', myComment)
+    wx.hideLoading();
   }
 })

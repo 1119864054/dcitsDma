@@ -5,11 +5,6 @@ import {
 var dbArticle = new DBArticle();
 const app = getApp();
 var sliderWidth = 96;
-var myData = {
-  favorSuggestion: [],
-  favorDemand: [],
-  favorTechnology: []
-}
 
 Page({
 
@@ -47,9 +42,9 @@ Page({
       favorDemand: favorDemand,
       favorTechnology: favorTechnology
     })
-    this.getFavorSuggestion();
-    this.getFavorDemand();
-    this.getFavorTechnology();
+
+    this.getFavor()
+
     var that = this;
     wx.getSystemInfo({
       success: function (res) {
@@ -68,79 +63,71 @@ Page({
     });
   },
 
-  onTapToArticle: function (event) {
-    wx.navigateTo({
-      url: '/pages/article/article'
+  async getFavor() {
+    wx.showLoading({
+      title: '加载中',
+      mask: true,
     });
-  },
 
-  async getFavorSuggestion() {
-    myData.favorSuggestion = []
-    let res1 = await dbArticle.getFavor(app.globalData.suggestionKey)
-    for (let i = 0; i < res1.length; i++) {
-      let article = dbArticle.getCache(res1[i].articleId)
+    let favorSuggestion = []
+    let sugList = await dbArticle.getFavor(app.globalData.suggestionKey)
+    for (let i = 0; i < sugList.length; i++) {
+      let article = dbArticle.getCache(sugList[i].articleId)
       if (article) {
-        myData.favorSuggestion = myData.favorSuggestion.concat(article)
+        favorSuggestion = favorSuggestion.concat(article)
       } else {
-        await dbArticle.getArticleByAIdFromDB(res1[i].articleId, app.globalData.suggestionKey).then(res2 => {
-          myData.favorSuggestion = myData.favorSuggestion.concat(res2)
-          dbArticle.setCache(res1[i].articleId, res2[0])
+        await dbArticle.getArticleByAIdFromDB(sugList[i].articleId, app.globalData.suggestionKey).then(res2 => {
+          favorSuggestion = favorSuggestion.concat(res2)
+          dbArticle.setCache(sugList[i].articleId, res2[0])
         })
       }
     }
-    console.log('myData.favorSuggestion', myData.favorSuggestion);
-    dbArticle.setCache('favorSuggestion', myData.favorSuggestion)
-    this.setData({
-      favorSuggestion: myData.favorSuggestion
-    })
-  },
+    console.log('favorSuggestion', favorSuggestion);
+    dbArticle.setCache('favorSuggestion', favorSuggestion)
 
-  async getFavorDemand() {
-    myData.favorDemand = []
-    let res1 = await dbArticle.getFavor(app.globalData.demandKey)
-    for (let i = 0; i < res1.length; i++) {
-      let article = dbArticle.getCache(res1[i].articleId)
+    let favorDemand = []
+    let demList = await dbArticle.getFavor(app.globalData.demandKey)
+    for (let i = 0; i < demList.length; i++) {
+      let article = dbArticle.getCache(demList[i].articleId)
       if (article) {
-        myData.favorDemand = myData.favorDemand.concat(article)
+        favorDemand = favorDemand.concat(article)
       } else {
-        await dbArticle.getArticleByAIdFromDB(res1[i].articleId, app.globalData.demandKey).then(res2 => {
-          myData.favorDemand = myData.favorDemand.concat(res2)
-          dbArticle.setCache(res1[i].articleId, res2[0])
+        await dbArticle.getArticleByAIdFromDB(demList[i].articleId, app.globalData.demandKey).then(res2 => {
+          favorDemand = favorDemand.concat(res2)
+          dbArticle.setCache(demList[i].articleId, res2[0])
         })
       }
     }
-    console.log('myData.favorDemand', myData.favorDemand);
-    dbArticle.setCache('favorDemand', myData.favorDemand)
-    this.setData({
-      favorDemand: myData.favorDemand
-    })
-  },
+    console.log('favorDemand', favorDemand);
+    dbArticle.setCache('favorDemand', favorDemand)
 
-  async getFavorTechnology() {
-    myData.favorTechnology = []
-    let res1 = await dbArticle.getFavor(app.globalData.technologyKey)
-    for (let i = 0; i < res1.length; i++) {
-      let article = dbArticle.getCache(res1[i].articleId)
+    let favorTechnology = []
+    let techList = await dbArticle.getFavor(app.globalData.technologyKey)
+    for (let i = 0; i < techList.length; i++) {
+      let article = dbArticle.getCache(techList[i].articleId)
       if (article) {
-        myData.favorTechnology = myData.favorTechnology.concat(article)
+        favorTechnology = favorTechnology.concat(article)
       } else {
-        await dbArticle.getArticleByAIdFromDB(res1[i].articleId, app.globalData.technologyKey).then(res2 => {
-          myData.favorTechnology = myData.favorTechnology.concat(res2)
-          dbArticle.setCache(res1[i].articleId, res2[0])
+        await dbArticle.getArticleByAIdFromDB(techList[i].articleId, app.globalData.technologyKey).then(res2 => {
+          favorTechnology = favorTechnology.concat(res2)
+          dbArticle.setCache(techList[i].articleId, res2[0])
         })
       }
     }
-    console.log('myData.favorTechnology', myData.favorTechnology);
-    dbArticle.setCache('favorTechnology', myData.favorTechnology)
+    console.log('favorTechnology', favorTechnology);
+    dbArticle.setCache('favorTechnology', favorTechnology)
+
     this.setData({
-      favorTechnology: myData.favorTechnology
+      favorSuggestion: favorSuggestion,
+      favorDemand: favorDemand,
+      favorTechnology: favorTechnology
     })
+
+    wx.hideLoading();
   },
 
   onPullDownRefresh: function () {
-    this.getFavorSuggestion();
-    this.getFavorDemand();
-    this.getFavorTechnology();
     wx.stopPullDownRefresh()
+    this.getFavor()
   }
 })

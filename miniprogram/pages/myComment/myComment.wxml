@@ -7,8 +7,8 @@
                         <block wx:for="{{myComment}}" wx:for-index="idx" wx:key="_id" wx:for-item="item" data-idx="{{idx}}">
                             <view class="weui-media-box weui-media-box_text" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' bind:tap="onTapToArticle">
                                 <view class="weui-media-box__title weui-media-box__title_in-text">
-                                    <view class="" selectable="false" space="false" decode="false">
-                                        文章标题：{{item.title}}
+                                    <view class="weui-cell_link" selectable="false" space="false" decode="false">
+                                        {{item.title}}
                                     </view>
                                 </view>
                                 <view class="weui-media-box__desc">{{item.content}}</view>
