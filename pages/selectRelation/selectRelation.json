@@ -1,9 +1,0 @@
-{
-  "navigationBarTitleText": "选择关联信息",
-  "usingComponents": {
-    "wux-checkbox-group": "../../dist/checkbox-group/index",
-    "wux-checkbox": "../../dist/checkbox/index",
-    "wux-icon": "../../dist/icon/index",
-    "wux-button": "../../dist/button/index"
-  }
-}

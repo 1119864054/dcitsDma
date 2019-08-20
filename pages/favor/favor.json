@@ -1,6 +1,0 @@
-{
-  "usingComponents": {
-    "article-item":"../../components/articleItem/articleItem"
-  },
-  "navigationBarTitleText": "我的收藏"
-}

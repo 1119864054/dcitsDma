@@ -1,6 +1,0 @@
-{
-  "usingComponents": {
-    "my-article-item":"../../components/myArticleItem/myArticleItem"
-  },
-  "navigationBarTitleText": "我的文章"
-}
