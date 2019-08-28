@@ -4,13 +4,17 @@ import {
 
 var dbArticle = new DBArticle();
 
+var myData = {
+}
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    myComment: []
+    myComment: [],
+    isLoad: false,
   },
 
   /**
@@ -21,6 +25,7 @@ Page({
     this.setData({
       myComment: myComment
     })
+
     this.getMyComment()
   },
 
@@ -49,30 +54,87 @@ Page({
   },
 
   async getMyComment() {
-    wx.showLoading({
-      title: '加载中',
-      mask: true,
-    });
+    this.setData({
+      isLoad: false
+    })
 
-    let res = await dbArticle.getMyComment()
-    let myComment = res.data
-    for (let i = 0; i < myComment.length; i++) {
-      let article = dbArticle.getCache(myComment[i].articleId)
-      if (article) {
-        myComment[i].title = article.title
-      } else {
-        await dbArticle.getArticleByAIdFromDB(myComment[i].articleId, myComment[i].articleType).then(res2 => {
-          myComment[i].title = res2[0].title
-          dbArticle.setCache(myComment[i].articleId, res2[0])
-        })
+    let myComment = []
+
+    let commentList = await dbArticle.getMyComment()
+
+    let headAId = commentList[0].articleId
+    let headAType = commentList[0].articleType
+    let article = dbArticle.getCache(headAId)
+    if (!article) {
+      article = (await dbArticle.getArticleByAIdFromDB(headAId, headAType))[0]
+    }
+    let headATitle = article.title
+    let temp = {}
+    let partMyComment = []
+
+    for (let i = 0; i < commentList.length; i++) {
+      let nowAId = commentList[i].articleId
+      let nowAType = commentList[i].articleType
+      if (nowAId != headAId) {
+        temp.articleId = headAId
+        temp.articleType = headAType
+        temp.title = headATitle
+        temp.partMyComment = partMyComment
+
+        myComment.push(temp)
+        
+        article = dbArticle.getCache(nowAId)
+        if (!article) {
+          article = (await dbArticle.getArticleByAIdFromDB(nowAId, nowAType))[0]
+        }
+
+        headAId = article._id
+        headAType = article.articleType
+        headATitle = article.title
+        partMyComment = []
+        temp = {}
       }
+      partMyComment.push(commentList[i])
+    }
+    if (partMyComment) {
+      temp.articleId = headAId
+      temp.articleType = headAType
+      temp.title = headATitle
+      temp.partMyComment = partMyComment
+      myComment.push(temp)
     }
 
-    console.log('myComment', myComment);
+    console.log('myComment', myComment)
+
     this.setData({
-      myComment: myComment
+      myComment: myComment,
+      isLoad: true
     })
     dbArticle.setCache('myComment', myComment)
-    wx.hideLoading();
+
+    // let cgroup = myData.commentGroup
+    // console.log(cgroup)
+    // let myComment = []
+    // for (let i = 0; i < cgroup.length; i++) {
+    //   let comment = (await dbArticle.getMyComment(cgroup[i]._id)).data
+    //   console.log(comment)
+    //   let article = dbArticle.getCache(cgroup[i]._id)
+    //   if (!article) {
+    //     article = (await dbArticle.getArticleByAIdFromDB(cgroup[i]._id, comment[0].articleType))[0]
+    //   }
+    //   let temp = {}
+    //   temp.comment = comment
+    //   temp.articleId = article._id
+    //   temp.articleType = article.articleType
+    //   temp.title = article.title
+    //   myComment.concat(temp)
+    // }
+    // console.log('myComment: ', myComment)
+
+    // this.setData({
+    //   myComment: myComment,
+    //   isLoad: true
+    // })
+    // dbArticle.setCache('myComment', myComment)
   }
 })

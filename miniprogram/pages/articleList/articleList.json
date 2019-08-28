@@ -1,6 +1,6 @@
 {
   "usingComponents": {
+    "my-fab-button": "../../components/myFabButton/myFabButton",
     "wux-timeago": "../../dist/timeago/index"
-  },
-  "navigationBarTitleText": "我的文章"
+  }
 }

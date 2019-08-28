@@ -8,17 +8,8 @@ Component({
     buttons: {
       type: Array,
       value: [{
-        label: '新建需求意见',
-        appParameter: 'suggestion',
+        label: '新建文章',
         icon: '../../images/fabbutton/suggestion.svg'
-      }, {
-        label: '新建业务需求',
-        appParameter: 'demand',
-        icon: '../../images/fabbutton/demand.svg'
-      }, {
-        label: '新建项目技术',
-        appParameter: 'technology',
-        icon: '../../images/fabbutton/technology.svg'
       }]
     }
   },
@@ -36,15 +27,8 @@ Component({
   methods: {
     onTapToNewArticle(e) {
       if (app.globalData.logged) {
-        let articleType = e.detail.value.appParameter;
-        console.log(articleType)
         wx.navigateTo({
-          url: '/pages/newArticle/newArticle?articleType=' + articleType,
-          success: (result) => {
-
-          },
-          fail: () => { },
-          complete: () => { }
+          url: '/pages/newArticle/newArticle'
         });
       }
       else {

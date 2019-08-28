@@ -1,25 +1,26 @@
 {
   "pages": [
+    "pages/articleList/articleList",
     "pages/user/user",
-    "pages/suggestion/suggestion",
-    "pages/demand/demand",
-    "pages/technology/technology",
     "pages/article/article",
-    "pages/comment/comment",
     "pages/message/message",
-    "pages/relation/relation",
     "pages/newArticle/newArticle",
     "pages/myArticle/myArticle",
     "pages/favor/favor",
     "pages/myComment/myComment",
-    "pages/selectRelation/selectRelation",
-    "pages/addComment/addComment"
+    "pages/selectRelation/selectRelation"
   ],
   "window": {
-    "navigationBarTextStyle": "black",
-    "navigationBarBackgroundColor": "#EDEDED",
-    "backgroundColor": "#EDEDED",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "ColorUI",
+    "navigationStyle": "custom",
+    "navigationBarTextStyle": "white",
     "enablePullDownRefresh": true
+  },
+  "debug": true,
+  "sitemapLocation": "sitemap.json",
+  "usingComponents": {
+    "cu-custom": "/colorui/components/cu-custom"
   },
   "tabBar": {
     "borderStyle": "white",
@@ -28,22 +29,10 @@
     "backgroundColor": "#ffffff",
     "position": "bottom",
     "list": [{
-        "pagePath": "pages/suggestion/suggestion",
-        "text": "需求意见箱",
+        "pagePath": "pages/articleList/articleList",
+        "text": "文章",
         "iconPath": "images/tabbar/suggestion.png",
         "selectedIconPath": "images/tabbar/suggestion_selected.png"
-      },
-      {
-        "pagePath": "pages/demand/demand",
-        "text": "业务需求",
-        "iconPath": "images/tabbar/demand.png",
-        "selectedIconPath": "images/tabbar/demand_selected.png"
-      },
-      {
-        "pagePath": "pages/technology/technology",
-        "text": "项目需求",
-        "iconPath": "images/tabbar/technology.png",
-        "selectedIconPath": "images/tabbar/technology_selected.png"
       },
       {
         "pagePath": "pages/user/user",
@@ -52,7 +41,5 @@
         "selectedIconPath": "images/tabbar/user_selected.png"
       }
     ]
-  },
-  "debug": true,
-  "sitemapLocation": "sitemap.json"
+  }
 }

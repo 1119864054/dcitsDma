@@ -1,0 +1,27 @@
+<template name="articleItem">
+    <view class="cu-item shadow-warp" bindtap="onTapToArticle" data-article-id="{{_id}}" data-article-type="{{articleType}}">
+        <view class="text-black text-bold padding-lr-lg padding-bottom-sm padding-top-lg">
+            {{title}}
+        </view>
+        <view class="text-cut text-df text-grey padding-lr-lg">{{content}}</view>
+        <view class="cu-list menu-avatar">
+            <view class="cu-item">
+                <view class="cu-avatar round lg" style="background-image:url({{avatar}});" />
+                <view class="content flex-sub">
+                    <view class="text-grey">{{username}}</view>
+                    <view class="text-gray text-sm flex justify-between">
+                        <wux-timeago to="{{timeStamp}}" lang="zh_CN" refreshable />
+                        <view class="text-gray text-sm">
+                            <text class="cuIcon-attentionfill margin-lr-xs" />
+                            10
+                            <text class="cuIcon-appreciatefill margin-lr-xs" />
+                            20
+                            <text class="cuIcon-messagefill margin-lr-xs" />
+                            30
+                        </view>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>

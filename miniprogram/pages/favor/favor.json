@@ -1,6 +1,6 @@
 {
   "usingComponents": {
-    "article-item":"../../components/articleItem/articleItem"
+    "wux-timeago": "../../dist/timeago/index"
   },
   "navigationBarTitleText": "我的收藏"
 }

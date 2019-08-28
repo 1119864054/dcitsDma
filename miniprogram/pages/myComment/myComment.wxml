@@ -1,27 +1,29 @@
-<view class="page">
-    <view class="page__bd">
-        <scroll-view scroll-y style="" bindscrolltoupper="upper" bindscrolltolower="lower" bindscroll="scroll" scroll-into-view="{{toView}}" scroll-top="{{scrollTop}}">
-            <view class="weui-panel">
-                <view class="weui-panel weui-panel_access">
-                    <view class="weui-panel__bd">
-                        <block wx:for="{{myComment}}" wx:for-index="idx" wx:key="_id" wx:for-item="item" data-idx="{{idx}}">
-                            <view class="weui-media-box weui-media-box_text" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' bind:tap="onTapToArticle">
-                                <view class="weui-media-box__title weui-media-box__title_in-text">
-                                    <view class="weui-cell_link" selectable="false" space="false" decode="false">
-                                        {{item.title}}
-                                    </view>
-                                </view>
-                                <view class="weui-media-box__desc">{{item.content}}</view>
-                                <view class="weui-media-box__info">
-                                    <view class="weui-media-box__info__meta">
-                                        {{item.date}}
-                                    </view>
+<cu-custom bgColor="bg-gradual-pink" isBack="{{true}}">
+    <view slot="backText"></view>
+    <view wx:if="{{!isLoad}}" slot="content">加载中</view>
+    <view wx:else slot="content">我的评论</view>
+    <view class="action" slot="right">
+        <view class="cu-load load-icon {{!isLoad?'loading':'over'}}"></view>
+    </view>
+</cu-custom>
+<view class="cu-card">
+    <block wx:for="{{myComment}}" wx:for-index="idx" wx:key="_id" wx:for-item="item" data-idx="{{idx}}">
+        <view class="cu-item shadow">
+            <view class="cu-list padding solids-top">
+                <view class="cu-item" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' bind:tap="onTapToArticle">
+                    <view class="content">
+                        <view class="text-lg text-blue">{{item.title}}</view>
+                        <block wx:for="{{item.partMyComment}}" wx:key="_id" wx:for-item="partMyComment">
+                            <view class="bg-grey padding-sm radius margin-top-sm  text-sm">
+                                <view class="flex">
+                                    <view>{{partMyComment.date}}：</view>
+                                    <view class="flex-sub">{{partMyComment.content}}</view>
                                 </view>
                             </view>
                         </block>
                     </view>
                 </view>
             </view>
-        </scroll-view>
-    </view>
+        </view>
+    </block>
 </view>

@@ -7,7 +7,7 @@
 	},
 	"setting": {
 		"urlCheck": true,
-		"es6": false,
+		"es6": true,
 		"enhance": true,
 		"postcss": true,
 		"minified": true,
@@ -25,7 +25,7 @@
 		}
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.8.0",
+	"libVersion": "2.8.1",
 	"appid": "wx8c248cdfb82112cf",
 	"projectname": "new_mypro",
 	"cloudfunctionTemplateRoot": "",
@@ -49,6 +49,10 @@
 			"list": []
 		},
 		"game": {
+			"list": []
+		},
+		"gamePlugin": {
+			"current": -1,
 			"list": []
 		},
 		"miniprogram": {
@@ -107,7 +111,7 @@
 					"id": 7,
 					"name": "pages/selectRelation/selectRelation",
 					"pathName": "pages/selectRelation/selectRelation",
-					"query": "",
+					"query": "articleType=demand",
 					"scene": null
 				},
 				{
@@ -128,6 +132,13 @@
 					"id": -1,
 					"name": "pages/myComment/myComment",
 					"pathName": "pages/myComment/myComment",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/myArticle/myArticle",
+					"pathName": "pages/myArticle/myArticle",
 					"query": "",
 					"scene": null
 				}

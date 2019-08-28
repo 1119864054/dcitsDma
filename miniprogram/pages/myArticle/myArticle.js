@@ -4,7 +4,6 @@ import {
 
 var dbArticle = new DBArticle();
 const app = getApp();
-var sliderWidth = 96;
 
 Page({
 
@@ -12,68 +11,59 @@ Page({
    * 页面的初始数据
    */
   data: {
-    tabs: ["我的意见", "业务需求", "项目需求"],
-    activeIndex: 0,
-    sliderOffset: 0,
-    sliderLeft: 0,
-    mySuggestion: [],
-    myDemand: [],
-    myTechnology: [],
+    myArticleList: [],
+    windowHeight: '',
+    CustomBar: '',
+    isLoad: false,
+    current: 0
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    let mySuggestion = dbArticle.getCache('mySuggestion')
-    let myDemand = dbArticle.getCache('myDemand')
-    let myTechnology = dbArticle.getCache('myTechnology')
-    if (!mySuggestion) {
-      mySuggestion = []
-    }
-    if (!myDemand) {
-      myDemand = []
-    }
-    if (!myTechnology) {
-      myTechnology = []
-    }
+    let mySuggestion = [],myDemand=[],myTechnology=[]
+     mySuggestion = dbArticle.getCache('mySuggestion')
+     myDemand = dbArticle.getCache('myDemand')
+     myTechnology = dbArticle.getCache('myTechnology')
+    let myArticleList = []
+    myArticleList.push(mySuggestion)
+    myArticleList.push(myDemand)
+    myArticleList.push(myTechnology)
     this.setData({
-      mySuggestion: mySuggestion,
-      myDemand: myDemand,
-      myTechnology: myTechnology
+      CustomBar: app.globalData.CustomBar,
+      windowHeight: app.globalData.windowHeight,
+      myArticleList: myArticleList
     })
-
     this.getMyArticle()
-
-    var that = this;
-    wx.getSystemInfo({
-      success: function (res) {
-        that.setData({
-          sliderLeft: (res.windowWidth / that.data.tabs.length - sliderWidth) / 2,
-          sliderOffset: res.windowWidth / that.data.tabs.length * that.data.activeIndex
-        });
-      }
-    });
   },
 
-  tabClick: function (e) {
+  tabSelect(e) {
     this.setData({
-      sliderOffset: e.currentTarget.offsetLeft,
-      activeIndex: e.currentTarget.id
-    });
+      current: e.currentTarget.dataset.id
+    })
   },
 
-  onTapToArticle: function (event) {
+  onSwiperChange(e) {
+    console.log(e)
+    this.setData({
+      current: e.detail.current
+    })
+  },
+
+  onTapToArticle: function (e) {
+    console.log(e);
+    let articleId = e.currentTarget.dataset.articleId
+    let articleType = e.currentTarget.dataset.articleType
     wx.navigateTo({
-      url: '/pages/article/article'
+      url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType
     });
   },
 
   async getMyArticle() {
-    wx.showLoading({
-      title: '加载中',
-      mask: true,
-    });
+    this.setData({
+      isLoad: false
+    })
 
     let mySuggestion = dbArticle.getCache('mySuggestion')
     if (!mySuggestion) {
@@ -102,13 +92,15 @@ Page({
       dbArticle.setCache(myTechnology[i]._id, myTechnology[i])
     }
 
-    this.setData({
-      mySuggestion: mySuggestion,
-      myDemand: myDemand,
-      myTechnology: myTechnology
-    })
+    let myArticleList = []
+    myArticleList.push(mySuggestion)
+    myArticleList.push(myDemand)
+    myArticleList.push(myTechnology)
 
-    wx.hideLoading();
+    this.setData({
+      myArticleList: myArticleList,
+      isLoad: true
+    })
   },
 
   onPullDownRefresh: function () {

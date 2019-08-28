@@ -10,45 +10,175 @@ const app = getApp()
 var dbArticle = new DBArticle();
 var util = new Util()
 
-var myData = {
+let myData = {
     title: '',
     content: '',
     imagesCloudId: [],
+    articleTypeList: ['suggestion', 'demand', 'technology'],
+    articleType: 'suggestion',
 }
 
 Page({
+
     data: {
-        images: [],
-        articleTypeZh: '',
-        articleType: '',
-        relation: []
+        imgList: [],
+        relation: [],
+        typeIndex: 0,
+        picker: ['需求意见', '业务需求', '项目需求'],
+        length: 0,
+        relationTitle: []
     },
+
     onLoad: function (options) {
-        var articleType = options.articleType
-        var articleTypeZh = util.getArticleTypeZh(articleType)
+    },
+
+    onShow: function () {
+        let relation = this.data.relation
+        console.log('relation', relation)
+        let relationTitle = []
+        if (relation.length > 0) {
+            for (let i = 0; i < relation.length; i++) {
+                let array = relation[i].split('^^^')
+                relationTitle.push(array[2])
+            }
+        }
         this.setData({
-            articleType: articleType,
-            articleTypeZh: articleTypeZh
+            relationTitle: relationTitle
         })
     },
-    onShow: function () {
-        console.log('relation', this.data.relation)
-    },
-    chooseImage: function (e) {
-        var that = this;
-        wx.chooseImage({
-            sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
-            sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
-            success: function (res) {
-                // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-                that.setData({
-                    images: that.data.images.concat(res.tempFilePaths)
-                });
 
-                console.log('image paths ', that.data.images)
+    chooseImage() {
+        wx.chooseImage({
+            count: 9, //默认9
+            sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+            sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+            success: (res) => {
+                if (this.data.imgList.length != 0) {
+                    this.setData({
+                        imgList: this.data.imgList.concat(res.tempFilePaths)
+                    })
+                } else {
+                    this.setData({
+                        imgList: res.tempFilePaths
+                    })
+                }
+                console.log('imgList ', this.data.imgList)
+            }
+        });
+    },
+
+    previewImage(e) {
+        wx.previewImage({
+            urls: this.data.imgList,
+            current: e.currentTarget.dataset.url
+        });
+    },
+
+    deleteImage(e) {
+        wx.showModal({
+            title: '提示',
+            content: '确定要删除这张照片吗？',
+            cancelText: '取消',
+            confirmText: '确定',
+            success: res => {
+                if (res.confirm) {
+                    this.data.imgList.splice(e.currentTarget.dataset.index, 1);
+                    this.setData({
+                        imgList: this.data.imgList
+                    })
+                }
             }
         })
     },
+
+    PickerChange(e) {
+        console.log(e);
+        this.setData({
+            typeIndex: e.detail.value,
+            relation: [],
+            relationTitle: []
+        })
+        myData.articleType = myData.articleTypeList[e.detail.value]
+    },
+
+    getTitle: function (e) {
+        myData.title = e.detail.value
+        console.log('title', myData.title)
+    },
+
+    getContent: function (e) {
+        myData.content = e.detail.value
+        this.setData({
+            length: e.detail.value.length
+        })
+        console.log('content', myData.content)
+    },
+
+    tapToSelectRelate: function (e) {
+        wx.navigateTo({
+            url: '/pages/selectRelation/selectRelation?articleType=' + myData.articleType
+        });
+    },
+
+    async tapToSubmit() {
+        if (!myData.title) {
+            wx.showToast({
+                title: '标题不能为空',
+                icon: 'none',
+            })
+        } else if (!myData.content) {
+            wx.showToast({
+                title: '正文不能为空',
+                icon: 'none',
+            })
+        } else {
+            await this.uploadImage()
+            wx.showLoading({
+                title: '上传文章',
+            })
+            await dbArticle.addNewArticle(myData.articleType, myData.title, myData.content, myData.imagesCloudId, this.data.relation)
+            myData = {
+                title: '',
+                content: '',
+                imagesCloudId: [],
+                articleTypeList: ['suggestion', 'demand', 'technology'],
+                articleType: 'suggestion',
+            }
+            wx.hideLoading();
+            wx.switchTab({
+                url: '/pages/articleList/articleList',
+                success: (result) => {
+                    wx.showToast({
+                        title: '新增文章成功',
+                        duration: 3000,
+                    })
+                },
+            });
+        }
+    },
+
+    async uploadImage() {
+        wx.showLoading({
+            title: '上传图片',
+            mask: true
+        })
+
+        var that = this
+
+        for (var i = 0; i < this.data.imgList.length; i++) {
+            const filePath = this.data.imgList[i]
+            // 上传图片
+            const cloudPath = app.globalData.openid + i + (new Date()).valueOf() + filePath.match(/\.[^.]+?$/)
+
+            console.log('filePath  ', filePath)
+            console.log('cloudPath  ', cloudPath)
+
+            await that.uploadOneImage(cloudPath, filePath)
+        }
+        console.log('[上传全部文件] 成功')
+        wx.hideLoading();
+    },
+
     uploadOneImage: function (cloudPath, filePath) {
         return new Promise((resolve, reject) => {
             wx.cloud.uploadFile({
@@ -71,83 +201,4 @@ Page({
             })
         })
     },
-    async uploadImage() {
-        wx.showLoading({
-            title: '上传图片',
-        })
-
-        var that = this
-
-        for (var i = 0; i < this.data.images.length; i++) {
-            const filePath = this.data.images[i]
-            // 上传图片
-            const cloudPath = app.globalData.openid + i + (new Date()).valueOf() + filePath.match(/\.[^.]+?$/)
-
-            console.log('filePath  ', filePath)
-            console.log('cloudPath  ', cloudPath)
-
-            await that.uploadOneImage(cloudPath, filePath)
-        }
-        console.log('[上传全部文件] 成功')
-        wx.hideLoading();
-    },
-    previewImage: function (e) {
-        wx.previewImage({
-            current: e.currentTarget.id, // 当前显示图片的http链接
-            urls: this.data.images // 需要预览的图片http链接列表
-        })
-    },
-    tapToSelectRelate: function (e) {
-        wx.navigateTo({
-            url: '/pages/selectRelation/selectRelation?articleType=' + this.data.articleType,
-            success: (result) => {
-
-            },
-            fail: () => { },
-            complete: () => { }
-        });
-    },
-    getTitle: function (e) {
-        myData.title = e.detail.value
-        console.log('title', myData.title)
-    },
-    getContent: function (e) {
-        myData.content = e.detail.value
-        console.log('content', myData.content)
-    },
-    async tapToSubmit() {
-        if (!myData.title) {
-            wx.showToast({
-                title: '标题不能为空',
-                icon: 'none',
-            })
-        } else if (!myData.content) {
-            wx.showToast({
-                title: '正文不能为空',
-                icon: 'none',
-            })
-        } else {
-            await this.uploadImage()
-            wx.showLoading({
-                title: '上传文章',
-            })
-            await dbArticle.addNewArticle(this.data.articleType, myData.title, myData.content, myData.imagesCloudId, this.data.relation)
-            myData = {
-                title: '',
-                content: '',
-                imagesCloudId: [],
-            }
-            wx.hideLoading();
-            var that = this
-            wx.switchTab({
-                url: '/pages/' + that.data.articleType + '/' + that.data.articleType,
-                success: (result) => {
-                    wx.showToast({
-                        title: '新增' + that.data.articleTypeZh.substring(0, 2) + '成功',
-                        duration: 3000,
-                    })
-                },
-            });
-        }
-    }
 });

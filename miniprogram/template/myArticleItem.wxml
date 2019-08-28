@@ -1,0 +1,21 @@
+<template name="myArticleItem">
+    <view class="cu-item shadow" bindtap="onTapToArticle" data-article-id="{{_id}}" data-article-type="{{articleType}}">
+        <view class="text-black text-bold padding-lr-lg padding-bottom-sm padding-top-lg">
+            {{title}}
+        </view>
+        <view class="text-cut text-df text-grey padding-lr-lg">{{content}}</view>
+        <view class="flex justify-start">
+            <view class="flex-sub text-gray text-sm text-left padding">
+                <wux-timeago to="{{timeStamp}}" lang="zh_CN" refreshable />
+            </view>
+            <view class="flex-sub text-gray text-sm text-right padding">
+                <text class="cuIcon-attentionfill margin-lr-xs"></text>
+                10
+                <text class="cuIcon-appreciatefill margin-lr-xs"></text>
+                20
+                <text class="cuIcon-messagefill margin-lr-xs"></text>
+                30
+            </view>
+        </view>
+    </view>
+</template>

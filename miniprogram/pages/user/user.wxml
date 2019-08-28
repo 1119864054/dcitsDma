@@ -1,56 +1,48 @@
-<view class="page">
-  <view class="page__bd">
-    <view class="weui-panel weui-panel_access">
-      <view class="weui-panel__bd">
-        <view class="weui-media-box weui-media-box_appmsg">
-          <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-            <image class="weui-media-box__thumb" src="{{avatar}}" />
-          </view>
-          <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-            <button hidden="{{logged}}" class="login" bindtap="onGetOpenid" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">
-              {{username}}
-            </button>
-            <view class="weui-media-box__title" hidden="{{!logged}}">{{username}}</view>
-            <view class="weui-media-box__desc">{{sign}}</view>
-          </view>
-        </view>
+<cu-custom bgColor="bg-gradual-blue">
+  <view slot="content">个人主页</view>
+</cu-custom>
+<view class="margin-sm padding-xl bg-white radius shadow-warp margin-top">
+  <view class="flex justify-center">
+    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo" class='cu-btn round bg-green shadow'>
+      获取头像昵称
+    </button>
+    <block wx:else>
+      <view class='text-center'>
+        <view class="cu-avatar xl round solids" style="background-image:url({{avatar}})"></view>
+        <view class="padding">{{username}}</view>
       </view>
-    </view>
-    <view class="weui-cells__title">功能列表</view>
-    <view class="weui-cells weui-cells_after-title">
-      <navigator url="/pages/myArticle/myArticle" class="weui-cell weui-cell_access" hover-class="weui-cell_active" hover-stay-time="100">
-        <view class="weui-cell__hd">
-          <image src="/images/person/article.svg" style="margin-right: 16px;vertical-align: middle;width:20px; height: 20px;"></image>
-        </view>
-        <view class="weui-cell__bd">我的文章</view>
-        <view class="weui-cell__ft weui-cell__ft_in-access">{{userInfo.articleList.length}}</view>
-      </navigator>
-      <navigator url="/pages/favor/favor" class="weui-cell weui-cell_example weui-cell_access" hover-class="weui-cell_active" hover-stay-time="100">
-        <view class="weui-cell__hd">
-          <image src="/images/person/favor.svg" style="margin-right: 16px;vertical-align: middle;width:20px; height: 20px;"></image>
-        </view>
-        <view class="weui-cell__bd">我的收藏</view>
-        <view class="weui-cell__ft weui-cell__ft_in-access">{{userInfo.favor.length}}</view>
-      </navigator>
-      <navigator url="/pages/message/message" class="weui-cell weui-cell_example weui-cell_access" hover-class="weui-cell_active" hover-stay-time="100">
-        <view class="weui-cell__hd">
-          <image src="/images/person/message.svg" style="margin-right: 16px;vertical-align: middle;width:20px; height: 20px;"></image>
-        </view>
-        <view class="weui-cell__bd">我的消息</view>
-        <view class="weui-cell__ft weui-cell__ft_in-access" style="font-size: 0">
-          <view hidden="{{checked}}" class="weui-badge weui-badge_dot" style="margin-left: 5px;margin-right: 5px;"></view>
-        </view>
-      </navigator>
-      <navigator url="/pages/myComment/myComment" class="weui-cell weui-cell_example weui-cell_access" hover-class="weui-cell_active" hover-stay-time="100">
-        <view class="weui-cell__hd">
-          <image src="/images/person/comment.svg" style="margin-right: 16px;vertical-align: middle;width:20px; height: 20px;"></image>
-        </view>
-        <view class="weui-cell__bd">我的评论</view>
-        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
-      </navigator>
-    </view>
-    <view class="weui-btn-area">
-      <button class="weui-btn" type="default" catch:tap="onTapClearCache">清除数据缓存</button>
-    </view>
+    </block>
   </view>
+</view>
+<view class="cu-list menu card-menu margin-top">
+  <navigator class="cu-item arrow" url="/pages/myArticle/myArticle">
+    <view class="content">
+      <text class="cuIcon-writefill text-blue"></text>
+      <text class="text-grey">我的文章</text>
+    </view>
+  </navigator>
+  <navigator class="cu-item arrow" hover-class="" url="/pages/message/message">
+    <view class="content">
+      <text class="cuIcon-messagefill text-orange"></text>
+      <text class="text-grey">我的消息</text>
+    </view>
+    <view class="action">
+        <view class="cu-tag round bg-red" wx:if="{{!checked}}">new</view>
+      </view>
+  </navigator>
+  <navigator class="cu-item arrow" hover-class="" url="/pages/favor/favor">
+    <view class="content">
+      <text class="cuIcon-favorfill text-cyan"></text>
+      <text class="text-grey">我的收藏</text>
+    </view>
+  </navigator>
+  <navigator class="cu-item arrow" hover-class="" url="/pages/myComment/myComment">
+    <view class="content">
+      <text class="cuIcon-commentfill text-grey"></text>
+      <text class="text-grey">我的评论</text>
+    </view>
+  </navigator>
+</view>
+<view class="padding flex flex-direction">
+  <button class="cu-btn bg-grey round lg" catch:tap="onTapClearCache">清除数据缓存</button>
 </view>

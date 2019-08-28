@@ -1,12 +1,14 @@
-import {
-  Util
-} from '../util/util.js';
+import { Util } from '../util/util.js';
+
+import config from '../util/config.js'
+
+const constPageSize = config.getPageSize
 
 const db = wx.cloud.database()
 const _ = db.command
 const app = getApp()
 
-var util = new Util()
+// const util = new Util()
 
 class DBArticle {
   constructor() {
@@ -15,7 +17,7 @@ class DBArticle {
 
   //添加到缓存
   setCache(key, value) {
-    value.createTime = new Date().getTime()
+    // value.createTime = new Date().getTime()
     try {
       wx.setStorageSync(key, value)
       console.log('[DBArticle] [' + key + '] [同步缓存记录] 成功')
@@ -28,7 +30,11 @@ class DBArticle {
   getCache(storageKeyName) {
     try {
       let result = wx.getStorageSync(storageKeyName);
-      console.log('[DBArticle] [' + storageKeyName + '] [查询缓存记录] 成功：', result)
+      if (!result || result.length < 1) {
+        console.log('[DBArticle] [' + storageKeyName + '] [查询缓存记录] 未查询到记录', result)
+      } else {
+        console.log('[DBArticle] [' + storageKeyName + '] [查询缓存记录] 成功： ', result)
+      }
       return result;
     } catch (err) {
       console.error('[DBArticle] [' + storageKeyName + '] [查询缓存记录] 失败：', err)
@@ -36,14 +42,20 @@ class DBArticle {
   }
 
   //从数据库读取文章列表
-  getAllArticleData(storageKeyName) {
+  getAllArticleData(storageKeyName, pageSize = constPageSize, currentPage = 0) {
     return new Promise((resolve, reject) => {
       db.collection(storageKeyName)
         .orderBy('date', 'desc')
+        .skip(currentPage * pageSize)
+        .limit(pageSize)
         .get()
         .then(res => {
           let result = res.data
-          console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', result)
+          if (result.length > 0) {
+            console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', result)
+          } else {
+            console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 未查询到记录', result)
+          }
           resolve(result)
         })
         .catch(err => {
@@ -59,6 +71,7 @@ class DBArticle {
 
   //新增文章到数据库
   addNewArticle(storageKeyName, title, content, images, relation) {
+    let util = new Util()
     let id = app.globalData.id
     db.collection(storageKeyName).add({
       data: {
@@ -66,16 +79,16 @@ class DBArticle {
         title: title,
         userId: id,
         articleImg: images,
-        detail: content.length > 40 ? content.substring(0, 40).concat('...') : content,
         content: content,
-        timeStamp: new Date().getTime()
+        timeStamp: new Date().getTime(),
+        articleType: storageKeyName
       }
     })
       .then(res => {
         //关联关系
         if (storageKeyName == app.globalData.demandKey) {
           for (let i = 0; i < relation.length; i++) {
-            let idArray = relation[i].split(',')
+            let idArray = relation[i].split('^^^')
             db.collection('SDRelation').add({
               data: {
                 suggestionId: idArray[0],
@@ -104,7 +117,7 @@ class DBArticle {
           }
         } else if (storageKeyName == app.globalData.technologyKey) {
           for (let i = 0; i < relation.length; i++) {
-            let idArray = relation[i].split(',')
+            let idArray = relation[i].split('^^^')
             db.collection('DTRelation').add({
               data: {
                 demandId: idArray[0],
@@ -178,83 +191,6 @@ class DBArticle {
     })
   }
 
-  //添加用户
-  addUser() {
-    let openid = app.globalData.openid;
-    let username = app.globalData.username;
-    let avatar = app.globalData.avatar;
-
-    return new Promise((resolve, reject) => {
-      db.collection('user').where({
-        _openid: openid
-      }).get().then(res => {
-        console.log('[DBArticle] [根据openid查询user信息] 成功: ', res)
-        if (!res.data.length || !res) {
-          db.collection('user').add({
-            data: {
-              username: username,
-              avatar: avatar,
-              date: util.formatTime(new Date()),
-              sign: '个性签名'
-            }
-          }).then(res => {
-            console.log('[DBArticle] [未查询到用户->添加用户] 成功', res)
-            app.globalData.id = res._id
-            resolve()
-          }).catch(err => {
-            console.error('[DBArticle] [未查询到用户->添加用户] 失败：', err)
-            reject()
-          })
-        } else {
-          app.globalData.id = res.data[0]._id
-          console.log('[DBArticle] [查询用户] 成功', res.data[0])
-          resolve()
-        }
-      }).catch(err => {
-        console.error('[DBArticle] [查询用户] 失败：', err)
-        reject()
-      })
-    })
-  }
-
-  //更新用户
-  updateUser(sign = '个性签名') {
-    let username = app.globalData.username;
-    let avatar = app.globalData.avatar;
-
-    return new Promise((resolve, reject) => {
-      db.collection('user').doc(app.globalData.id)
-        .update({
-          data: {
-            username: username,
-            avatar: avatar,
-            sign: sign
-          }
-        }).then(res => {
-          console.log('[DBArticle] [更新用户] 成功: ', res)
-          resolve()
-        }).catch(err => {
-          console.error('[DBArticle] [更新用户] 失败: ', err)
-          reject()
-        })
-    })
-  }
-
-  //获取用户信息
-  getUser(id = app.globalData.id) {
-    return new Promise((resolve, reject) => {
-      db.collection('user').where({
-        _id: id
-      }).get().then(res => {
-        console.log('[DBArticle] [查询用户] 成功: ', res.data[0])
-        resolve(res.data[0])
-      }).catch(err => {
-        console.error('[DBArticle] [查询用户] 失败: ', err)
-        reject()
-      })
-    })
-  }
-
   //是否收藏
   isFavor(articleId) {
     let userId = app.globalData.id
@@ -278,18 +214,23 @@ class DBArticle {
 
   //添加收藏
   addFavor(articleId, articleType) {
+    let util = new Util()
     let userId = app.globalData.id
-    db.collection('favor').add({
-      data: {
-        articleId: articleId,
-        userId: userId,
-        date: util.formatTime(new Date()),
-        articleType: articleType
-      }
-    }).then(res => {
-      console.log('[DBArticle] [添加favor] 成功: ', res)
-    }).catch(err => {
-      console.error('[DBArticle] [添加favor] 失败: ', err)
+    return new Promise((resolve, reject) => {
+      db.collection('favor').add({
+        data: {
+          articleId: articleId,
+          userId: userId,
+          date: util.formatTime(new Date()),
+          articleType: articleType
+        }
+      }).then(res => {
+        console.log('[DBArticle] [添加favor] 成功: ', res)
+        resolve(res)
+      }).catch(err => {
+        console.error('[DBArticle] [添加favor] 失败: ', err)
+        reject()
+      })
     })
   }
 
@@ -313,6 +254,7 @@ class DBArticle {
 
   //添加评论
   addComment(articleId, content, articleType) {
+    let util = new Util()
     let userId = app.globalData.id
     return new Promise((resolve, reject) => {
       db.collection('comment').add({
@@ -321,7 +263,8 @@ class DBArticle {
           userId: userId,
           content: content,
           date: util.formatTime(new Date()),
-          articleType: articleType
+          articleType: articleType,
+          timeStamp: new Date().getTime()
         }
       }).then(res => {
         console.log('[DBArticle] [添加comment] 成功: ', res)
@@ -359,10 +302,10 @@ class DBArticle {
         .where({
           userId: userId
         })
-        .orderBy('date', 'desc')
+        .orderBy('articleId', 'asc')
         .get().then(res => {
-          console.log('[DBArticle] [查询mycomment] 成功: ', res)
-          resolve(res)
+          console.log('[DBArticle] [查询mycomment] 成功: ', res.data)
+          resolve(res.data)
         }).catch(err => {
           console.error('[DBArticle] [查询mycomment] 失败: ', err)
           reject()
@@ -399,6 +342,8 @@ class DBArticle {
             console.error('[DBArticle] [查询DTRelation] 失败: ', err)
             reject()
           })
+      } else {
+        resolve()
       }
     })
   }
@@ -426,7 +371,9 @@ class DBArticle {
     return new Promise((resolve, reject) => {
       db.collection('message').where({
         beRelated: id
-      }).orderBy('checked', 'desc').get()
+      }).orderBy('checked', 'asc')
+        .orderBy('date', 'desc')
+        .get()
         .then(res => {
           console.log('[DBArticle] [查询message] 成功: ', res)
           resolve(res)

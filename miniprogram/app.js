@@ -6,15 +6,15 @@ App({
   onLaunch: function () {
     console.log("App.js onLaunch");
 
+    // 展示本地存储能力
+    var logs = wx.getStorageSync('logs') || []
+    logs.unshift(Date.now())
+    wx.setStorageSync('logs', logs)
+
     if (!wx.cloud) {
       console.error('请使用 2.2.3 或以上的基础库以使用云能力')
     } else {
       wx.cloud.init({
-        // env 参数说明：
-        //   env 参数决定接下来小程序发起的云开发调用（wx.cloud.xxx）会默认请求到哪个云环境的资源
-        //   此处请填入环境 ID, 环境 ID 可打开云控制台查看
-        //   如不填则使用默认环境（第一个创建的环境）
-        // env: 'my-env-id',
         env: 'test-154312',
         traceUser: true,
       })
@@ -31,6 +31,80 @@ App({
       sign: '',
       logged: false,
     }
+
+    this.onGetOpenid()
+
+    // 获取用户信息
+    wx.getSetting({
+      success: res => {
+        if (res.authSetting['scope.userInfo']) {
+          wx.showLoading({
+            title: "正在登录",
+            mask: true,
+          });
+          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
+          wx.getUserInfo({
+            lang: 'zh_CN',
+            timeout: 10000,
+            success: (res) => {
+              console.log('[login] [获取用户信息userInfo] 成功 ', res)
+              this.globalData.username = res.userInfo.nickName
+              this.globalData.avatar = res.userInfo.avatarUrl
+              this.globalData.logged = true
+              wx.hideLoading();
+              if (this.userInfoReadyCallback) {
+                this.userInfoReadyCallback(res)
+              }
+            },
+            fail: () => {
+              console.error('[login] [获取用户信息userInfo] 失败')
+            }
+          });
+        }
+      }
+    })
+
+    // 获取系统状态栏信息
+    wx.getSystemInfo({
+      success: e => {
+        console.log(e);
+        this.globalData.windowHeight = e.windowHeight
+        this.globalData.screenHeight = e.screenHeight
+        this.globalData.StatusBar = e.statusBarHeight;
+        let custom = wx.getMenuButtonBoundingClientRect();
+        this.globalData.Custom = custom;
+        this.globalData.CustomBar = custom.bottom + custom.top - e.statusBarHeight;
+      }
+    })
+  },
+
+  onGetOpenid: function () {
+    let that = this
+    // 调用云函数
+    return new Promise((resolve, reject) => {
+      wx.cloud.callFunction({
+        name: 'login',
+        data: {},
+        success: res => {
+          console.log('[云函数login] [login] [获取openid] 成功: ', res.result.openid)
+          that.globalData.openid = res.result.openid
+          let db = wx.cloud.database()
+          db.collection('user').where({
+            _openid: res.result.openid
+          }).get().then(user => {
+            console.log('[onGetOpenid] [查询用户ByOpenid] 成功: ', user.data[0])
+            this.globalData.id = user.data[0]._id
+          }).catch(err => {
+            console.error('[onGetOpenid] [查询用户ByOpenid] 失败: ', err)
+          })
+          resolve()
+        },
+        fail: err => {
+          console.error('[云函数login] [login] [获取openid] 失败: ', err)
+          reject()
+        }
+      })
+    })
   },
 
   /**

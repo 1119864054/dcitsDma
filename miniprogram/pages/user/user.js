@@ -1,54 +1,57 @@
 import { DBArticle } from "../../db/DBArticle";
+import { DBUser } from "../../db/DBUser";
 
 var dbArticle = new DBArticle();
+var dbUser = new DBUser();
 const app = getApp()
 
 Page({
 
   data: {
-    avatar: '../../images/person/head.svg',
-    username: '点击登录',
-    sign: '签名',
+    username: '',
+    avatar: '',
     logged: false,
-    checked: true
+    checked: true,
+    hasUserInfo: false,
+    canIUse: wx.canIUse('button.open-type.getUserInfo'),
   },
 
   onLoad: function (options) {
-    // 获取用户信息
-    wx.getSetting({
-      success: res => {
-        if (res.authSetting['scope.userInfo']) {
-          wx.showLoading({
-            title: "正在登录",
-            mask: true,
-          });
-          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-          wx.getUserInfo({
-            lang: 'zh_CN',
-            timeout: 10000,
-            success: (res) => {
-              console.log('[login] [获取用户信息userInfo] 成功 ', res)
-              app.globalData.username = res.userInfo.nickName
-              app.globalData.avatar = res.userInfo.avatarUrl
-              app.globalData.logged = true
-              this.login()
-            },
-            fail: () => {
-              console.error('[login] [获取用户信息userInfo] 失败')
-            }
-          });
-        }
+    if (app.globalData.logged) {
+      this.login()
+    } else if (this.data.canIUse) {
+      // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
+      // 所以此处加入 callback 以防止这种情况
+      app.userInfoReadyCallback = res => {
+        this.login()
       }
-    })
-
-    this.setTabbarCache()
+    } else {
+      // 在没有 open-type=getUserInfo 版本的兼容处理
+      wx.getUserInfo({
+        lang: 'zh_CN',
+        timeout: 10000,
+        success: (res) => {
+          console.log('[login] [获取用户信息userInfo] 成功 ', res)
+          this.globalData.username = res.userInfo.nickName
+          this.globalData.avatar = res.userInfo.avatarUrl
+          this.globalData.logged = true
+          wx.hideLoading();
+          if (this.userInfoReadyCallback) {
+            this.userInfoReadyCallback(res)
+          }
+        },
+        fail: () => {
+          console.error('[login] [获取用户信息userInfo] 失败')
+        }
+      });
+    }
   },
 
   onShow: function () {
     this.isNewMessage()
   },
 
-  onGetUserInfo: function (e) {
+  getUserInfo: function (e) {
     wx.showLoading({
       title: "正在登录",
       mask: true,
@@ -56,46 +59,26 @@ Page({
     app.globalData.logged = true
     app.globalData.username = e.detail.userInfo.nickName
     app.globalData.avatar = e.detail.userInfo.avatarUrl
-    console.log('[login] [onGetUserInfo] 登录成功', e.detail.userInfo)
+    console.log('[login] [getUserInfo] 登录成功', e.detail.userInfo)
     this.login()
   },
 
   login(e) {
-    this.onGetOpenid().then(() => {
-      dbArticle.addUser().then(() => {
-        this.isNewMessage()
-        this.setMyCache()
-        dbArticle.updateUser()
-        let username = app.globalData.username;
-        let avatar = app.globalData.avatar;
-        let logged = app.globalData.logged;
-        this.setData({
-          avatar: avatar,
-          username: username,
-          logged: logged,
-        })
-        wx.hideLoading();
-        wx.stopPullDownRefresh()
+    dbUser.addUser().then(() => {
+      this.isNewMessage()
+      this.setMyCache()
+      dbUser.updateUser()
+      let username = app.globalData.username;
+      let avatar = app.globalData.avatar;
+      let logged = app.globalData.logged;
+      this.setData({
+        avatar: avatar,
+        username: username,
+        logged: logged,
+        hasUserInfo: true
       })
-    })
-  },
-
-  onGetOpenid: function () {
-    // 调用云函数
-    return new Promise((resolve, reject) => {
-      wx.cloud.callFunction({
-        name: 'login',
-        data: {},
-        success: res => {
-          console.log('[云函数login] [login] [获取openid] 成功: ', res.result.openid)
-          app.globalData.openid = res.result.openid
-          resolve()
-        },
-        fail: err => {
-          console.error('[云函数login] [login] [获取openid] 失败: ', err)
-          reject()
-        }
-      })
+      wx.hideLoading();
+      wx.stopPullDownRefresh()
     })
   },
 
@@ -126,20 +109,6 @@ Page({
     })
   },
 
-  setTabbarCache() {
-    dbArticle.getAllArticleData(app.globalData.suggestionKey).then(res => {
-      dbArticle.setCache(app.globalData.suggestionKey, res)
-    })
-
-    dbArticle.getAllArticleData(app.globalData.demandKey).then(res => {
-      dbArticle.setCache(app.globalData.demandKey, res)
-    })
-
-    dbArticle.getAllArticleData(app.globalData.technologyKey).then(res => {
-      dbArticle.setCache(app.globalData.technologyKey, res)
-    })
-  },
-
   setMyCache() {
     dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.suggestionKey).then(res => {
       dbArticle.setCache('mySuggestion', res)
@@ -151,8 +120,8 @@ Page({
       dbArticle.setCache('myTechnology', res)
     })
 
-    dbArticle.getMyComment().then(res => {
-      dbArticle.setCache('myComment', res.data)
-    })
+    // dbArticle.getMyComment().then(res => {
+    //   dbArticle.setCache('myComment', res.data)
+    // })
   }
 })

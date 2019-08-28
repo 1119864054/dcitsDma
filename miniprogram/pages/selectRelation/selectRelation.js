@@ -1,55 +1,55 @@
-import {
-  DBArticle
-} from '../../db/DBArticle.js';
+import { DBArticle } from "../../db/DBArticle";
+import { DBUser } from "../../db/DBUser";
 
-const app = getApp()
 var dbArticle = new DBArticle();
-
+var dbUser = new DBUser();
+const app = getApp()
+var myData = {
+  articleType: '',
+  value: [],
+}
 Page({
   data: {
-    value: [],
-    articleType: '',
     articleList: []
   },
-  onLoad: function (options) {
+  async onLoad(options) {
+    console.log(options.articleType);
     if (options.articleType == 'demand') {
-      this.setData({
-        articleType: 'suggestion'
-      })
+      myData.articleType = 'suggestion'
     } else if (options.articleType == 'technology') {
-      this.setData({
-        articleType: 'demand'
-      })
+      myData.articleType = 'demand'
     }
 
-    dbArticle.getAllArticleData(this.data.articleType).then(res1 => {
-      let articleList = res1
-      for (let i = 0; i < articleList.length; i++) {
-        dbArticle.getUser(articleList[i].userId).then(res2 => {
-          articleList[i].author = res2.username
-          this.setData({
-            articleList: this.data.articleList.concat(articleList[i])
-          })
-        })
+    let articleList = await dbArticle.getAllArticleData(myData.articleType)
+    for (let i = 0; i < articleList.length; i++) {
+      let user = dbArticle.getCache(articleList[i].userId)
+      if (!user) {
+        user = await dbUser.getUser(articleList[i].userId)
+        dbArticle.setCache(articleList[i].userId, user)
       }
-    })
-  },
-  onChange(field, e) {
-    console.log(e.detail)
-    const { value } = e.detail
-    const data = this.data[field]
-    const index = data.indexOf(value)
-    const current = index === -1 ? [...data, value] : data.filter((n) => n !== value)
-
+      articleList[i].username = user.username
+    }
     this.setData({
-      [field]: current,
+      articleList: articleList
     })
-
-    console.log('checkbox发生change事件，携带value值为：', e.detail.value)
   },
 
   onTapChange(e) {
-    this.onChange('value', e)
+    console.log('选择的value', e.detail.value)
+    myData.value = e.detail.value
+  },
+
+  showModal(e) {
+    this.setData({
+      modalName: e.currentTarget.dataset.target,
+      detail: e.currentTarget.dataset.detail
+    })
+  },
+
+  hideModal(e) {
+    this.setData({
+      modalName: null
+    })
   },
 
   submit() {
@@ -57,7 +57,7 @@ Page({
     let prevPage = pages[pages.length - 2];
     console.log(prevPage)
     prevPage.setData({
-      relation: this.data.value
+      relation: myData.value
     })
     wx.navigateBack({
       delta: 1

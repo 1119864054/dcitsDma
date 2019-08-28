@@ -1,5 +1,7 @@
-@import 'style/weui.wxss';
-/* @import 'style/skyvow.wxss'; */
+@import "colorui/main.wxss";
+@import "colorui/icon.wxss";
+/* @import 'style/weui.wxss';
+@import 'style/skyvow.wxss';
 
 page{
     background-color: #f6f6f6;
@@ -39,4 +41,4 @@ page{
 }
 .weui-cell_example:before{
     left:52px;
-}
+} */
