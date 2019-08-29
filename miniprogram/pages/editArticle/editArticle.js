@@ -1,9 +1,10 @@
-import { DBArticle } from '../../db/DBArticle.js';
-import { Util } from '../../util/util.js';
+import { DBArticle } from '../../db/DBArticle';
+import { Cache } from '../../db/Cache';
+
+var dbArticle = new DBArticle();
+var cache = new Cache()
 
 const app = getApp()
-var dbArticle = new DBArticle();
-var util = new Util()
 
 let myData = {
   imagesCloudId: [],
@@ -29,10 +30,10 @@ Page({
     let articleId = options.articleId
     let articleType = options.articleType
 
-    let article = dbArticle.getCache(articleId)
+    let article = cache.getCache(articleId)
     if (!article) {
       article = (await dbArticle.getArticleByAIdFromDB(articleId, articleType))[0]
-      dbArticle.setCache(articleId, article)
+      cache.setCache(articleId, article)
     }
 
     let typeIndex = 0

@@ -1,6 +1,9 @@
-import { DBArticle } from '../../db/DBArticle.js';
+import { DBArticle } from '../../db/DBArticle';
+import { Cache } from '../../db/Cache';
 
 var dbArticle = new DBArticle();
+var cache = new Cache()
+
 const app = getApp();
 
 var myData = {
@@ -26,9 +29,9 @@ Page({
    */
   onLoad: function (options) {
     let mySuggestion = [], myDemand = [], myTechnology = []
-    mySuggestion = dbArticle.getCache('mySuggestion')
-    myDemand = dbArticle.getCache('myDemand')
-    myTechnology = dbArticle.getCache('myTechnology')
+    mySuggestion = cache.getCache('mySuggestion')
+    myDemand = cache.getCache('myDemand')
+    myTechnology = cache.getCache('myTechnology')
     let myArticleList = []
     myArticleList.push(mySuggestion)
     myArticleList.push(myDemand)
@@ -71,7 +74,6 @@ Page({
   },
 
   async onTapDelete(e) {
-    let that = this
     this.hideModal()
     wx.showLoading({
       title: '删除文章中',
@@ -116,21 +118,21 @@ Page({
     })
 
     let mySuggestion = await dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.suggestionKey)
-    dbArticle.setCache('mySuggestion', mySuggestion)
+    cache.setCache('mySuggestion', mySuggestion)
     for (let i = 0; i < mySuggestion.length; i++) {
-      dbArticle.setCache(mySuggestion[i]._id, mySuggestion[i])
+      cache.setCache(mySuggestion[i]._id, mySuggestion[i])
     }
 
     let myDemand = await dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.demandKey)
-    dbArticle.setCache('myDemand', myDemand)
+    cache.setCache('myDemand', myDemand)
     for (let i = 0; i < myDemand.length; i++) {
-      dbArticle.setCache(myDemand[i]._id, myDemand[i])
+      cache.setCache(myDemand[i]._id, myDemand[i])
     }
 
     let myTechnology = await dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.technologyKey)
-    dbArticle.setCache('myTechnology', myTechnology)
+    cache.setCache('myTechnology', myTechnology)
     for (let i = 0; i < myTechnology.length; i++) {
-      dbArticle.setCache(myTechnology[i]._id, myTechnology[i])
+      cache.setCache(myTechnology[i]._id, myTechnology[i])
     }
 
     let myArticleList = []

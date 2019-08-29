@@ -29,7 +29,7 @@
     <button class="cu-btn bg-gradual-green shadow-blur round">搜索</button>
   </view>
 </view>
-<swiper easing-function="easeInOutCubic" current="{{current}}" bindchange="onSwiperChange" style="margin-top:190rpx;height:{{windowHeight-150}}px">
+<swiper current="{{current}}" bindchange="onSwiperChange" style="margin-top:190rpx;height:{{windowHeight-150}}px">
   <block wx:for="{{myArticleList}}" wx:key="idx" wx:for-index="idx">
     <swiper-item>
       <scroll-view scroll-y style="height:100%">
@@ -45,19 +45,18 @@
 <view class="cu-modal bottom-modal {{modalName=='more'?'show':''}}">
   <view class="cu-dialog">
     <view class="cu-list text-center bg-white">
-      <view class="cu-item padding solid-bottom">
-        <view class="content text-blue" data-target="edit" bind:tap="showModal">编辑文章</view>
+      <view class="cu-item padding solid-bottom" data-target="edit" bind:tap="showModal">
+        <view class="content text-blue text-bold text-shadow">编辑文章</view>
       </view>
       <view class="cu-item padding " data-target="delete" bind:tap="showModal">
-        <view class="content text-red">删除文章</view>
+        <view class="content text-red text-bold text-shadow">删除文章</view>
       </view>
-      <view class="cu-item bg-gray padding">
-        <view class="content text-grey" bindtap="hideModal">取消</view>
+      <view class="cu-item bg-gray padding" bindtap="hideModal">
+        <view class="content text-grey">取消</view>
       </view>
     </view>
   </view>
 </view>
-
 <view class="cu-modal {{modalName=='edit'?'show':''}}" bindtap="hideModal">
   <view class="cu-dialog">
     <view class="cu-bar bg-white justify-end">
@@ -77,7 +76,6 @@
     </view>
   </view>
 </view>
-
 <view class="cu-modal {{modalName=='delete'?'show':''}}" bindtap="hideModal">
   <view class="cu-dialog">
     <view class="cu-bar bg-white justify-end">

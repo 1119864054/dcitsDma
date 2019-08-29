@@ -1,11 +1,16 @@
 import { DBArticle } from "../../db/DBArticle";
 import { DBUser } from "../../db/DBUser";
+import { Cache } from '../../db/Cache';
+import { DBMessage } from '../../db/DBMessage';
+import { DBRelation } from '../../db/DBRelation';
 
 var dbArticle = new DBArticle();
 var dbUser = new DBUser();
+var cache = new Cache()
+var dbMessage = new DBMessage()
+var dbRelation = new DBRelation()
 
 const app = getApp()
-var dbArticle = new DBArticle();
 
 Page({
 
@@ -21,7 +26,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    let message = dbArticle.getCache('message')
+    let message = cache.getCache('message')
     this.setData({
       message: message
     })
@@ -33,25 +38,25 @@ Page({
       isLoad: false
     })
 
-    let res1 = await dbArticle.getMessage()
+    let res1 = await dbMessage.getMessage()
     if (res1) {
       let message = res1.data
       console.log('message', message)
 
       for (let i = 0; i < message.length; i++) {
 
-        let res2 = await dbArticle.getRelationById(message[i].relationId, message[i].relationType)
+        let res2 = await dbRelation.getRelationById(message[i].relationId, message[i].relationType)
         if (res2) {
           let relation = res2.data[0]
           console.log('relation', relation)
 
           if (message[i].relationType == 'SDRelation') {
-            let demand = dbArticle.getCache(relation.demandId)
+            let demand = cache.getCache(relation.demandId)
             if (!demand) {
               let res3 = await dbArticle.getArticleByAIdFromDB(relation.demandId, 'demand')
               if (res3) {
                 demand = res3[0]
-                dbArticle.setCache(relation.demandId, demand)
+                cache.setCache(relation.demandId, demand)
               }
             }
             console.log('demand', demand)
@@ -60,12 +65,12 @@ Page({
             message[i].articleId = demand._id
             message[i].articleType = 'demand'
 
-            let user = dbArticle.getCache(message[i].relate)
+            let user = cache.getCache(message[i].relate)
             if (!user) {
               let res4 = await dbUser.getUser(message[i].relate)
               if (res4) {
                 user = res4
-                dbArticle.setCache(message[i].relate, user)
+                cache.setCache(message[i].relate, user)
               }
             }
             console.log('user', user)
@@ -73,12 +78,12 @@ Page({
             message[i].username = user.username
             message[i].avatar = user.avatar
 
-            let suggestion = dbArticle.getCache(relation.suggestionId)
+            let suggestion = cache.getCache(relation.suggestionId)
             if (!suggestion) {
               let res5 = await dbArticle.getArticleByAIdFromDB(relation.suggestionId, 'suggestion')
               if (res5) {
                 suggestion = res5[0]
-                dbArticle.setCache(relation.suggestionId, suggestion)
+                cache.setCache(relation.suggestionId, suggestion)
               }
             }
 
@@ -90,12 +95,12 @@ Page({
 
           } else if (message[i].relationType == 'DTRelation') {
 
-            let technology = dbArticle.getCache(relation.technologyId)
+            let technology = cache.getCache(relation.technologyId)
             if (!technology) {
               let res3 = await dbArticle.getArticleByAIdFromDB(relation.technologyId, 'technology')
               if (res3) {
                 technology = res3[0]
-                dbArticle.setCache(relation.technologyId, technology)
+                cache.setCache(relation.technologyId, technology)
               }
             }
             console.log('technology', technology)
@@ -104,12 +109,12 @@ Page({
             message[i].articleId = technology._id
             message[i].articleType = 'technology'
 
-            let user = dbArticle.getCache(message[i].relate)
+            let user = cache.getCache(message[i].relate)
             if (!user) {
               let res4 = await dbUser.getUser(message[i].relate)
               if (res4) {
                 user = res4
-                dbArticle.setCache(message[i].relate, user)
+                cache.setCache(message[i].relate, user)
               }
             }
             console.log('user', user)
@@ -117,12 +122,12 @@ Page({
             message[i].username = user.username
             message[i].avatar = user.avatar
 
-            let demand = dbArticle.getCache(relation.demandId)
+            let demand = cache.getCache(relation.demandId)
             if (!demand) {
               let res5 = await dbArticle.getArticleByAIdFromDB(relation.demandId, 'demand')
               if (res5) {
                 demand = res5[0]
-                dbArticle.setCache(relation.demandId, demand)
+                cache.setCache(relation.demandId, demand)
               }
             }
             console.log('demand', demand)
@@ -135,7 +140,7 @@ Page({
         }
       }
       console.log('message-after', message);
-      dbArticle.setCache('message', message)
+      cache.setCache('message', message)
       this.setData({
         message: message,
         isLoad: true
@@ -149,7 +154,7 @@ Page({
     for (let i = 0; i < message.length; i++) {
       if (message[i]._id == messageId) {
         message[i].checked = true
-        dbArticle.checkMessage(messageId)
+        dbMessage.checkMessage(messageId)
         break;
       }
     }
@@ -161,14 +166,14 @@ Page({
   onTapToArticle: function (e) {
     let articleId = e.currentTarget.dataset.articleId
     let articleType = e.currentTarget.dataset.articleType
-    if (dbArticle.getCache(articleId)) {
+    if (cache.getCache(articleId)) {
       wx.navigateTo({
         url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType
       });
     } else {
       dbArticle.getArticleByAIdFromDB(articleId, articleType).then(res => {
         if (res) {
-          dbArticle.setCache(articleId, res[0])
+          cache.setCache(articleId, res[0])
         }
         wx.navigateTo({
           url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType

@@ -1,8 +1,13 @@
 import { DBArticle } from "../../db/DBArticle";
 import { DBUser } from "../../db/DBUser";
+import { Cache } from '../../db/Cache';
+import { DBMessage } from '../../db/DBMessage';
 
 var dbArticle = new DBArticle();
 var dbUser = new DBUser();
+var cache = new Cache()
+var dbMessage = new DBMessage()
+
 const app = getApp()
 
 Page({
@@ -96,7 +101,7 @@ Page({
   },
 
   isNewMessage() {
-    dbArticle.getUncheckedMessage().then(res => {
+    dbMessage.getUncheckedMessage().then(res => {
       if (res.data.length > 0) {
         this.setData({
           checked: false
@@ -111,17 +116,13 @@ Page({
 
   setMyCache() {
     dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.suggestionKey).then(res => {
-      dbArticle.setCache('mySuggestion', res)
+      cache.setCache('mySuggestion', res)
     })
     dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.demandKey).then(res => {
-      dbArticle.setCache('myDemand', res)
+      cache.setCache('myDemand', res)
     })
     dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.technologyKey).then(res => {
-      dbArticle.setCache('myTechnology', res)
+      cache.setCache('myTechnology', res)
     })
-
-    // dbArticle.getMyComment().then(res => {
-    //   dbArticle.setCache('myComment', res.data)
-    // })
   }
 })

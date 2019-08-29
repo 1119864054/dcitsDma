@@ -1,8 +1,11 @@
 import { DBArticle } from "../../db/DBArticle";
 import { DBUser } from "../../db/DBUser";
+import { Cache } from '../../db/Cache';
 
 var dbArticle = new DBArticle();
 var dbUser = new DBUser();
+var cache = new Cache()
+
 const app = getApp()
 
 import config from '../../util/config.js'
@@ -26,9 +29,9 @@ Page({
   },
 
   onLoad: function (options) {
-    let suggestionListCache = dbArticle.getCache('suggestion')
-    let demandListCache = dbArticle.getCache('demand')
-    let technologyListCache = dbArticle.getCache('technology')
+    let suggestionListCache = cache.getCache('suggestion')
+    let demandListCache = cache.getCache('demand')
+    let technologyListCache = cache.getCache('technology')
 
     this.setData({
       suggestion: suggestionListCache,
@@ -93,10 +96,10 @@ Page({
     if (newArticleList && newArticleList.length > 0) {
       currentPage++;
       for (let i = 0; i < newArticleList.length; i++) {
-        let user = dbArticle.getCache(newArticleList[i].userId)
+        let user = cache.getCache(newArticleList[i].userId)
         if (!user) {
           user = await dbUser.getUser(newArticleList[i].userId)
-          dbArticle.setCache(newArticleList[i].userId, user)
+          cache.setCache(newArticleList[i].userId, user)
         }
         newArticleList[i].avatar = user.avatar
         newArticleList[i].username = user.username
@@ -126,16 +129,16 @@ Page({
     let articleList = await dbArticle.getAllArticleData(articleType)
     if (articleList) {
       for (let i = 0; i < articleList.length; i++) {
-        let userInfo = dbArticle.getCache(articleList[i].userId)
+        let userInfo = cache.getCache(articleList[i].userId)
         if (!userInfo) {
           userInfo = await dbUser.getUser(articleList[i].userId)
-          dbArticle.setCache(articleList[i].userId, userInfo)
+          cache.setCache(articleList[i].userId, userInfo)
         }
         articleList[i].username = userInfo.username
         articleList[i].avatar = userInfo.avatar
-        dbArticle.setCache(articleList[i]._id, articleList[i])
+        cache.setCache(articleList[i]._id, articleList[i])
       }
-      dbArticle.setCache(articleType, articleList)
+      cache.setCache(articleType, articleList)
     }
     console.log(articleType, ':articleList:', articleList)
     if (articleList.length < pageSize) {

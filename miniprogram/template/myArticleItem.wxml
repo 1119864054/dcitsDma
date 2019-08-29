@@ -1,13 +1,9 @@
 <template name="myArticleItem">
     <view class="cu-item shadow-warp" bindtap="onTapToArticle" data-article-id="{{_id}}" data-article-type="{{articleType}}">
-        <view class="flex flex-wrap">
-            <view class="basis-xl text-black text-bold padding-lr-lg padding-bottom-sm padding-top-lg">
-                {{title}}
-            </view>
-            <view class="basis-xs text-grey text-bold padding-lr-lg padding-bottom-sm padding-top-lg text-shadow" catch:tap="showModal" 
-            data-target="more" data-edit-title='{{title}}' data-article-id='{{_id}}' data-article-type='{{articleType}}'>
-                更多
-            </view>
+        <view class="flex flex-wrap text-black text-bold padding-lr-lg padding-bottom-sm padding-top-lg">
+            <view class="basis-xl">{{title}}</view>
+            <view class="basis-xs text-grey  text-shadow cuIcon-edit text-right"
+             catch:tap="showModal" data-target="more" data-edit-title='{{title}}' data-article-id='{{_id}}' data-article-type='{{articleType}}'>编辑</view>
         </view>
         <view class="text-cut text-df text-grey padding-lr-lg">{{content}}</view>
         <view class="flex justify-start">

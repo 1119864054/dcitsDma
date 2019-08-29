@@ -1,9 +1,8 @@
-import { DBArticle } from '../../db/DBArticle.js';
-import { Util } from '../../util/util.js';
+import { DBArticle } from '../../db/DBArticle';
+
+var dbArticle = new DBArticle();
 
 const app = getApp()
-var dbArticle = new DBArticle();
-var util = new Util()
 
 let myData = {
     title: '',

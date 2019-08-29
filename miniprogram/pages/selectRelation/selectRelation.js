@@ -1,13 +1,16 @@
 import { DBArticle } from "../../db/DBArticle";
 import { DBUser } from "../../db/DBUser";
+import { Cache } from '../../db/Cache';
 
 var dbArticle = new DBArticle();
 var dbUser = new DBUser();
-const app = getApp()
+const cache = new Cache()
+
 var myData = {
   articleType: '',
   value: [],
 }
+
 Page({
   data: {
     articleList: []
@@ -22,10 +25,10 @@ Page({
 
     let articleList = await dbArticle.getAllArticleData(myData.articleType)
     for (let i = 0; i < articleList.length; i++) {
-      let user = dbArticle.getCache(articleList[i].userId)
+      let user = cache.getCache(articleList[i].userId)
       if (!user) {
         user = await dbUser.getUser(articleList[i].userId)
-        dbArticle.setCache(articleList[i].userId, user)
+        cache.setCache(articleList[i].userId, user)
       }
       articleList[i].username = user.username
     }

@@ -1,11 +1,10 @@
-import {
-  DBArticle
-} from '../../db/DBArticle.js';
+import { DBArticle } from '../../db/DBArticle';
+import { Cache } from '../../db/Cache';
+import { DBComment } from '../../db/DBComment';
 
 var dbArticle = new DBArticle();
-
-var myData = {
-}
+var cache = new Cache()
+var dbComment = new DBComment()
 
 Page({
 
@@ -21,7 +20,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    let myComment = dbArticle.getCache('myComment')
+    let myComment = cache.getCache('myComment')
     this.setData({
       myComment: myComment
     })
@@ -37,13 +36,13 @@ Page({
   onTapToArticle: function (e) {
     let articleId = e.currentTarget.dataset.articleId
     let articleType = e.currentTarget.dataset.articleType
-    if (dbArticle.getCache(articleId)) {
+    if (cache.getCache(articleId)) {
       wx.navigateTo({
         url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType
       });
     } else {
       dbArticle.getArticleByAIdFromDB(articleId, articleType).then(res => {
-        dbArticle.setCache(articleId, res[0])
+        cache.setCache(articleId, res[0])
         wx.navigateTo({
           url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType
         });
@@ -60,11 +59,11 @@ Page({
 
     let myComment = []
 
-    let commentList = await dbArticle.getMyComment()
+    let commentList = await dbComment.getMyComment()
 
     let headAId = commentList[0].articleId
     let headAType = commentList[0].articleType
-    let article = dbArticle.getCache(headAId)
+    let article = cache.getCache(headAId)
     if (!article) {
       article = (await dbArticle.getArticleByAIdFromDB(headAId, headAType))[0]
     }
@@ -82,8 +81,8 @@ Page({
         temp.partMyComment = partMyComment
 
         myComment.push(temp)
-        
-        article = dbArticle.getCache(nowAId)
+
+        article = cache.getCache(nowAId)
         if (!article) {
           article = (await dbArticle.getArticleByAIdFromDB(nowAId, nowAType))[0]
         }
@@ -110,31 +109,6 @@ Page({
       myComment: myComment,
       isLoad: true
     })
-    dbArticle.setCache('myComment', myComment)
-
-    // let cgroup = myData.commentGroup
-    // console.log(cgroup)
-    // let myComment = []
-    // for (let i = 0; i < cgroup.length; i++) {
-    //   let comment = (await dbArticle.getMyComment(cgroup[i]._id)).data
-    //   console.log(comment)
-    //   let article = dbArticle.getCache(cgroup[i]._id)
-    //   if (!article) {
-    //     article = (await dbArticle.getArticleByAIdFromDB(cgroup[i]._id, comment[0].articleType))[0]
-    //   }
-    //   let temp = {}
-    //   temp.comment = comment
-    //   temp.articleId = article._id
-    //   temp.articleType = article.articleType
-    //   temp.title = article.title
-    //   myComment.concat(temp)
-    // }
-    // console.log('myComment: ', myComment)
-
-    // this.setData({
-    //   myComment: myComment,
-    //   isLoad: true
-    // })
-    // dbArticle.setCache('myComment', myComment)
+    cache.setCache('myComment', myComment)
   }
 })

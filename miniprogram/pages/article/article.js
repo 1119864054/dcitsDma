@@ -1,17 +1,26 @@
 // pages/article/article.js
-import { Util } from '../../util/util.js';
+import { Util } from '../../util/util';
 import { DBArticle } from "../../db/DBArticle";
 import { DBUser } from "../../db/DBUser";
+import { Cache } from '../../db/Cache';
+import { DBFavor } from '../../db/DBFavor';
+import { DBComment } from '../../db/DBComment';
+import { DBRelation } from '../../db/DBRelation';
 
+var util = new Util();
 var dbArticle = new DBArticle();
 var dbUser = new DBUser();
-var util = new Util();
+var cache = new Cache()
+var dbFavor = new DBFavor()
+var dbComment = new DBComment()
+var dbRelation = new DBRelation()
 
 var myData = {
   articleId: '',
   articleType: '',
   commentContent: ''
 };
+
 const app = getApp();
 
 Page({
@@ -50,57 +59,59 @@ Page({
     myData.articleId = articleId;
     myData.articleType = articleType;
 
-    let articleData = dbArticle.getCache(articleId)
+    let articleData = cache.getCache(articleId)
 
     console.log('articleData', articleData)
 
-    this.setData({
-      removed: articleData.removed
-    })
+    if (articleData.removed) {
+      this.setData({
+        removed: articleData.removed
+      })
+    } else {
+      let comment = cache.getCache(articleId + '_comment')
 
-    let comment = dbArticle.getCache(articleId + '_comment')
+      let articleTypeZh = util.getArticleTypeZh(articleType)
+      console.log('articleTypeZh', articleTypeZh)
 
-    let articleTypeZh = util.getArticleTypeZh(articleType)
-    console.log('articleTypeZh', articleTypeZh)
-
-    let articleImg = dbArticle.getCache(articleId + '_image_cache')
-    if (!articleImg) {
-      articleImg = articleData.articleImg
-      util.getImageCached(articleId, articleData.articleImg)
-    }
-
-    let res = dbArticle.getCache(articleData.userId)
-    if (res) {
-      res = await dbUser.getUser(articleData.userId)
-      dbArticle.setCache(articleData.userId, res)
-    }
-    let content = articleData.content.split("。")
-    this.setData({
-      comment: comment,
-      username: res.username,
-      avatar: res.avatar,
-      content: content,
-      articleImg: articleImg,
-      date: articleData.date,
-      title: articleData.title,
-      articleTypeZh: articleTypeZh,
-      articleType: articleType,
-      myAvatar: app.globalData.avatar
-    })
-
-    dbArticle.isFavor(articleId).then(res => {
-      let isFavor = false
-      if (res) {
-        isFavor = true
-        this.setData({
-          isFavor: isFavor,
-          favorId: res._id
-        })
+      let articleImg = cache.getCache(articleId + '_image_cache')
+      if (!articleImg) {
+        articleImg = articleData.articleImg
+        cache.getImageCached(articleId, articleData.articleImg)
       }
-    })
 
-    this.getComment()
-    this.getRelation()
+      let res = cache.getCache(articleData.userId)
+      if (res) {
+        res = await dbUser.getUser(articleData.userId)
+        cache.setCache(articleData.userId, res)
+      }
+      let content = articleData.content.split("。")
+      this.setData({
+        comment: comment,
+        username: res.username,
+        avatar: res.avatar,
+        content: content,
+        articleImg: articleImg,
+        date: articleData.date,
+        title: articleData.title,
+        articleTypeZh: articleTypeZh,
+        articleType: articleType,
+        myAvatar: app.globalData.avatar
+      })
+
+      dbFavor.isFavor(articleId).then(res => {
+        let isFavor = false
+        if (res) {
+          isFavor = true
+          this.setData({
+            isFavor: isFavor,
+            favorId: res._id
+          })
+        }
+      })
+
+      this.getComment()
+      this.getRelation()
+    }
   },
 
   onPullDownRefresh: function () {
@@ -134,7 +145,7 @@ Page({
           isFavor: true,
           favorCount: this.data.favorCount + 1
         })
-        dbArticle.addFavor(myData.articleId, myData.articleType).then(res => {
+        dbFavor.addFavor(myData.articleId, myData.articleType).then(res => {
           this.setData({
             favorId: res._id
           })
@@ -159,7 +170,7 @@ Page({
       favorCount: this.data.favorCount - 1
     })
     let favorId = e.currentTarget.dataset.favorId
-    dbArticle.removeFavor(favorId)
+    dbFavor.removeFavor(favorId)
   },
 
   onTapToRelate(e) {
@@ -172,18 +183,18 @@ Page({
   },
 
   async getComment() {
-    let res1 = await dbArticle.getComment(myData.articleId)
+    let res1 = await dbComment.getComment(myData.articleId)
     if (res1) {
       let comment = res1.data
       for (let i = 0; i < comment.length; i++) {
-        let userInfo = dbArticle.getCache(comment[i].userId)
+        let userInfo = cache.getCache(comment[i].userId)
         if (userInfo) {
           comment[i].username = userInfo.username
           comment[i].avatar = userInfo.avatar
         } else {
           await dbUser.getUser(comment[i].userId).then(userInfo => {
             if (userInfo) {
-              dbArticle.setCache(comment[i].userId, userInfo)
+              cache.setCache(comment[i].userId, userInfo)
               comment[i].username = userInfo.username
               comment[i].avatar = userInfo.avatar
             }
@@ -192,7 +203,7 @@ Page({
       }
 
       console.log('comment', comment);
-      dbArticle.setCache(myData.articleId + '_comment', comment)
+      cache.setCache(myData.articleId + '_comment', comment)
       this.setData({
         comment: comment,
         value: ''
@@ -204,7 +215,7 @@ Page({
     let that = this
     if (app.globalData.logged) {
       if (myData.commentContent.length > 0) {
-        dbArticle.addComment(myData.articleId, myData.commentContent, myData.articleType).then(() => {
+        dbComment.addComment(myData.articleId, myData.commentContent, myData.articleType).then(() => {
           that.getComment()
           myData.commentContent = ''
         })
@@ -230,25 +241,25 @@ Page({
 
   async getRelation() {
     let relationDetail = []
-    let res = await dbArticle.getRelation(myData.articleId, myData.articleType)
+    let res = await dbRelation.getRelation(myData.articleId, myData.articleType)
     if (res) {
       let relation = res.data
 
       if (myData.articleType == 'demand') {
         for (let i = 0; i < relation.length; i++) {
           let temp = {}
-          let article = dbArticle.getCache(relation[i].suggestionId)
+          let article = cache.getCache(relation[i].suggestionId)
           if (!article) {
             article = (await dbArticle.getArticleByAIdFromDB(relation[i].suggestionId, 'suggestion'))[0]
-            dbArticle.setCache(relation[i].suggestionId, article)
+            cache.setCache(relation[i].suggestionId, article)
           }
           temp.title = article.title
           temp.articleId = article._id
           temp.articleType = article.articleType
-          let user = dbArticle.getCache(article.userId)
+          let user = cache.getCache(article.userId)
           if (!user) {
             user = await dbUser.getUser(article.userId)
-            dbArticle.setCache(article.userId, user)
+            cache.setCache(article.userId, user)
           }
           temp.username = user.username
           relationDetail.push(temp)
@@ -257,18 +268,18 @@ Page({
       else if (myData.articleType == 'technology') {
         for (let i = 0; i < relation.length; i++) {
           let temp = {}
-          let article = dbArticle.getCache(relation[i].demandId)
+          let article = cache.getCache(relation[i].demandId)
           if (!article) {
             article = (await dbArticle.getArticleByAIdFromDB(relation[i].demandId, 'demand'))[0]
-            dbArticle.setCache(relation[i].demandId, article)
+            cache.setCache(relation[i].demandId, article)
           }
           temp.title = article.title
           temp.articleId = article._id
           temp.articleType = article.articleType
-          let user = dbArticle.getCache(article.userId)
+          let user = cache.getCache(article.userId)
           if (!user) {
             user = await dbUser.getUser(article.userId)
-            dbArticle.setCache(article.userId, user)
+            cache.setCache(article.userId, user)
           }
           temp.username = user.username
           relationDetail.push(temp)

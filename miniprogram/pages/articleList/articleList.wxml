@@ -29,7 +29,7 @@
     <button class="cu-btn bg-gradual-green shadow-blur round">搜索</button>
   </view>
 </view>
-<swiper easing-function="easeInOutCubic" current="{{current}}" bindchange="onSwiperChange" style="margin-top:190rpx;height:{{windowHeight-150}}px">
+<swiper current="{{current}}" bindchange="onSwiperChange" style="margin-top:190rpx;height:{{windowHeight-150}}px">
   <swiper-item>
     <scroll-view scroll-y style="height:100%" bindscrolltolower='loadMore'>
       <view class="cu-card case">
