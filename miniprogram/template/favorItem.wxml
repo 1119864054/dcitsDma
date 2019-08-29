@@ -1,5 +1,5 @@
 <template name="favorItem">
-    <view class="cu-item shadow" catch:tap="onTapToArticle" data-article-id="{{_id}}" data-article-type="{{articleType}}">
+    <view class="cu-item shadow-warp" catch:tap="onTapToArticle" data-article-id="{{_id}}" data-article-type="{{articleType}}">
         <view class="text-black text-bold padding-lr-lg padding-bottom-sm padding-top-lg">
             {{title}}
         </view>
@@ -11,7 +11,7 @@
                     <view class="text-grey">{{username}}</view>
                     <view class="text-gray text-sm flex justify-between">
                         <wux-timeago to="{{timeStamp}}" lang="zh_CN" refreshable />
-                        <view class="text-gray text-df" catch:tap="onTapToUnfavor">
+                        <view class="text-gray text-df" data-favor-id='{{favorId}}' catch:tap="onTapToUnfavor" hidden="{{false}}">
                             <text class="cuIcon-deletefill text-red" />
                             <text class="text-red margin-lr">取消收藏</text>
                         </view>

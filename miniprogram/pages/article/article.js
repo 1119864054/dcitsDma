@@ -20,8 +20,12 @@ Page({
    * 页面的初始数据
    */
   data: {
+    removed: false,
+
     isFavor: '',
     value: '',
+    favorId: '',
+    favorCount: 0,
 
     comment: [],
     relationDetail: [],
@@ -46,12 +50,18 @@ Page({
     myData.articleId = articleId;
     myData.articleType = articleType;
 
+    let articleData = dbArticle.getCache(articleId)
+
+    console.log('articleData', articleData)
+
+    this.setData({
+      removed: articleData.removed
+    })
+
     let comment = dbArticle.getCache(articleId + '_comment')
 
     let articleTypeZh = util.getArticleTypeZh(articleType)
     console.log('articleTypeZh', articleTypeZh)
-
-    let articleData = dbArticle.getCache(articleId)
 
     let articleImg = dbArticle.getCache(articleId + '_image_cache')
     if (!articleImg) {
@@ -82,14 +92,19 @@ Page({
       let isFavor = false
       if (res) {
         isFavor = true
+        this.setData({
+          isFavor: isFavor,
+          favorId: res._id
+        })
       }
-      this.setData({
-        isFavor: isFavor
-      })
     })
 
     this.getComment()
     this.getRelation()
+  },
+
+  onPullDownRefresh: function () {
+    wx.stopPullDownRefresh()
   },
 
   previewImage: function (e) {
@@ -117,8 +132,12 @@ Page({
       if (!this.data.isFavor) {
         this.setData({
           isFavor: true,
+          favorCount: this.data.favorCount + 1
         })
         dbArticle.addFavor(myData.articleId, myData.articleType).then(res => {
+          this.setData({
+            favorId: res._id
+          })
           console.log('收藏成功：', res);
           wx.showToast({
             title: '收藏成功',
@@ -134,8 +153,13 @@ Page({
     }
   },
 
-  onPullDownRefresh: function () {
-    wx.stopPullDownRefresh()
+  onTapUnFavor(e) {
+    this.setData({
+      isFavor: false,
+      favorCount: this.data.favorCount - 1
+    })
+    let favorId = e.currentTarget.dataset.favorId
+    dbArticle.removeFavor(favorId)
   },
 
   onTapToRelate(e) {

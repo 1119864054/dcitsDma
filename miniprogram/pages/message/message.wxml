@@ -20,9 +20,9 @@
         </view>
         <view class="text-content">
             写的《
-            <text class="text-blue" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' bind:tap="onTapToArticle">{{item.article}}</text>
+            <text class="text-blue text-bold text-sm" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' bind:tap="onTapToArticle">{{item.article}}</text>
             》关联了我的《
-            <text class="text-blue" data-article-id='{{item.myArticleId}}' data-article-type='{{item.myArticleType}}' bind:tap="onTapToArticle">{{item.myArticle}}</text>
+            <text class="text-blue text-bold text-sm" data-article-id='{{item.myArticleId}}' data-article-type='{{item.myArticleType}}' bind:tap="onTapToArticle">{{item.myArticle}}</text>
             》
         </view>
     </view>

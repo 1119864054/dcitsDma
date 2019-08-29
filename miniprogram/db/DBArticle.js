@@ -41,10 +41,22 @@ class DBArticle {
     }
   }
 
+  //从缓存删除一条数据
+  removeCache(storageKeyName) {
+    try {
+      let result = wx.removeStorageSync(storageKeyName)
+      console.log('[DBArticle] [' + storageKeyName + '] [删除缓存' + storageKeyName + '] 成功： ', result)
+    } catch (e) {
+      console.log('[DBArticle] [' + storageKeyName + '] [删除缓存' + storageKeyName + '] 失败： ', e)
+    }
+  }
+
   //从数据库读取文章列表
   getAllArticleData(storageKeyName, pageSize = constPageSize, currentPage = 0) {
     return new Promise((resolve, reject) => {
-      db.collection(storageKeyName)
+      db.collection(storageKeyName).where({
+        removed: false
+      })
         .orderBy('date', 'desc')
         .skip(currentPage * pageSize)
         .limit(pageSize)
@@ -81,7 +93,8 @@ class DBArticle {
         articleImg: images,
         content: content,
         timeStamp: new Date().getTime(),
-        articleType: storageKeyName
+        articleType: storageKeyName,
+        removed: false
       }
     })
       .then(res => {
@@ -164,7 +177,8 @@ class DBArticle {
   getArticleByIdFromDB(userId, articleType) {
     return new Promise((resolve, reject) => {
       db.collection(articleType).where({
-        userId: userId
+        userId: userId,
+        removed: false
       }).orderBy('date', 'desc')
         .get().then(res => {
           console.log('[DBArticle] [根据userId查询article信息] 成功: ', res.data)
@@ -180,12 +194,31 @@ class DBArticle {
   getArticleByAIdFromDB(articleId, articleType) {
     return new Promise((resolve, reject) => {
       db.collection(articleType).where({
-        _id: articleId
+        _id: articleId,
       }).get().then(res => {
         console.log('[DBArticle] [根据articleId查询article信息] 成功: ', res.data)
         resolve(res.data)
       }).catch(err => {
         console.error('[DBArticle] [根据articleId查询article信息] 失败: ', err)
+        reject()
+      })
+    })
+  }
+
+  //删除文章
+  removeArticle(articleId, articleType) {
+    let that = this
+    return new Promise((resolve, reject) => {
+      db.collection(articleType).doc(articleId).update({
+        data: {
+          removed: true
+        }
+      }).then(res => {
+        console.log('[DBArticle] [删除article] 成功: ', res)
+        that.removeCache(articleId)
+        resolve()
+      }).catch(err => {
+        console.error('[DBArticle] [删除article] 失败: ', err)
         reject()
       })
     })
@@ -197,16 +230,25 @@ class DBArticle {
     return new Promise((resolve, reject) => {
       db.collection('favor').where({
         articleId: articleId,
-        userId: userId
+        userId: userId,
       }).get().then(res => {
-        console.log('[DBArticle] [查询favor] 成功: ', res)
-        if (!res.data || !res.data.length) {
-          resolve(false)
-        } else {
-          resolve(true)
-        }
+        console.log('[DBArticle] [查询favor] 成功: ', res.data[0])
+        resolve(res.data[0])
       }).catch(err => {
         console.error('[DBArticle] [查询favor] 失败: ', err)
+        reject()
+      })
+    })
+  }
+
+  //取消收藏
+  removeFavor(favorId) {
+    return new Promise((resolve, reject) => {
+      db.collection('favor').doc(favorId).remove().then(res => {
+        console.log('[DBArticle] [删除favor] 成功: ', res)
+        resolve(res)
+      }).catch(err => {
+        console.error('[DBArticle] [删除favor] 失败: ', err)
         reject()
       })
     })
@@ -222,7 +264,7 @@ class DBArticle {
           articleId: articleId,
           userId: userId,
           date: util.formatTime(new Date()),
-          articleType: articleType
+          articleType: articleType,
         }
       }).then(res => {
         console.log('[DBArticle] [添加favor] 成功: ', res)
@@ -303,6 +345,7 @@ class DBArticle {
           userId: userId
         })
         .orderBy('articleId', 'asc')
+        .orderBy('date', 'desc')
         .get().then(res => {
           console.log('[DBArticle] [查询mycomment] 成功: ', res.data)
           resolve(res.data)

@@ -62,7 +62,18 @@ Page({
   },
 
   onTapToUnfavor(e) {
-    console.log('取消收藏')
+    wx.showLoading({
+      title: '取消收藏',
+      mask: true,
+    });
+
+    let that = this
+
+    console.log('取消收藏', e)
+    dbArticle.removeFavor(e.currentTarget.dataset.favorId).then(res => {
+      that.getFavor()
+      wx.hideLoading();
+    })
   },
 
   async getFavor() {
@@ -80,12 +91,13 @@ Page({
           dbArticle.setCache(sugList[i].articleId, article)
         }
         let user = dbArticle.getCache(article.userId)
-        if(!user){
+        if (!user) {
           user = await dbUser.getUser(article.userId)
           dbArticle.setCache(article.userId, user)
         }
         article.username = user.username
         article.avatar = user.avatar
+        article.favorId = sugList[i]._id
         favorSuggestion = favorSuggestion.concat(article)
       }
       console.log('favorSuggestion', favorSuggestion);
@@ -102,12 +114,13 @@ Page({
           dbArticle.setCache(demList[i].articleId, article)
         }
         let user = dbArticle.getCache(article.userId)
-        if(!user){
+        if (!user) {
           user = await dbUser.getUser(article.userId)
           dbArticle.setCache(article.userId, user)
         }
         article.username = user.username
         article.avatar = user.avatar
+        article.favorId = demList[i]._id
         favorDemand = favorDemand.concat(article)
       }
       console.log('favorDemand', favorDemand);
@@ -124,12 +137,13 @@ Page({
           dbArticle.setCache(tecList[i].articleId, article)
         }
         let user = dbArticle.getCache(article.userId)
-        if(!user){
+        if (!user) {
           user = await dbUser.getUser(article.userId)
           dbArticle.setCache(article.userId, user)
         }
         article.username = user.username
         article.avatar = user.avatar
+        article.favorId = tecList[i]._id
         favorTechnology = favorTechnology.concat(article)
       }
       console.log('favorTechnology', favorTechnology);

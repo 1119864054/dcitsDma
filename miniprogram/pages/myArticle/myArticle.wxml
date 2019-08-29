@@ -42,3 +42,58 @@
     </swiper-item>
   </block>
 </swiper>
+<view class="cu-modal bottom-modal {{modalName=='more'?'show':''}}">
+  <view class="cu-dialog">
+    <view class="cu-list text-center bg-white">
+      <view class="cu-item padding solid-bottom">
+        <view class="content text-blue" data-target="edit" bind:tap="showModal">编辑文章</view>
+      </view>
+      <view class="cu-item padding " data-target="delete" bind:tap="showModal">
+        <view class="content text-red">删除文章</view>
+      </view>
+      <view class="cu-item bg-gray padding">
+        <view class="content text-grey" bindtap="hideModal">取消</view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="cu-modal {{modalName=='edit'?'show':''}}" bindtap="hideModal">
+  <view class="cu-dialog">
+    <view class="cu-bar bg-white justify-end">
+      <view class="content">提示</view>
+      <view class="action" bindtap="hideModal">
+        <text class="cuIcon-close text-red"></text>
+      </view>
+    </view>
+    <view class="padding-xl">
+      确定要
+      <text class="text-bold">编辑</text>
+      文章《{{editTitle}}》吗？
+    </view>
+    <view class="cu-bar bg-white">
+      <view class="text-lg flex-sub text-grey solid-left" bindtap="hideModal">取消</view>
+      <view class="text-lg flex-sub text-green text-bold" bindtap="onTapEdit">确定</view>
+    </view>
+  </view>
+</view>
+
+<view class="cu-modal {{modalName=='delete'?'show':''}}" bindtap="hideModal">
+  <view class="cu-dialog">
+    <view class="cu-bar bg-white justify-end">
+      <view class="content">提示</view>
+      <view class="action" bindtap="hideModal">
+        <text class="cuIcon-close text-red"></text>
+      </view>
+    </view>
+    <view class="padding-xl">
+      确定要
+      <text class="text-red">删除</text>
+      文章《{{editTitle}}》吗？
+    </view>
+    <view class="cu-bar bg-white">
+      <view class="text-lg flex-sub text-grey solid-left" bindtap="hideModal">取消</view>
+      <view class="text-lg flex-sub text-red text-bold" bindtap="onTapDelete">删除</view>
+    </view>
+  </view>
+</view>

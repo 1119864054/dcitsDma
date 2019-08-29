@@ -8,7 +8,8 @@
     "pages/myArticle/myArticle",
     "pages/favor/favor",
     "pages/myComment/myComment",
-    "pages/selectRelation/selectRelation"
+    "pages/selectRelation/selectRelation",
+    "pages/editArticle/editArticle"
   ],
   "window": {
     "navigationBarBackgroundColor": "#fff",
@@ -28,7 +29,8 @@
     "color": "#999999",
     "backgroundColor": "#ffffff",
     "position": "bottom",
-    "list": [{
+    "list": [
+      {
         "pagePath": "pages/articleList/articleList",
         "text": "文章",
         "iconPath": "images/tabbar/suggestion.png",

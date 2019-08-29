@@ -1,10 +1,5 @@
-import {
-    DBArticle
-} from '../../db/DBArticle.js';
-
-import {
-    Util
-} from '../../util/util.js';
+import { DBArticle } from '../../db/DBArticle.js';
+import { Util } from '../../util/util.js';
 
 const app = getApp()
 var dbArticle = new DBArticle();
@@ -201,4 +196,8 @@ Page({
             })
         })
     },
+
+    onUnload(){
+        console.log('确定放弃此次编辑？')
+    }
 });

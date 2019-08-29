@@ -2,100 +2,122 @@
     <view slot="backText">返回</view>
     <view slot="content">{{title}}</view>
 </cu-custom>
-<view class="cu-card dynamic no-card" style="margin-bottom:50px">
-    <view class="cu-item shadow">
-        <view class="cu-list menu-avatar">
-            <view class="cu-item">
-                <view class="cu-avatar round lg shadow-blur" style="background-image:url({{avatar}});"></view>
-                <view class="content flex-sub">
-                    <view>{{username}}</view>
-                    <view class="text-gray text-sm flex justify-between">{{date}}</view>
-                </view>
+<view wx:if="{{removed}}" class="bg-white padding-lr">
+    <view class="solids-bottom padding-xs flex align-center">
+        <view class="flex-sub text-center">
+            <view class="solid-bottom text-xsl padding">
+                <text class=" cuIcon-infofill text-red"></text>
             </view>
+            <view class="padding text-grey">该文章已被删除</view>
         </view>
-        <view class="cu-bar bg-white">
-            <view class="action border-title">
-                <text class="text-xl text-bold text-black text-shadow">{{title}}</text>
-                <text class="bg-gradual-blue" style="width:3rem"></text>
-            </view>
-        </view>
-        <block wx:for="{{content}}" wx:for-index="idx" wx:key="idx">
-            <view class="text-left padding-xs padding-lr">{{item}}</view>
-        </block>
-        <view class="grid flex-sub padding-lr col-1">
-            <block wx:for="{{articleImg}}" wx:key="*this">
-                <view class="padding-tb-xs">
-                    <image class="" catch:tap="previewImage" id="{{item}}" class="weui-article__img" src="{{item}}" mode="widthFix" style="width:100%;" />
-                </view>
-            </block>
-        </view>
-        <view class="text-gray text-lg text-left padding" catch:tap="onTapFavor">
-            <text class="cuIcon-attentionfill margin-lr-xs"></text>
-            10
-            <text class="cuIcon-messagefill margin-lr-xs"></text>
-            30
-            <block wx:if="{{isFavor}}">
-                <text class="text-red cuIcon-favorfill margin-lr-xs"></text>
-                <text class="text-red">20 取消收藏</text>
-            </block>
-            <block wx:else>
-                <text class="cuIcon-favor margin-lr-xs"></text>
-                20 收藏
-            </block>
-        </view>
-        <view wx:if="{{relationDetail}}" class="cu-bar bg-white solid-bottom">
-            <view class='action'>
-                <text class="cuIcon-titles text-blue"></text>
-                <text class="text-lg text-bold">关联的文章</text>
-            </view>
-        </view>
-        <view class="padding-sm bg-white">
-            <view class="text-grey text-left padding-bottom-sm" wx:if="{{!relationDetail.length}}">暂无关联文章</view>
-            <block wx:for="{{relationDetail}}" wx:key="_id">
-                <view class="text-blue text-left padding-bottom-sm" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' catch:tap="onTapToRelate">
-                    {{item.title}} .{{item.username}}
-                </view>
-            </block>
-        </view>
-        <view class="cu-bar bg-white solid-bottom">
-            <view class='action'>
-                <text class="cuIcon-titles text-green"></text>
-                <text class="text-lg text-bold">评论</text>
-            </view>
-        </view>
-        <view class="cu-list menu-avatar comment solids-top">
-            <block wx:for="{{comment}}" wx:key="_id">
+    </view>
+</view>
+<block wx:else>
+    <view class="cu-card dynamic no-card" style="margin-bottom:50px">
+        <view class="cu-item shadow">
+            <view class="cu-list menu-avatar">
                 <view class="cu-item">
-                    <view class="cu-avatar round" style="background-image:url({{item.avatar}});"></view>
-                    <view class="content">
-                        <view class="text-grey">{{item.username}}</view>
-                        <view class="text-gray text-content text-df">{{item.content}}</view>
-                        <!-- <view class="bg-grey padding-sm radius margin-top-sm  text-sm">
+                    <view class="cu-avatar round lg shadow-blur" style="background-image:url({{avatar}});"></view>
+                    <view class="content flex-sub">
+                        <view>{{username}}</view>
+                        <view class="text-gray text-sm flex justify-between">{{date}}</view>
+                    </view>
+                </view>
+            </view>
+            <view class="cu-bar bg-white">
+                <view class="action border-title">
+                    <text class="text-xl text-bold text-black text-shadow">{{title}}</text>
+                    <text class="bg-gradual-blue" style="width:3rem"></text>
+                </view>
+            </view>
+            <block wx:for="{{content}}" wx:for-index="idx" wx:key="idx">
+                <view class="text-left padding-xs padding-lr">{{item}}</view>
+            </block>
+            <view class="grid flex-sub padding-lr col-1">
+                <block wx:for="{{articleImg}}" wx:key="*this">
+                    <view class="padding-tb-xs">
+                        <image class="" catch:tap="previewImage" id="{{item}}" class="weui-article__img" src="{{item}}" mode="widthFix" style="width:100%;" />
+                    </view>
+                </block>
+            </view>
+            <view class="text-gray text-lg text-left padding solids-bottom">
+                <view class="cu-capsule round">
+                    <view class="cu-tag bg-blue">浏览</view>
+                    <view class="cu-tag line-blue">123</view>
+                </view>
+                <view class="cu-capsule round">
+                    <view class="cu-tag bg-blue">评论</view>
+                    <view class="cu-tag line-blue">123</view>
+                </view>
+                <block wx:if="{{isFavor}}">
+                    <view class="cu-capsule round" catch:tap="onTapUnFavor" data-favor-id='{{favorId}}'>
+                        <view class="cu-tag bg-red">取消收藏</view>
+                        <view class="cu-tag line-red">{{favorCount}}</view>
+                    </view>
+                </block>
+                <block wx:else>
+                    <view class="cu-capsule round" catch:tap="onTapFavor">
+                        <view class="cu-tag bg-blue">收藏</view>
+                        <view class="cu-tag line-blue">{{favorCount}}</view>
+                    </view>
+                </block>
+            </view>
+            <view class="cu-bar bg-white solid-bottom">
+                <view class='action'>
+                    <text class="cuIcon-titles text-blue"></text>
+                    <text class="text-lg text-bold">关联的文章</text>
+                </view>
+            </view>
+            <view class="padding-sm bg-white">
+                <view class="text-grey text-left padding-bottom-sm" wx:if="{{!relationDetail.length}}">
+                    暂无关联文章
+                </view>
+                <block wx:for="{{relationDetail}}" wx:key="_id">
+                    <view class="text-blue text-left padding-bottom-sm" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' catch:tap="onTapToRelate">
+                        {{item.title}} .{{item.username}}
+                    </view>
+                </block>
+            </view>
+            <view class="cu-bar bg-white solids-top solid-bottom">
+                <view class='action'>
+                    <text class="cuIcon-titles text-green"></text>
+                    <text class="text-lg text-bold">评论</text>
+                </view>
+            </view>
+            <view class="cu-list menu-avatar comment">
+                <block wx:for="{{comment}}" wx:key="_id">
+                    <view class="cu-item solid-bottom">
+                        <view class="cu-avatar round" style="background-image:url({{item.avatar}});"></view>
+                        <view class="content">
+                            <view class="text-grey">{{item.username}}</view>
+                            <view class="text-gray text-content text-df">{{item.content}}</view>
+                            <!-- <view class="bg-grey padding-sm radius margin-top-sm  text-sm">
                             <view class="flex">
                                 <view>凯尔：</view>
                                 <view class="flex-sub">妹妹，你在帮他们给黑暗找借口吗?</view>
                             </view>
                         </view> -->
-                        <view class="margin-top-sm flex justify-between">
-                            <view class="text-gray text-df">
-                                <wux-timeago to="{{item.timeStamp}}" lang="zh_CN" refreshable />
-                            </view>
-                            <view>
-                                <text class="cuIcon-appreciatefill text-red"></text>
-                                <text class="cuIcon-messagefill text-gray margin-left-sm"></text>
+                            <view class="margin-top-sm flex justify-between">
+                                <view class="text-gray text-df">
+                                    <wux-timeago to="{{item.timeStamp}}" lang="zh_CN" refreshable />
+                                </view>
+                                <view>
+                                    <text class="cuIcon-appreciatefill text-red"></text>
+                                    <text class="cuIcon-messagefill text-gray margin-left-sm"></text>
+                                </view>
                             </view>
                         </view>
                     </view>
-                </view>
-            </block>
+                </block>
+            </view>
         </view>
     </view>
-</view>
-<view class="cu-bar input foot">
-    <view class="cu-avatar round" style="background-image:url({{myAvatar}});"></view>
-    <input class="solid-bottom" maxlength="30" cursor-spacing="10" bindinput="getContent" placeholder="添加评论...(最多30个字)" value="{{value}}"></input>
-    <!-- <view class="action">
+    <view class="cu-bar input foot">
+        <view class="cu-avatar round" style="background-image:url({{myAvatar}});"></view>
+        <input class="solid-bottom" maxlength="30" cursor-spacing="10" bindinput="getContent" placeholder="添加评论...(最多30个字)" value="{{value}}"></input>
+        <!-- <view class="action">
         <text class="cuIcon-emojifill text-grey"></text>
     </view> -->
-    <button class="cu-btn bg-green shadow-blur" bind:tap="onTapToSubmit">发送</button>
-</view>
+        <button class="cu-btn bg-green shadow-blur" bind:tap="onTapToSubmit">发送</button>
+    </view>
+</block>
