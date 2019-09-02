@@ -110,7 +110,7 @@ Page({
 
     tapToSelectRelate: function (e) {
         wx.navigateTo({
-            url: '/pages/selectRelation/selectRelation?articleType=' + myData.articleType
+            url: '/pages/selectRelation/selectRelation?articleType=' + myData.articleType + '&articleId=' + myData.articleId
         });
     },
 
@@ -144,7 +144,6 @@ Page({
                 success: (result) => {
                     wx.showToast({
                         title: '新增文章成功',
-                        duration: 3000,
                     })
                 },
             });
@@ -196,7 +195,7 @@ Page({
         })
     },
 
-    onUnload(){
+    onUnload() {
         console.log('确定放弃此次编辑？')
     }
 });

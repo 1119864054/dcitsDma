@@ -7,6 +7,7 @@ var dbUser = new DBUser();
 const cache = new Cache()
 
 var myData = {
+  articleId: '',
   articleType: '',
   value: [],
 }
@@ -17,12 +18,14 @@ Page({
   },
   async onLoad(options) {
     console.log(options.articleType);
+    myData.articleId = options.articleId
     if (options.articleType == 'demand') {
       myData.articleType = 'suggestion'
     } else if (options.articleType == 'technology') {
       myData.articleType = 'demand'
     }
 
+    let articleListNew = []
     let articleList = await dbArticle.getAllArticleData(myData.articleType)
     for (let i = 0; i < articleList.length; i++) {
       let user = cache.getCache(articleList[i].userId)
@@ -31,9 +34,12 @@ Page({
         cache.setCache(articleList[i].userId, user)
       }
       articleList[i].username = user.username
+      if (articleList[i]._id != myData.articleId) {
+        articleListNew.push(articleList[i])
+      }
     }
     this.setData({
-      articleList: articleList
+      articleList: articleListNew
     })
   },
 

@@ -57,7 +57,7 @@
     </view>
   </view>
 </scroll-view>
-<view class="cu-bar search bg-white fixed" style="top:{{CustomBar+45}}px">
+<!-- <view class="cu-bar search bg-white fixed" style="top:{{CustomBar+45}}px">
   <view class="search-form round">
     <text class="cuIcon-search"></text>
     <input type="text" placeholder="搜索文章" confirm-type="search"></input>
@@ -65,8 +65,8 @@
   <view class="action">
     <button class="cu-btn bg-gradual-green shadow-blur round">搜索</button>
   </view>
-</view>
-<swiper current="{{current}}" bindchange="onSwiperChange" style="margin-top:190rpx;height:{{windowHeight-150}}px">
+</view> -->
+<swiper current="{{current}}" bindchange="onSwiperChange" style="margin-top:{{CustomBar+45}}rpx;height:{{windowHeight-70}}px">
   <block wx:for="{{myFavorList}}" wx:key="idx" wx:for-index="idx">
     <swiper-item>
       <scroll-view scroll-y style="height:100%">

@@ -6,7 +6,17 @@
         <view class="cu-load load-icon {{!isLoad?'loading':'over'}}"></view>
     </view>
 </cu-custom>
-<view class="cu-card">
+<view wx:if="{{empty}}" class="bg-gray padding-lr">
+    <view class="padding-xs flex align-center">
+        <view class="flex-sub text-center">
+            <view class="text-xsl padding">
+                <image style="height:100rpx" class="" src="../../images/forpage/empty.svg" mode="aspectFit" lazy-load="false" binderror="" bindload="" />
+            </view>
+            <view class="padding text-grey">暂无评论</view>
+        </view>
+    </view>
+</view>
+<view wx:else class="cu-card">
     <block wx:for="{{myComment}}" wx:for-index="idx" wx:key="_id" wx:for-item="item" data-idx="{{idx}}">
         <view class="cu-item shadow">
             <view class="cu-list padding solids-top">

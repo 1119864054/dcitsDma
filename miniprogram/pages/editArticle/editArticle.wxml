@@ -5,9 +5,7 @@
 <form>
     <view class="cu-form-group margin-top">
         <view class="title">文章类型</view>
-        <picker bindchange="PickerChange" value="{{typeIndex}}" range="{{picker}}">
-            <view class="picker">{{picker[typeIndex]}}</view>
-        </picker>
+        <view class="picker text-bold text-shadow">{{picker[typeIndex]}}</view>
     </view>
     <view class="cu-form-group margin-top">
         <view class="title">标题</view>

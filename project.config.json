@@ -28,7 +28,7 @@
 	"libVersion": "2.8.1",
 	"appid": "wx8c248cdfb82112cf",
 	"projectname": "new_mypro",
-	"cloudfunctionTemplateRoot": "",
+	"cloudfunctionTemplateRoot": "cloudfunctionTemplate",
 	"debugOptions": {
 		"hidedInDevtools": []
 	},

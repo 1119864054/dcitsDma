@@ -13,6 +13,8 @@ import config from '../util/config.js'
 const constPageSize = config.getPageSize
 
 const db = wx.cloud.database()
+const _ = db.command
+
 const app = getApp()
 
 class DBArticle {
@@ -51,9 +53,9 @@ class DBArticle {
   }
 
   //新增文章到数据库
-  addNewArticle(storageKeyName, title, content, images, relation) {
+  async addNewArticle(articleType, title, content, images, relation, updated = false) {
     let id = app.globalData.id
-    db.collection(storageKeyName).add({
+    db.collection(articleType).add({
       data: {
         date: util.formatTime(new Date()),
         title: title,
@@ -61,16 +63,21 @@ class DBArticle {
         articleImg: images,
         content: content,
         timeStamp: new Date().getTime(),
-        articleType: storageKeyName,
-        removed: false
+        articleType: articleType,
+        removed: false,
+        updated: updated,
+
+        favorCount: 0,
+        commentCount: 0,
+        visitCount: 0
       }
     })
       .then(res => {
         //关联关系
         let relationType = ''
-        if (storageKeyName == app.globalData.demandKey) {
+        if (articleType == app.globalData.demandKey) {
           relationType = 'SDRelation'
-        } else if (storageKeyName == app.globalData.technologyKey) {
+        } else if (articleType == app.globalData.technologyKey) {
           relationType = 'DTRelation'
         }
         for (let i = 0; i < relation.length; i++) {
@@ -79,16 +86,96 @@ class DBArticle {
             //消息
             dbMessage.addMessage(relationId, relationType, idArray[1], id)
           })
+
         }
-        console.log('[DBArticle] [' + storageKeyName + '] [新增文章] 成功: _id=', res._id)
+        console.log('[DBArticle] [' + articleType + '] [新增文章] 成功: _id=', res._id)
       })
       .catch(err => {
         wx.showToast({
           icon: 'none',
           title: '新增文章失败'
         })
-        console.error('[DBArticle] [' + storageKeyName + '] [新增文章] 失败：', err)
+        console.error('[DBArticle] [' + articleType + '] [新增文章] 失败：', err)
       })
+  }
+
+  //更新文章（编辑）
+  async updateArticle(articleId, articleType, oldArticleType, title, content, images, relation) {
+    // if (articleType != oldArticleType) {
+    //   await dbRelation.removeRelationByAId(articleId, oldArticleType)
+    //   await this.removeArticle(articleId, oldArticleType)
+    //   await this.addNewArticle(articleType, title, content, images, relation, true)
+    // } 
+    cache.removeCache(articleId)
+    let id = app.globalData.id
+    let res = await db.collection(articleType).doc(articleId).update({
+      data: {
+        title: title,
+        content: content,
+        date: util.formatTime(new Date()),
+        updated: true,
+        articleImg: images
+      }
+    })
+    await dbRelation.removeRelationByAId(articleId, articleType)
+    //关联关系
+    if (relation.length > 0) {
+      let relationType = ''
+      if (articleType == app.globalData.demandKey) {
+        relationType = 'SDRelation'
+      } else if (articleType == app.globalData.technologyKey) {
+        relationType = 'DTRelation'
+      }
+      for (let i = 0; i < relation.length; i++) {
+        let idArray = relation[i].split('^^^')
+        let relationId = await dbRelation.addRelation(relationType, idArray[0], articleId)
+        //消息
+        await dbMessage.addMessage(relationId, relationType, idArray[1], id)
+      }
+      console.log('[DBArticle] [' + articleType + '] [更新文章] 返回信息: ', res)
+    }
+  }
+
+  //更新文章（收藏）
+  updateFavorCount(articleId, articleType, favorCount) {
+    cache.removeCache(articleId)
+    db.collection(articleType).doc(articleId).update({
+      data: {
+        favorCount: _.inc(favorCount)
+      }
+    }).then(res => {
+      console.log('[DBArticle] [更新收藏数] 成功: ', res)
+    }).catch(err => {
+      console.error('[DBArticle] [更新收藏数] 失败: ', err)
+    })
+  }
+
+  //更新文章（评论）
+  updateCommentCount(articleId, articleType, commentCount) {
+    cache.removeCache(articleId)
+    db.collection(articleType).doc(articleId).update({
+      data: {
+        commentCount: _.inc(commentCount)
+      }
+    }).then(res => {
+      console.log('[DBArticle] [更新评论数] 成功: ', res)
+    }).catch(err => {
+      console.error('[DBArticle] [更新评论数] 失败: ', err)
+    })
+  }
+
+  //更新文章（访问）
+  updateVisitCount(articleId, articleType, visitCount) {
+    cache.removeCache(articleId)
+    db.collection(articleType).doc(articleId).update({
+      data: {
+        visitCount: _.inc(visitCount)
+      }
+    }).then(res => {
+      console.log('[DBArticle] [更新访问数] 成功: ', res)
+    }).catch(err => {
+      console.error('[DBArticle] [更新访问数] 失败: ', err)
+    })
   }
 
   //根据用户ID从数据库读取文章
@@ -108,6 +195,7 @@ class DBArticle {
     })
   }
 
+
   //根据文章ID从数据库读取文章
   getArticleByAIdFromDB(articleId, articleType) {
     return new Promise((resolve, reject) => {
@@ -123,7 +211,7 @@ class DBArticle {
     })
   }
 
-  //删除文章
+  //删除文章（标记）
   removeArticle(articleId, articleType) {
     return new Promise((resolve, reject) => {
       db.collection(articleType).doc(articleId).update({
@@ -131,13 +219,49 @@ class DBArticle {
           removed: true
         }
       }).then(res => {
-        console.log('[DBArticle] [删除article] 成功: ', res)
+        console.log('[DBArticle] [删除article（标记）] 成功: ', res)
         cache.removeCache(articleId)
         resolve()
       }).catch(err => {
-        console.error('[DBArticle] [删除article] 失败: ', err)
+        console.error('[DBArticle] [删除article（标记）] 失败: ', err)
         reject()
       })
+    })
+  }
+
+  //删除文章（真实）
+  removeArticleReal(articleId, articleType) {
+    return new Promise((resolve, reject) => {
+      db.collection(articleType).doc(articleId).remove().then(res => {
+        console.log('[DBArticle] [删除article（真实）] 成功: ', res)
+        cache.removeCache(articleId)
+        resolve()
+      }).catch(err => {
+        console.error('[DBArticle] [删除article（真实）] 失败: ', err)
+        reject()
+      })
+    })
+  }
+
+  //搜索文章
+  searchArticle(articleType, key, pageSize = constPageSize, currentPage = 0) {
+    return new Promise((resolve, reject) => {
+      db.collection(articleType).where({
+        title: new db.RegExp({
+          regexp: '[' + key + ']',
+          options: 'i',
+        })
+      })
+        .orderBy('date', 'desc')
+        .skip(currentPage * pageSize)
+        .limit(pageSize)
+        .get().then(res => {
+          console.log('[DBArticle] [search] 成功: ', res.data)
+          resolve(res.data)
+        }).catch(err => {
+          console.error('[DBArticle] [search] 失败: ', err)
+          reject(res)
+        })
     })
   }
 }

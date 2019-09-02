@@ -77,6 +77,21 @@ class DBFavor {
                 })
         })
     }
+
+    //根据文章id获取收藏数
+    getFavorCountByAId(articleId) {
+        return new Promise((resolve, reject) => {
+            db.collection('favor').where({
+                articleId: articleId
+            }).count().then(res => {
+                console.log('[DBRelation] [获取收藏数量] 成功: ', res.total)
+                resolve(res.total)
+            }).catch(err => {
+                console.error('[DBRelation] [获取收藏数量] 失败: ', err)
+                reject()
+            })
+        })
+    }
 }
 
 export {

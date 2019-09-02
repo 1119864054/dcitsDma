@@ -19,7 +19,8 @@ Page({
    */
   data: {
     message: [],
-    isLoad: false
+    isLoad: false,
+    empty: true
   },
 
   /**
@@ -39,17 +40,15 @@ Page({
     })
 
     let res1 = await dbMessage.getMessage()
-    if (res1) {
-      let message = res1.data
-      console.log('message', message)
-
+    let message = res1.data
+    if (message.length > 0) {
       for (let i = 0; i < message.length; i++) {
-
         let res2 = await dbRelation.getRelationById(message[i].relationId, message[i].relationType)
-        if (res2) {
-          let relation = res2.data[0]
-          console.log('relation', relation)
-
+        let relation = res2.data[0]
+        console.log('relation', relation)
+        if (!relation) {
+          dbMessage.removeMessageByRId(message[i].relationId)
+        } else {
           if (message[i].relationType == 'SDRelation') {
             let demand = cache.getCache(relation.demandId)
             if (!demand) {
@@ -143,6 +142,11 @@ Page({
       cache.setCache('message', message)
       this.setData({
         message: message,
+        isLoad: true
+      })
+    } else {
+      this.setData({
+        empty: true,
         isLoad: true
       })
     }

@@ -15,42 +15,45 @@ let pageSize = config.getPageSize
 let currentPage = 0
 let articleType = ['suggestion', 'demand', 'technology']
 
+var myData = {
+  search: ''
+}
+
 Page({
 
   data: {
+    isLoad: false,
     articleList: '',
     loadMore_suggestion: true,
     loadMore_demand: true,
     loadMore_technology: true,
     current: 0,
     windowHeight: '',
-    CustomBar: '',
-    isLoad: false,
+    CustomBar: 0,
     search: ''
   },
 
-  onLoad: function (options) {
-    let suggestionListCache = cache.getCache('suggestion')
-    let demandListCache = cache.getCache('demand')
-    let technologyListCache = cache.getCache('technology')
+  async onLoad(options) {
+    let search = options.search
+    myData.search = search
+
+    this.getNewData('suggestion', search)
+    this.getNewData('demand', search)
+    this.getNewData('technology', search)
+
     this.setData({
-      suggestion: suggestionListCache,
-      demand: demandListCache,
-      technology: technologyListCache,
+      windowHeight: app.globalData.windowHeight,
       CustomBar: app.globalData.CustomBar,
-      windowHeight: app.globalData.windowHeight
+      search: search
     })
   },
 
-  onShow: function (options) {
-    this.getNewData('suggestion')
-    this.getNewData('demand')
-    this.getNewData('technology')
+  getSearch(e) {
+    myData.search = e.detail.value
   },
 
-  onPullDownRefresh: function () {
-    wx.stopPullDownRefresh()
-    this.getNewData(articleType[this.data.current])
+  onTapToSearch() {
+    this.getNewData(articleType[this.data.current], myData.search)
   },
 
   loadMore: function () {
@@ -82,6 +85,38 @@ Page({
     })
   },
 
+  async getNewData(articleType, search) {
+    let key = 'loadMore_' + [articleType]
+    this.setData({
+      isLoad: false
+    })
+    currentPage = 1
+    let articleList = await dbArticle.searchArticle(articleType, search)
+    if (articleList) {
+      for (let i = 0; i < articleList.length; i++) {
+        let userInfo = cache.getCache(articleList[i].userId)
+        if (!userInfo) {
+          userInfo = await dbUser.getUser(articleList[i].userId)
+          cache.setCache(articleList[i].userId, userInfo)
+        }
+        articleList[i].username = userInfo.username
+        articleList[i].avatar = userInfo.avatar
+        cache.setCache(articleList[i]._id, articleList[i])
+      }
+      cache.setCache(articleType, articleList)
+    }
+    console.log(articleType, ':articleList:', articleList)
+    if (articleList.length < pageSize) {
+      this.setData({
+        [key]: false
+      })
+    }
+    this.setData({
+      [articleType]: articleList,
+      isLoad: true
+    })
+  },
+
   async getMoreData(articleType) {
     console.log('currentPage——————', currentPage)
     let key = 'loadMore_' + [articleType]
@@ -92,7 +127,7 @@ Page({
     let that = this;
     let articleList = this.data[articleType]
 
-    let newArticleList = await dbArticle.getAllArticleData(articleType, pageSize, currentPage)
+    let newArticleList = await dbArticle.searchArticle(articleType, myData.search, pageSize, currentPage)
     if (newArticleList && newArticleList.length > 0) {
       currentPage++;
       for (let i = 0; i < newArticleList.length; i++) {
@@ -119,52 +154,4 @@ Page({
       });
     }
   },
-
-  async getNewData(articleType) {
-    let key = 'loadMore_' + [articleType]
-    this.setData({
-      isLoad: false
-    })
-    currentPage = 1
-    let articleList = await dbArticle.getAllArticleData(articleType)
-    if (articleList) {
-      for (let i = 0; i < articleList.length; i++) {
-        let userInfo = cache.getCache(articleList[i].userId)
-        if (!userInfo) {
-          userInfo = await dbUser.getUser(articleList[i].userId)
-          cache.setCache(articleList[i].userId, userInfo)
-        }
-        articleList[i].username = userInfo.username
-        articleList[i].avatar = userInfo.avatar
-        cache.setCache(articleList[i]._id, articleList[i])
-      }
-      cache.setCache(articleType, articleList)
-    }
-    console.log(articleType, ':articleList:', articleList)
-    if (articleList.length < pageSize) {
-      this.setData({
-        [key]: false
-      })
-    }
-    this.setData({
-      [articleType]: articleList,
-      isLoad: true
-    })
-  },
-
-  getSearch(e) {
-    this.data.search = e.detail.value
-  },
-
-  onTapToSearch() {
-    let search = this.data.search
-    if (search) {
-      this.setData({
-        search: ''
-      })
-      wx.navigateTo({
-        url: '/pages/search/search?search=' + search
-      });
-    }
-  }
 })

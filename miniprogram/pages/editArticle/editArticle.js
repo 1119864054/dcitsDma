@@ -1,8 +1,10 @@
 import { DBArticle } from '../../db/DBArticle';
 import { Cache } from '../../db/Cache';
+import { DBRelation } from '../../db/DBRelation';
 
 var dbArticle = new DBArticle();
 var cache = new Cache()
+var dbRelation = new DBRelation()
 
 const app = getApp()
 
@@ -10,6 +12,8 @@ let myData = {
   imagesCloudId: [],
   articleTypeList: ['suggestion', 'demand', 'technology'],
   articleType: 'suggestion',
+  articleId: '',
+  oldArticleType: ''
 }
 
 Page({
@@ -29,6 +33,9 @@ Page({
   async onLoad(options) {
     let articleId = options.articleId
     let articleType = options.articleType
+    myData.articleId = articleId
+    myData.articleType = articleType
+    myData.oldArticleType = articleType
 
     let article = cache.getCache(articleId)
     if (!article) {
@@ -44,12 +51,43 @@ Page({
       }
     }
 
+    let relation = []
+    let localRelation = []
+    if (articleType != 'suggestion') {
+      let res = await dbRelation.getRelation(articleId, articleType)
+      relation = res.data
+      if (articleType == 'demand') {
+        for (let i = 0; i < relation.length; i++) {
+          let article = cache.getCache(relation[i].suggestionId)
+          if (!article) {
+            article = (await dbArticle.getArticleByAIdFromDB(relation[i].suggestionId, 'suggestion'))[0]
+            cache.setCache(relation[i].suggestionId, article)
+          }
+          let temp = [article._id, article.userId, article.title].join('^^^')
+          localRelation.push(temp)
+        }
+      } else if (articleType == 'technology') {
+        for (let i = 0; i < relation.length; i++) {
+          let article = cache.getCache(relation[i].demandId)
+          if (!article) {
+            article = (await dbArticle.getArticleByAIdFromDB(relation[i].demandId, 'demand'))[0]
+            cache.setCache(relation[i].demandId, article)
+          }
+          let temp = [article._id, article.userId, article.title].join('^^^')
+          localRelation.push(temp)
+        }
+      }
+    }
+
     this.setData({
       title: article.title,
       content: article.content,
       imgList: article.articleImg,
-      typeIndex: typeIndex
+      typeIndex: typeIndex,
+      relation: localRelation
     })
+
+    this.onShow()
   },
 
   onShow: function () {
@@ -136,7 +174,7 @@ Page({
 
   tapToSelectRelate: function (e) {
     wx.navigateTo({
-      url: '/pages/selectRelation/selectRelation?articleType=' + myData.articleType
+      url: '/pages/selectRelation/selectRelation?articleType=' + myData.articleType + '&articleId=' + myData.articleId
     });
   },
 
@@ -156,19 +194,19 @@ Page({
       wx.showLoading({
         title: '上传文章',
       })
-      await dbArticle.addNewArticle(myData.articleType, this.data.title, this.data.content, myData.imagesCloudId, this.data.relation)
+      await dbArticle.updateArticle(myData.articleId, myData.articleType, myData.oldArticleType, this.data.title, this.data.content, myData.imagesCloudId, this.data.relation)
       myData = {
         imagesCloudId: [],
         articleTypeList: ['suggestion', 'demand', 'technology'],
         articleType: 'suggestion',
+        articleId: '',
       }
       wx.hideLoading();
-      wx.switchTab({
-        url: '/pages/articleList/articleList',
+      wx.navigateBack({
+        delta: 1,
         success: (result) => {
           wx.showToast({
-            title: '新增文章成功',
-            duration: 3000,
+            title: '更新文章成功',
           })
         },
       });
@@ -185,13 +223,17 @@ Page({
 
     for (var i = 0; i < this.data.imgList.length; i++) {
       const filePath = this.data.imgList[i]
-      // 上传图片
-      const cloudPath = app.globalData.openid + i + (new Date()).valueOf() + filePath.match(/\.[^.]+?$/)
+      if (!filePath.startsWith('cloud')) {
+        // 上传图片
+        const cloudPath = app.globalData.openid + i + (new Date()).valueOf() + filePath.match(/\.[^.]+?$/)
 
-      console.log('filePath  ', filePath)
-      console.log('cloudPath  ', cloudPath)
+        console.log('filePath  ', filePath)
+        console.log('cloudPath  ', cloudPath)
 
-      await that.uploadOneImage(cloudPath, filePath)
+        await that.uploadOneImage(cloudPath, filePath)
+      } else {
+        myData.imagesCloudId = myData.imagesCloudId.concat(filePath)
+      }
     }
     console.log('[上传全部文件] 成功')
     wx.hideLoading();

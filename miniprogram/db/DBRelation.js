@@ -2,6 +2,8 @@ const db = wx.cloud.database()
 
 import { Util } from '../util/util';
 
+const util = new Util()
+
 class DBRelation {
     constructor() {
 
@@ -9,7 +11,6 @@ class DBRelation {
 
     //添加关联关系
     addRelation(relationType, firstId, secondId) {
-        let util = new Util()
         if (relationType == 'SDRelation') {
             return new Promise((resolve, reject) => {
                 db.collection(relationType).add({
@@ -96,6 +97,26 @@ class DBRelation {
                 })
         })
     }
+
+    //删除一篇文章的所有关联关系
+    removeRelationByAId(articleId, articleType) {
+        return new Promise((resolve, reject) => {
+            wx.cloud.callFunction({
+                name: 'removeRelation',
+                data: {
+                    articleId: articleId,
+                    articleType: articleType,
+                }
+            }).then(res => {
+                console.log('[DBRelation] [删除关联关系] 成功: ', res.result)
+                resolve()
+            }).catch(err => {
+                console.error('[DBRelation] [删除关联关系] 失败: ', err)
+                reject()
+            })
+        })
+    }
+
 }
 
 export {

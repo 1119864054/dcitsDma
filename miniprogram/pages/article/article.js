@@ -6,6 +6,7 @@ import { Cache } from '../../db/Cache';
 import { DBFavor } from '../../db/DBFavor';
 import { DBComment } from '../../db/DBComment';
 import { DBRelation } from '../../db/DBRelation';
+import { DBLike } from '../../db/DBLike';
 
 var util = new Util();
 var dbArticle = new DBArticle();
@@ -14,6 +15,7 @@ var cache = new Cache()
 var dbFavor = new DBFavor()
 var dbComment = new DBComment()
 var dbRelation = new DBRelation()
+var dbLike = new DBLike()
 
 var myData = {
   articleId: '',
@@ -35,6 +37,8 @@ Page({
     value: '',
     favorId: '',
     favorCount: 0,
+    visitCount: 0,
+    updated: false,
 
     comment: [],
     relationDetail: [],
@@ -84,7 +88,9 @@ Page({
         res = await dbUser.getUser(articleData.userId)
         cache.setCache(articleData.userId, res)
       }
+
       let content = articleData.content.split("。")
+
       this.setData({
         comment: comment,
         username: res.username,
@@ -95,7 +101,10 @@ Page({
         title: articleData.title,
         articleTypeZh: articleTypeZh,
         articleType: articleType,
-        myAvatar: app.globalData.avatar
+        myAvatar: app.globalData.avatar,
+        favorCount: articleData.favorCount,
+        visitCount: articleData.visitCount,
+        updated: articleData.updated
       })
 
       dbFavor.isFavor(articleId).then(res => {
@@ -111,6 +120,11 @@ Page({
 
       this.getComment()
       this.getRelation()
+
+      if (!cache.getCache(articleId + '_visit')) {
+        dbArticle.updateVisitCount(articleId, articleType, 1)
+        cache.setCache(articleId + '_visit', true)
+      }
     }
   },
 
@@ -149,6 +163,7 @@ Page({
           this.setData({
             favorId: res._id
           })
+          dbArticle.updateFavorCount(myData.articleId, myData.articleType, 1)
           console.log('收藏成功：', res);
           wx.showToast({
             title: '收藏成功',
@@ -171,6 +186,7 @@ Page({
     })
     let favorId = e.currentTarget.dataset.favorId
     dbFavor.removeFavor(favorId)
+    dbArticle.updateFavorCount(myData.articleId, myData.articleType, -1)
   },
 
   onTapToRelate(e) {
@@ -187,6 +203,13 @@ Page({
     if (res1) {
       let comment = res1.data
       for (let i = 0; i < comment.length; i++) {
+        let isLiked = await dbLike.isLiked(comment[i]._id)
+        if (isLiked.length > 0) {
+          comment[i].isLiked = true
+          comment[i].likeId = isLiked[0]._id
+        } else {
+          comment[i].isLiked = false
+        }
         let userInfo = cache.getCache(comment[i].userId)
         if (userInfo) {
           comment[i].username = userInfo.username
@@ -218,6 +241,7 @@ Page({
         dbComment.addComment(myData.articleId, myData.commentContent, myData.articleType).then(() => {
           that.getComment()
           myData.commentContent = ''
+          dbArticle.updateCommentCount(myData.articleId, myData.articleType, 1)
         })
       } else {
         wx.showToast({
@@ -232,7 +256,43 @@ Page({
       });
 
     }
+  },
 
+  reply(e) {
+    let username = e.currentTarget.dataset.username
+    this.setData({
+      value: '回复 @' + username + ' : '
+    })
+  },
+
+  like(e) {
+    let comment = this.data.comment
+    comment[e.currentTarget.dataset.idx].isLiked = true
+    comment[e.currentTarget.dataset.idx].likeCount++
+    this.setData({
+      comment: comment
+    })
+    wx.showToast({
+      title: '点赞成功',
+      icon: 'none'
+    });
+    dbLike.addLike(e.currentTarget.dataset.commentId)
+    dbComment.updateLikeCount(e.currentTarget.dataset.commentId, 1)
+  },
+
+  cancelLike(e) {
+    let comment = this.data.comment
+    comment[e.currentTarget.dataset.idx].isLiked = false
+    comment[e.currentTarget.dataset.idx].likeCount--
+    this.setData({
+      comment: comment
+    })
+    wx.showToast({
+      title: '取消点赞',
+      icon: 'none'
+    });
+    dbLike.removeLike(e.currentTarget.dataset.likeId)
+    dbComment.updateLikeCount(e.currentTarget.dataset.commentId, -1)
   },
 
   getContent: function (e) {

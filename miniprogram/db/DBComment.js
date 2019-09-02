@@ -2,6 +2,7 @@ const db = wx.cloud.database()
 const app = getApp()
 
 import { Util } from '../util/util';
+const _ = db.command
 
 class DBComment {
     constructor() {
@@ -20,7 +21,8 @@ class DBComment {
                     content: content,
                     date: util.formatTime(new Date()),
                     articleType: articleType,
-                    timeStamp: new Date().getTime()
+                    timeStamp: new Date().getTime(),
+                    likeCount: 0
                 }
             }).then(res => {
                 console.log('[DBComment] [添加comment] 成功: ', res)
@@ -39,6 +41,7 @@ class DBComment {
                 .where({
                     articleId: articleId,
                 })
+                .orderBy('likeCount', 'desc')
                 .orderBy('date', 'desc')
                 .get().then(res => {
                     console.log('[DBComment] [查询comment] 成功: ', res)
@@ -67,6 +70,38 @@ class DBComment {
                     console.error('[DBComment] [查询mycomment] 失败: ', err)
                     reject()
                 })
+        })
+    }
+
+    //根据文章id获取评论数
+    getCommentCountByAId(articleId) {
+        return new Promise((resolve, reject) => {
+            db.collection('comment').where({
+                articleId: articleId
+            }).count().then(res => {
+                console.log('[DBRelation] [获取评论数量] 成功: ', res.total)
+                resolve(res.total)
+            }).catch(err => {
+                console.error('[DBRelation] [获取评论数量] 失败: ', err)
+                reject()
+            })
+        })
+    }
+
+    //点赞
+    updateLikeCount(commentId, likeCount) {
+        return new Promise((resolve, reject) => {
+            db.collection('comment').doc(commentId).update({
+                data: {
+                    likeCount: _.inc(likeCount)
+                }
+            }).then(res => {
+                console.log('[DBRelation] [点赞] 成功: ', res)
+                resolve()
+            }).catch(err => {
+                console.error('[DBRelation] [点赞] 失败: ', err)
+                reject()
+            })
         })
     }
 }

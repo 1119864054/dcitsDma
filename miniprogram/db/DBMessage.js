@@ -81,6 +81,24 @@ class DBMessage {
             console.error('[DBMessage] [更新message] 失败: ', err)
         })
     }
+
+    //删除一篇文章的所有关联文章的消息
+    removeMessageByRId(relationId) {
+        return new Promise((resolve, reject) => {
+            wx.cloud.callFunction({
+                name: 'removeMessage',
+                data: {
+                    relationId: relationId,
+                }
+            }).then(res => {
+                console.log('[DBRelation] [删除关联消息] 成功: ', res.result)
+                resolve()
+            }).catch(err => {
+                console.error('[DBRelation] [删除关联消息] 失败: ', err)
+                reject()
+            })
+        })
+    }
 }
 
 

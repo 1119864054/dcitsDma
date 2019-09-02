@@ -41,6 +41,10 @@ Page({
       windowHeight: app.globalData.windowHeight,
       myArticleList: myArticleList
     })
+
+  },
+
+  onShow: function () {
     this.getMyArticle()
   },
 
@@ -68,9 +72,9 @@ Page({
 
   onTapEdit(e) {
     this.hideModal()
-    // wx.navigateTo({
-    //   url: '/pages/editArticle/editArticle?articleId=' + myData.articleId + '&articleType=' + myData.articleType,
-    // });
+    wx.navigateTo({
+      url: '/pages/editArticle/editArticle?articleId=' + myData.articleId + '&articleType=' + myData.articleType,
+    });
   },
 
   async onTapDelete(e) {
@@ -84,7 +88,7 @@ Page({
       wx.showToast({
         title: '删除成功',
         icon: 'success',
-        success:res=>{
+        success: res => {
           this.getMyArticle()
         }
       });

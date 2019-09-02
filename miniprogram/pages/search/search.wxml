@@ -1,11 +1,11 @@
 <import src="../../template/articleItem.wxml" />
 <cu-custom bgColor="bg-gradual-blue" isBack="{{true}}">
-  <view slot="backText"></view>
-  <view wx:if="{{!isLoad}}" slot="content">加载中</view>
-  <view wx:else slot="content">文章</view>
-  <view class="action" slot="right">
-    <view class="cu-load load-icon {{!isLoad?'loading':'over'}}"></view>
-  </view>
+    <view slot="backText"></view>
+    <view wx:if="{{!isLoad}}" slot="content">加载中</view>
+    <view wx:else slot="content">搜索</view>
+    <view class="action" slot="right">
+        <view class="cu-load load-icon {{!isLoad?'loading':'over'}}"></view>
+    </view>
 </cu-custom>
 <scroll-view scroll-x class="bg-white nav fixed" style="top:{{CustomBar}}px;height:45px">
   <view class="flex text-center" style="height:100%">
@@ -29,7 +29,7 @@
     <button class="cu-btn bg-gradual-green shadow-blur round" catch:tap="onTapToSearch">搜索</button>
   </view>
 </view>
-<swiper current="{{current}}" bindchange="onSwiperChange" style="margin-top:190rpx;height:{{windowHeight-150}}px">
+<swiper current="{{current}}" bindchange="onSwiperChange" style="margin-top:190rpx;height:{{windowHeight-100}}px">
   <swiper-item>
     <scroll-view scroll-y style="height:100%" bindscrolltolower='loadMore'>
       <view class="cu-card case">
@@ -61,4 +61,3 @@
     </scroll-view>
   </swiper-item>
 </swiper>
-<my-fab-button></my-fab-button>

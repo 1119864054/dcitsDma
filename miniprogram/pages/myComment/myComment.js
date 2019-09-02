@@ -14,6 +14,7 @@ Page({
   data: {
     myComment: [],
     isLoad: false,
+    empty: false
   },
 
   /**
@@ -60,55 +61,61 @@ Page({
     let myComment = []
 
     let commentList = await dbComment.getMyComment()
+    if (commentList.length > 0) {
+      let headAId = commentList[0].articleId
+      let headAType = commentList[0].articleType
+      let article = cache.getCache(headAId)
+      if (!article) {
+        article = (await dbArticle.getArticleByAIdFromDB(headAId, headAType))[0]
+      }
+      let headATitle = article.title
+      let temp = {}
+      let partMyComment = []
 
-    let headAId = commentList[0].articleId
-    let headAType = commentList[0].articleType
-    let article = cache.getCache(headAId)
-    if (!article) {
-      article = (await dbArticle.getArticleByAIdFromDB(headAId, headAType))[0]
-    }
-    let headATitle = article.title
-    let temp = {}
-    let partMyComment = []
+      for (let i = 0; i < commentList.length; i++) {
+        let nowAId = commentList[i].articleId
+        let nowAType = commentList[i].articleType
+        if (nowAId != headAId) {
+          temp.articleId = headAId
+          temp.articleType = headAType
+          temp.title = headATitle
+          temp.partMyComment = partMyComment
 
-    for (let i = 0; i < commentList.length; i++) {
-      let nowAId = commentList[i].articleId
-      let nowAType = commentList[i].articleType
-      if (nowAId != headAId) {
+          myComment.push(temp)
+
+          article = cache.getCache(nowAId)
+          if (!article) {
+            article = (await dbArticle.getArticleByAIdFromDB(nowAId, nowAType))[0]
+          }
+
+          headAId = article._id
+          headAType = article.articleType
+          headATitle = article.title
+          partMyComment = []
+          temp = {}
+        }
+        partMyComment.push(commentList[i])
+      }
+      if (partMyComment) {
         temp.articleId = headAId
         temp.articleType = headAType
         temp.title = headATitle
         temp.partMyComment = partMyComment
-
         myComment.push(temp)
-
-        article = cache.getCache(nowAId)
-        if (!article) {
-          article = (await dbArticle.getArticleByAIdFromDB(nowAId, nowAType))[0]
-        }
-
-        headAId = article._id
-        headAType = article.articleType
-        headATitle = article.title
-        partMyComment = []
-        temp = {}
       }
-      partMyComment.push(commentList[i])
-    }
-    if (partMyComment) {
-      temp.articleId = headAId
-      temp.articleType = headAType
-      temp.title = headATitle
-      temp.partMyComment = partMyComment
-      myComment.push(temp)
-    }
 
-    console.log('myComment', myComment)
+      console.log('myComment', myComment)
 
-    this.setData({
-      myComment: myComment,
-      isLoad: true
-    })
-    cache.setCache('myComment', myComment)
+      this.setData({
+        myComment: myComment,
+        isLoad: true
+      })
+      cache.setCache('myComment', myComment)
+    } else {
+      this.setData({
+        empty: true,
+        isLoad: true
+      })
+    }
   }
 })

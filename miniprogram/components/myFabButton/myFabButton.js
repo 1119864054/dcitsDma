@@ -9,7 +9,7 @@ Component({
       type: Array,
       value: [{
         label: '新建文章',
-        icon: '../../images/fabbutton/suggestion.svg'
+        icon: '../../images/fabbutton/write_fill.svg'
       }]
     }
   },

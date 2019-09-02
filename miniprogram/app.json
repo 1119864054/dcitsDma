@@ -9,7 +9,8 @@
     "pages/favor/favor",
     "pages/myComment/myComment",
     "pages/selectRelation/selectRelation",
-    "pages/editArticle/editArticle"
+    "pages/editArticle/editArticle",
+    "pages/search/search"
   ],
   "window": {
     "navigationBarBackgroundColor": "#fff",

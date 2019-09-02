@@ -13,11 +13,11 @@
                         <wux-timeago to="{{timeStamp}}" lang="zh_CN" refreshable />
                         <view class="text-gray text-sm">
                             <text class="cuIcon-attentionfill margin-lr-xs" />
-                            10
-                            <text class="cuIcon-appreciatefill margin-lr-xs" />
-                            20
+                            {{visitCount}}
                             <text class="cuIcon-messagefill margin-lr-xs" />
-                            30
+                            {{commentCount}}
+                            <text class="cuIcon-favorfill margin-lr-xs" />
+                            {{favorCount}}
                         </view>
                     </view>
                 </view>

@@ -6,12 +6,22 @@
         <view class="cu-load load-icon {{!isLoad?'loading':'over'}}"></view>
     </view>
 </cu-custom>
-<view class="cu-card dynamic {{isCard?'no-card':''}}">
+<view wx:if="{{empty}}" class="bg-gray padding-lr">
+    <view class="padding-xs flex align-center">
+        <view class="flex-sub text-center">
+            <view class="text-xsl padding">
+                <image style="height:100rpx" class="" src="../../images/forpage/empty.svg" mode="aspectFit" lazy-load="false" binderror="" bindload="" />
+            </view>
+            <view class="padding text-grey">暂无消息</view>
+        </view>
+    </view>
+</view>
+<view wx:else class="cu-card dynamic {{isCard?'no-card':''}}">
 <block wx:for="{{message}}" wx:key="_id">
     <view class="cu-item shadow-warp" data-message-id='{{item._id}}' bind:tap="onTapCheck">
         <view class="cu-list menu-avatar">
             <view class="cu-item">
-                <view class="cu-avatar round lg" style="background-image:url({{item.avatar}});"><view wx:if="{{!item.checked}}" class="cu-tag badge"></view></view>
+                <view class="cu-avatar round lg" style="background-image:url({{item.avatar}});"><view wx:if="{{!item.checked}}" class="cu-tag badge">未读</view></view>
                 <view class="content flex-sub">
                     <view>{{item.username}}</view>
                     <view class="text-gray text-sm flex justify-between"><wux-timeago to="{{item.date}}" lang="zh_CN" refreshable /></view>

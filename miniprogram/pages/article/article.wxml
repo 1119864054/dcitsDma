@@ -6,9 +6,9 @@
     <view class="solids-bottom padding-xs flex align-center">
         <view class="flex-sub text-center">
             <view class="solid-bottom text-xsl padding">
-                <text class=" cuIcon-infofill text-red"></text>
+                <text class="cuIcon-infofill text-red text-shadow"></text>
             </view>
-            <view class="padding text-grey">该文章已被删除</view>
+            <view class="padding text-grey">该文章已被删除或修改</view>
         </view>
     </view>
 </view>
@@ -20,7 +20,10 @@
                     <view class="cu-avatar round lg shadow-blur" style="background-image:url({{avatar}});"></view>
                     <view class="content flex-sub">
                         <view>{{username}}</view>
-                        <view class="text-gray text-sm flex justify-between">{{date}}</view>
+                        <view class="text-gray text-sm flex justify-between">
+                            <block wx:if="{{updated}}">更新于</block>
+                            {{date}}
+                        </view>
                     </view>
                 </view>
             </view>
@@ -43,11 +46,11 @@
             <view class="text-gray text-lg text-left padding solids-bottom">
                 <view class="cu-capsule round">
                     <view class="cu-tag bg-blue">浏览</view>
-                    <view class="cu-tag line-blue">123</view>
+                    <view class="cu-tag line-blue">{{visitCount}}</view>
                 </view>
                 <view class="cu-capsule round">
                     <view class="cu-tag bg-blue">评论</view>
-                    <view class="cu-tag line-blue">123</view>
+                    <view class="cu-tag line-blue">{{comment.length}}</view>
                 </view>
                 <block wx:if="{{isFavor}}">
                     <view class="cu-capsule round" catch:tap="onTapUnFavor" data-favor-id='{{favorId}}'>
@@ -85,8 +88,8 @@
                 </view>
             </view>
             <view class="cu-list menu-avatar comment">
-                <block wx:for="{{comment}}" wx:key="_id">
-                    <view class="cu-item solid-bottom">
+                <block wx:for="{{comment}}" wx:key="_id" wx:for-index="idx">
+                    <view class="cu-item solid-bottom" data-username="{{item.username}}" catch:tap="reply">
                         <view class="cu-avatar round" style="background-image:url({{item.avatar}});"></view>
                         <view class="content">
                             <view class="text-grey">{{item.username}}</view>
@@ -101,9 +104,13 @@
                                 <view class="text-gray text-df">
                                     <wux-timeago to="{{item.timeStamp}}" lang="zh_CN" refreshable />
                                 </view>
-                                <view>
+                                <view wx:if="{{item.isLiked}}" catch:tap="cancelLike" data-like-id="{{item.likeId}}" data-comment-id="{{item._id}}" data-idx="{{idx}}">
                                     <text class="cuIcon-appreciatefill text-red"></text>
-                                    <text class="cuIcon-messagefill text-gray margin-left-sm"></text>
+                                    {{item.likeCount}}
+                                </view>
+                                <view wx:else catch:tap="like" data-comment-id="{{item._id}}" data-idx="{{idx}}">
+                                    <text class="cuIcon-appreciate text-grey"></text>
+                                    {{item.likeCount}}
                                 </view>
                             </view>
                         </view>
@@ -114,7 +121,7 @@
     </view>
     <view class="cu-bar input foot">
         <view class="cu-avatar round" style="background-image:url({{myAvatar}});"></view>
-        <input class="solid-bottom" maxlength="30" cursor-spacing="10" bindinput="getContent" placeholder="添加评论...(最多30个字)" value="{{value}}"></input>
+        <input class="solid-bottom" maxlength="100" cursor-spacing="10" bindinput="getContent" placeholder="添加评论..." value="{{value}}"></input>
         <!-- <view class="action">
         <text class="cuIcon-emojifill text-grey"></text>
     </view> -->
