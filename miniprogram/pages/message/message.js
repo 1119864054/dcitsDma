@@ -20,7 +20,7 @@ Page({
   data: {
     message: [],
     isLoad: false,
-    empty: true
+    empty: false
   },
 
   /**
