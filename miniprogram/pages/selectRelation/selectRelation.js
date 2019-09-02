@@ -26,7 +26,7 @@ Page({
     }
 
     let articleListNew = []
-    let articleList = await dbArticle.getAllArticleData(myData.articleType)
+    let articleList = await dbArticle.getAllArticleDataUnlimited(myData.articleType)
     for (let i = 0; i < articleList.length; i++) {
       let user = cache.getCache(articleList[i].userId)
       if (!user) {

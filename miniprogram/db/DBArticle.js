@@ -52,6 +52,34 @@ class DBArticle {
     })
   }
 
+  //从数据库读取文章列表(不分页)
+  getAllArticleDataUnlimited(storageKeyName) {
+    return new Promise((resolve, reject) => {
+      db.collection(storageKeyName).where({
+        removed: false
+      })
+        .orderBy('date', 'desc')
+        .get()
+        .then(res => {
+          let result = res.data
+          if (result.length > 0) {
+            console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', result)
+          } else {
+            console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 未查询到记录', result)
+          }
+          resolve(result)
+        })
+        .catch(err => {
+          wx.showToast({
+            icon: 'none',
+            title: '查询记录失败'
+          })
+          console.error('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 失败：', err)
+          reject()
+        })
+    })
+  }
+
   //新增文章到数据库
   async addNewArticle(articleType, title, content, images, relation, updated = false) {
     let id = app.globalData.id
