@@ -18,7 +18,7 @@ Page({
   data: {
     myFavorList: [],
     current: 0,
-    windowHeight: '',
+    windowWidth: '',
     CustomBar: '',
     isLoad: false
   },
@@ -38,7 +38,7 @@ Page({
     console.log('myFavorList: ', myFavorList)
     this.setData({
       CustomBar: app.globalData.CustomBar,
-      windowHeight: app.globalData.windowHeight,
+      windowWidth: app.globalData.windowWidth,
       myFavorList: myFavorList
     })
     this.getFavor()

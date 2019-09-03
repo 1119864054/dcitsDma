@@ -9,13 +9,13 @@
 </cu-custom>
 <scroll-view scroll-x class="bg-white nav fixed" style="top:{{CustomBar}}px;height:45px">
   <view class="flex text-center" style="height:100%">
-    <view class="cu-item flex-sub {{current==0?'text-orange cur':''}}" bindtap="tabSelect" data-id="0" style="height:100%">
+    <view class="cu-item flex-sub {{current==0?'text-black cur text-bold':''}}" bindtap="tabSelect" data-id="0" style="height:100%">
       需求意见箱
     </view>
-    <view class="cu-item flex-sub {{current==1?'text-orange cur':''}}" bindtap="tabSelect" data-id="1" style="height:100%">
+    <view class="cu-item flex-sub {{current==1?'text-black cur text-bold':''}}" bindtap="tabSelect" data-id="1" style="height:100%">
       业务需求
     </view>
-    <view class="cu-item flex-sub {{current==2?'text-orange cur':''}}" bindtap="tabSelect" data-id="2" style="height:100%">
+    <view class="cu-item flex-sub {{current==2?'text-black cur text-bold':''}}" bindtap="tabSelect" data-id="2" style="height:100%">
       项目需求
     </view>
   </view>
@@ -29,27 +29,49 @@
     <button class="cu-btn bg-gradual-green shadow-blur round">搜索</button>
   </view>
 </view> -->
-<swiper current="{{current}}" bindchange="onSwiperChange" style="margin-top:{{CustomBar+45}}rpx;height:{{windowHeight-70}}px">
-  <block wx:for="{{myArticleList}}" wx:key="idx" wx:for-index="idx">
+<view style="position:fixed;top:{{CustomBar+45}}px;width:{{windowWidth}}px;bottom:0">
+  <swiper current="{{current}}" bindchange="onSwiperChange" style="height:100%">
     <swiper-item>
-      <scroll-view scroll-y style="height:100%">
+      <scroll-view scroll-y style="height:100%" bindscrolltolower='loadMore'>
         <view class="cu-card dynamic">
-          <block wx:for="{{item}}" wx:key="_id" wx:for-item="articleListChild">
-            <template is="myArticleItem" data="{{...articleListChild}}"></template>
+          <block wx:for="{{suggestion}}" wx:key="_id">
+            <template is="myArticleItem" data="{{...item}}"></template>
           </block>
         </view>
+        <view class="cu-load bg-gray {{loadMore_suggestion?'loading':'over'}}"></view>
       </scroll-view>
     </swiper-item>
-  </block>
-</swiper>
+    <swiper-item>
+      <scroll-view scroll-y style="height:100%" bindscrolltolower='loadMore'>
+        <view class="cu-card dynamic">
+          <block wx:for="{{demand}}" wx:key="_id">
+            <template is="myArticleItem" data="{{...item}}"></template>
+          </block>
+        </view>
+        <view class="cu-load bg-gray {{loadMore_demand?'loading':'over'}}"></view>
+      </scroll-view>
+    </swiper-item>
+    <swiper-item>
+      <scroll-view scroll-y style="height:100%" bindscrolltolower='loadMore'>
+        <view class="cu-card dynamic">
+          <block wx:for="{{technology}}" wx:key="_id" >
+            <template is="myArticleItem" data="{{...item}}"></template>
+          </block>
+        </view>
+        <view class="cu-load bg-gray {{loadMore_technology?'loading':'over'}}"></view>
+      </scroll-view>
+    </swiper-item>
+  </swiper>
+</view>
+<!-- 删除提示框 -->
 <view class="cu-modal bottom-modal {{modalName=='more'?'show':''}}">
   <view class="cu-dialog">
     <view class="cu-list text-center bg-white">
       <view class="cu-item padding solid-bottom" data-target="edit" bind:tap="showModal">
-        <view class="content text-blue text-bold text-shadow">编辑文章</view>
+        <view class="content text-bold text-lg" style="color:#576b95">编辑文章</view>
       </view>
       <view class="cu-item padding " data-target="delete" bind:tap="showModal">
-        <view class="content text-red text-bold text-shadow">删除文章</view>
+        <view class="content text-red text-bold text-lg">删除文章</view>
       </view>
       <view class="cu-item bg-gray padding" bindtap="hideModal">
         <view class="content text-grey">取消</view>
@@ -57,6 +79,7 @@
     </view>
   </view>
 </view>
+<!-- 编辑提示框 -->
 <view class="cu-modal {{modalName=='edit'?'show':''}}" bindtap="hideModal">
   <view class="cu-dialog">
     <view class="cu-bar bg-white justify-end">
@@ -72,10 +95,11 @@
     </view>
     <view class="cu-bar bg-white">
       <view class="text-lg flex-sub text-grey solid-left" bindtap="hideModal">取消</view>
-      <view class="text-lg flex-sub text-green text-bold" bindtap="onTapEdit">确定</view>
+      <view class="text-lg flex-sub text-bold" style="color:#576b95" bindtap="onTapEdit">确定</view>
     </view>
   </view>
 </view>
+<!-- 底部提示框 -->
 <view class="cu-modal {{modalName=='delete'?'show':''}}" bindtap="hideModal">
   <view class="cu-dialog">
     <view class="cu-bar bg-white justify-end">

@@ -18,12 +18,14 @@ let articleType = ['suggestion', 'demand', 'technology']
 Page({
 
   data: {
-    articleList: '',
+    suggestion: [],
+    demand: [],
+    technology: [],
     loadMore_suggestion: true,
     loadMore_demand: true,
     loadMore_technology: true,
     current: 0,
-    windowHeight: '',
+    windowWidth: '',
     CustomBar: '',
     isLoad: false,
     search: ''
@@ -38,7 +40,7 @@ Page({
       demand: demandListCache,
       technology: technologyListCache,
       CustomBar: app.globalData.CustomBar,
-      windowHeight: app.globalData.windowHeight
+      windowWidth: app.globalData.windowWidth,
     })
   },
 

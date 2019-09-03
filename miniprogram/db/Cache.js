@@ -40,27 +40,29 @@ class Cache {
     }
 
     getImageCached(articleId, imageUrl) {
-        let image_cache = []
-        let that = this
-        for (let i = 0; i < imageUrl.length; i++) {
-            wx.cloud.downloadFile({
-                fileID: imageUrl[i]
-            }).then(res => {
-                if (res.statusCode === 200) {
-                    console.log(imageUrl[i], '=>图片下载成功=>', res.tempFilePath)
-                    let fs = wx.getFileSystemManager()
-                    fs.saveFile({
-                        tempFilePath: res.tempFilePath, // 传入一个临时文件路径
-                        success(res) {
-                            console.log('图片保存成功: ', res)
-                            image_cache = image_cache.concat(res.savedFilePath)
-                            that.setCache(articleId + '_image_cache', image_cache)
-                        }
-                    })
-                } else {
-                    console.error('图片下载响应失败: ', res.statusCode)
-                }
-            })
+        if (imageUrl) {
+            let image_cache = []
+            let that = this
+            for (let i = 0; i < imageUrl.length; i++) {
+                wx.cloud.downloadFile({
+                    fileID: imageUrl[i]
+                }).then(res => {
+                    if (res.statusCode === 200) {
+                        console.log(imageUrl[i], '=>图片下载成功=>', res.tempFilePath)
+                        let fs = wx.getFileSystemManager()
+                        fs.saveFile({
+                            tempFilePath: res.tempFilePath, // 传入一个临时文件路径
+                            success(res) {
+                                console.log('图片保存成功: ', res)
+                                image_cache = image_cache.concat(res.savedFilePath)
+                                that.setCache(articleId + '_image_cache', image_cache)
+                            }
+                        })
+                    } else {
+                        console.error('图片下载响应失败: ', res.statusCode)
+                    }
+                })
+            }
         }
     }
 }

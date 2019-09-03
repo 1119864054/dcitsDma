@@ -1,4 +1,4 @@
-var PAGESIZE = 4;
+var PAGESIZE = 10;
 
 
 export default {

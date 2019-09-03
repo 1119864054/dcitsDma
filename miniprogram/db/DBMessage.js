@@ -51,6 +51,22 @@ class DBMessage {
         })
     }
 
+    //获取关联消息数
+    getMessageCount() {
+        let id = app.globalData.id
+        return new Promise((resolve, reject) => {
+            db.collection('message').where({
+                beRelated: id
+            }).count().then(res => {
+                console.log('[DBMessage] [查询MessageCount] 成功: ', res.total)
+                resolve(res.total)
+            }).catch(err => {
+                console.error('[DBMessage] [查询MessageCount] 失败: ', err)
+                reject()
+            })
+        })
+    }
+
     //获取未读消息
     getUncheckedMessage() {
         let id = app.globalData.id

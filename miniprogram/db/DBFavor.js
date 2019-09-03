@@ -92,6 +92,22 @@ class DBFavor {
             })
         })
     }
+
+    //根据用户id获取收藏数
+    getFavorCount() {
+        let userId = app.globalData.id
+        return new Promise((resolve, reject) => {
+            db.collection('favor').where({
+                userId: userId
+            }).count().then(res => {
+                console.log('[DBArticle] [根据用户id获取收藏数] 成功: ', res.total)
+                resolve(res.total)
+            }).catch(err => {
+                console.error('[DBArticle] [根据用户id获取收藏数] 失败: ', err)
+                reject()
+            })
+        })
+    }
 }
 
 export {

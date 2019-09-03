@@ -83,48 +83,46 @@ class DBArticle {
   //新增文章到数据库
   async addNewArticle(articleType, title, content, images, relation, updated = false) {
     let id = app.globalData.id
-    db.collection(articleType).add({
-      data: {
-        date: util.formatTime(new Date()),
-        title: title,
-        userId: id,
-        articleImg: images,
-        content: content,
-        timeStamp: new Date().getTime(),
-        articleType: articleType,
-        removed: false,
-        updated: updated,
+    try {
+      let res = await db.collection(articleType).add({
+        data: {
+          date: util.formatTime(new Date()),
+          title: title,
+          userId: id,
+          articleImg: images,
+          content: content,
+          timeStamp: new Date().getTime(),
+          articleType: articleType,
+          removed: false,
+          updated: updated,
 
-        favorCount: 0,
-        commentCount: 0,
-        visitCount: 0
+          favorCount: 0,
+          commentCount: 0,
+          visitCount: 0
+        }
+      })
+      console.log('[DBArticle] [' + articleType + '] [新增文章] 成功: _id=', res._id)
+      //关联关系
+      let relationType = ''
+      if (articleType == app.globalData.demandKey) {
+        relationType = 'SDRelation'
+      } else if (articleType == app.globalData.technologyKey) {
+        relationType = 'DTRelation'
       }
-    })
-      .then(res => {
-        //关联关系
-        let relationType = ''
-        if (articleType == app.globalData.demandKey) {
-          relationType = 'SDRelation'
-        } else if (articleType == app.globalData.technologyKey) {
-          relationType = 'DTRelation'
-        }
-        for (let i = 0; i < relation.length; i++) {
-          let idArray = relation[i].split('^^^')
-          dbRelation.addRelation(relationType, idArray[0], res._id).then(relationId => {
-            //消息
-            dbMessage.addMessage(relationId, relationType, idArray[1], id)
-          })
-
-        }
-        console.log('[DBArticle] [' + articleType + '] [新增文章] 成功: _id=', res._id)
+      for (let i = 0; i < relation.length; i++) {
+        let idArray = relation[i].split('^^^')
+        let relationId = await dbRelation.addRelation(relationType, idArray[0], res._id)
+        //消息
+        await dbMessage.addMessage(relationId, relationType, idArray[1], id)
+      }
+      return res._id
+    } catch (err) {
+      wx.showToast({
+        icon: 'none',
+        title: '新增文章失败'
       })
-      .catch(err => {
-        wx.showToast({
-          icon: 'none',
-          title: '新增文章失败'
-        })
-        console.error('[DBArticle] [' + articleType + '] [新增文章] 失败：', err)
-      })
+      console.error('[DBArticle] [' + articleType + '] [新增文章] 失败：', err)
+    }
   }
 
   //更新文章（编辑）
@@ -207,12 +205,14 @@ class DBArticle {
   }
 
   //根据用户ID从数据库读取文章
-  getArticleByIdFromDB(userId, articleType) {
+  getArticleByIdFromDB(userId, articleType, pageSize = constPageSize, currentPage = 0) {
     return new Promise((resolve, reject) => {
       db.collection(articleType).where({
         userId: userId,
         removed: false
       }).orderBy('date', 'desc')
+        .skip(currentPage * pageSize)
+        .limit(pageSize)
         .get().then(res => {
           console.log('[DBArticle] [根据userId查询article信息] 成功: ', res.data)
           resolve(res.data)
@@ -234,6 +234,30 @@ class DBArticle {
         resolve(res.data)
       }).catch(err => {
         console.error('[DBArticle] [根据articleId查询article信息] 失败: ', err)
+        reject()
+      })
+    })
+  }
+
+  //根据用户id获取文章数
+  getArticleCount() {
+    let userId = app.globalData.id
+    return new Promise((resolve, reject) => {
+      db.collection('suggestion').where({
+        userId: userId
+      }).count().then(res1 => {
+        db.collection('demand').where({
+          userId: userId
+        }).count().then(res2 => {
+          db.collection('technology').where({
+            userId: userId
+          }).count().then(res3 => {
+            console.log('[DBArticle] [根据用户id获取文章数] 成功: ', res1.total, '+', res2.total, '+', res3.total)
+            resolve(res1.total + res2.total + res3.total)
+          })
+        })
+      }).catch(err => {
+        console.error('[DBArticle] [根据用户id获取文章数] 失败: ', err)
         reject()
       })
     })

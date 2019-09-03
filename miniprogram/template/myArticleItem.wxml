@@ -2,7 +2,7 @@
     <view class="cu-item shadow-warp" bindtap="onTapToArticle" data-article-id="{{_id}}" data-article-type="{{articleType}}">
         <view class="flex flex-wrap text-black text-bold padding-lr-lg padding-bottom-sm padding-top-lg">
             <view class="basis-xl">{{title}}</view>
-            <view class="basis-xs text-grey  text-shadow cuIcon-edit text-right" catch:tap="showModal" data-target="more" data-edit-title='{{title}}' data-article-id='{{_id}}' data-article-type='{{articleType}}'>
+            <view class="basis-xs text-shadow cuIcon-edit text-right" style="color:#576b95" catch:tap="showModal" data-target="more" data-edit-title='{{title}}' data-article-id='{{_id}}' data-article-type='{{articleType}}'>
                 编辑
             </view>
         </view>

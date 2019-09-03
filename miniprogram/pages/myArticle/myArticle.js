@@ -6,6 +6,13 @@ var cache = new Cache()
 
 const app = getApp();
 
+import config from '../../util/config.js'
+
+let pageSize = config.getPageSize
+
+let currentPage = 0
+let articleType = ['suggestion', 'demand', 'technology']
+
 var myData = {
   articleId: '',
   articleType: ''
@@ -17,8 +24,13 @@ Page({
    * 页面的初始数据
    */
   data: {
-    myArticleList: [],
-    windowHeight: '',
+    suggestion: [],
+    demand: [],
+    technology: [],
+    loadMore_suggestion: true,
+    loadMore_demand: true,
+    loadMore_technology: true,
+    windowWidth: '',
     CustomBar: '',
     isLoad: false,
     current: 0
@@ -28,24 +40,23 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    let mySuggestion = [], myDemand = [], myTechnology = []
-    mySuggestion = cache.getCache('mySuggestion')
-    myDemand = cache.getCache('myDemand')
-    myTechnology = cache.getCache('myTechnology')
-    let myArticleList = []
-    myArticleList.push(mySuggestion)
-    myArticleList.push(myDemand)
-    myArticleList.push(myTechnology)
+    let suggestion = [], demand = [], technology = []
+    suggestion = cache.getCache('my_suggestion')
+    demand = cache.getCache('my_demand')
+    technology = cache.getCache('my_technology')
     this.setData({
       CustomBar: app.globalData.CustomBar,
-      windowHeight: app.globalData.windowHeight,
-      myArticleList: myArticleList
+      windowWidth: app.globalData.windowWidth,
+      suggestion: suggestion,
+      demand: demand,
+      technology: technology
     })
-
   },
 
   onShow: function () {
-    this.getMyArticle()
+    this.getMyArticle('suggestion')
+    this.getMyArticle('demand')
+    this.getMyArticle('technology')
   },
 
   tabSelect(e) {
@@ -89,7 +100,7 @@ Page({
         title: '删除成功',
         icon: 'success',
         success: res => {
-          this.getMyArticle()
+          this.getMyArticle(myData.articleType)
         }
       });
     })
@@ -116,42 +127,72 @@ Page({
     })
   },
 
-  async getMyArticle() {
+  async getMyArticle(articleType) {
     this.setData({
       isLoad: false
     })
+    let key = 'loadMore_' + [articleType]
+    let myArticleType = 'my_' + articleType
+    currentPage = 1
 
-    let mySuggestion = await dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.suggestionKey)
-    cache.setCache('mySuggestion', mySuggestion)
-    for (let i = 0; i < mySuggestion.length; i++) {
-      cache.setCache(mySuggestion[i]._id, mySuggestion[i])
+    let userId = app.globalData.id
+
+    let myArticleList = await dbArticle.getArticleByIdFromDB(userId, articleType)
+    cache.setCache(myArticleType, myArticleList)
+    for (let i = 0; i < myArticleList.length; i++) {
+      cache.setCache(myArticleList[i]._id, myArticleList[i])
     }
-
-    let myDemand = await dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.demandKey)
-    cache.setCache('myDemand', myDemand)
-    for (let i = 0; i < myDemand.length; i++) {
-      cache.setCache(myDemand[i]._id, myDemand[i])
+    if (myArticleList.length < pageSize) {
+      this.setData({
+        [key]: false
+      })
     }
-
-    let myTechnology = await dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.technologyKey)
-    cache.setCache('myTechnology', myTechnology)
-    for (let i = 0; i < myTechnology.length; i++) {
-      cache.setCache(myTechnology[i]._id, myTechnology[i])
-    }
-
-    let myArticleList = []
-    myArticleList.push(mySuggestion)
-    myArticleList.push(myDemand)
-    myArticleList.push(myTechnology)
-
     this.setData({
-      myArticleList: myArticleList,
+      [articleType]: myArticleList,
       isLoad: true
     })
   },
 
   onPullDownRefresh: function () {
     wx.stopPullDownRefresh()
-    this.getMyArticle()
-  }
+    this.getMyArticle(articleType[this.data.current])
+  },
+
+  loadMore: function () {
+    let that = this
+    setTimeout(function () {
+      that.getMoreData(articleType[that.data.current])
+    }, 600)
+  },
+
+  async getMoreData(articleType) {
+    console.log('currentPage——————', currentPage)
+    let key = 'loadMore_' + [articleType]
+    this.setData({
+      [key]: true,
+    })
+
+    let myArticleList = this.data[articleType]
+
+    let newMyArticleList = await dbArticle.getArticleByIdFromDB(app.globalData.id, articleType, pageSize, currentPage)
+    if (newMyArticleList && newMyArticleList.length > 0) {
+      currentPage++;
+      myArticleList = myArticleList.concat(newMyArticleList)
+      this.setData({
+        [articleType]: myArticleList
+      })
+      if (newMyArticleList.length < pageSize) {
+        this.setData({
+          [key]: false
+        })
+      }
+      for (let i = 0; i < newMyArticleList.length; i++) {
+        cache.setCache(newMyArticleList[i]._id, newMyArticleList[i])
+      }
+    } else {
+      this.setData({
+        [key]: false,
+      });
+    }
+  },
 })

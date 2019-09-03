@@ -2,11 +2,13 @@ import { DBArticle } from "../../db/DBArticle";
 import { DBUser } from "../../db/DBUser";
 import { Cache } from '../../db/Cache';
 import { DBMessage } from '../../db/DBMessage';
+import { DBFavor } from '../../db/DBFavor';
 
 var dbArticle = new DBArticle();
 var dbUser = new DBUser();
 var cache = new Cache()
 var dbMessage = new DBMessage()
+var dbFavor = new DBFavor()
 
 const app = getApp()
 
@@ -19,6 +21,10 @@ Page({
     checked: true,
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
+    articleCount: 0,
+    favorCount: 0,
+    newMessageCount: 0,
+    messageCount: 0
   },
 
   onLoad: function (options) {
@@ -54,6 +60,16 @@ Page({
 
   onShow: function () {
     this.isNewMessage()
+    dbArticle.getArticleCount().then(articleCount => {
+      this.setData({
+        articleCount: articleCount
+      })
+    })
+    dbFavor.getFavorCount().then(favorCount => {
+      this.setData({
+        favorCount: favorCount
+      })
+    })
   },
 
   getUserInfo: function (e) {
@@ -101,14 +117,18 @@ Page({
   },
 
   isNewMessage() {
-    dbMessage.getUncheckedMessage().then(res => {
-      if (res.data.length > 0) {
+    dbMessage.getUncheckedMessage().then(res1 => {
+      if (res1.data.length > 0) {
         this.setData({
-          checked: false
+          checked: false,
+          newMessageCount: res1.data.length
         })
       } else {
-        this.setData({
-          checked: true
+        dbMessage.getMessageCount().then(res2 => {
+          this.setData({
+            checked: true,
+            messageCount: res2
+          })
         })
       }
     })

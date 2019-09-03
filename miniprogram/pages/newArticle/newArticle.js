@@ -130,23 +130,31 @@ Page({
             wx.showLoading({
                 title: '上传文章',
             })
-            await dbArticle.addNewArticle(myData.articleType, myData.title, myData.content, myData.imagesCloudId, this.data.relation)
-            myData = {
-                title: '',
-                content: '',
-                imagesCloudId: [],
-                articleTypeList: ['suggestion', 'demand', 'technology'],
-                articleType: 'suggestion',
-            }
-            wx.hideLoading();
-            wx.switchTab({
-                url: '/pages/articleList/articleList',
-                success: (result) => {
-                    wx.showToast({
-                        title: '新增文章成功',
-                    })
-                },
-            });
+            let res = dbArticle.addNewArticle(myData.articleType, myData.title, myData.content, myData.imagesCloudId, this.data.relation)
+            res.then(articleId => {
+                myData = {
+                    title: '',
+                    content: '',
+                    imagesCloudId: [],
+                    articleTypeList: ['suggestion', 'demand', 'technology'],
+                    articleType: 'suggestion',
+                }
+                wx.hideLoading();
+                wx.switchTab({
+                    url: '/pages/articleList/articleList',
+                    success: (result) => {
+                        wx.showToast({
+                            title: '新增文章成功',
+                        })
+                        setTimeout(() => {
+                            wx.navigateTo({
+                                url: '/pages/article/article?articleId=' + articleId + '&articleType=' + myData.articleType
+                            });
+                        }, 800);
+                    },
+                });
+            })
+
         }
     },
 

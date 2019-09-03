@@ -70,6 +70,8 @@ App({
         console.log(e);
         this.globalData.windowHeight = e.windowHeight
         this.globalData.screenHeight = e.screenHeight
+        this.globalData.screenWidth = e.screenWidth
+        this.globalData.windowWidth = e.windowWidth
         this.globalData.StatusBar = e.statusBarHeight;
         let custom = wx.getMenuButtonBoundingClientRect();
         this.globalData.Custom = custom;
