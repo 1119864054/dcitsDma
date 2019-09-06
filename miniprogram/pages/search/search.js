@@ -10,8 +10,6 @@ const app = getApp()
 
 import config from '../../util/config.js'
 
-const log = require('../../util/log.js')
-
 let pageSize = config.getPageSize
 let currentPage = 0
 let articleType = ['suggestion', 'demand', 'technology']
@@ -105,7 +103,6 @@ Page({
       cache.setCache(articleType, articleList)
     }
     console.log(articleType, ':articleList:', articleList)
-    log.info(articleType, ':articleList:', articleList)
     if (articleList.length < pageSize) {
       this.setData({
         [key]: false

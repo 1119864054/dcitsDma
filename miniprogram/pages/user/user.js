@@ -86,7 +86,6 @@ Page({
           wx.getUserInfo({
             success(res) {
               console.log("[user] [获取用户信息userInfo] 成功 ", res)
-              log.info("[user] [获取用户信息userInfo] 成功 ", res)
               app.globalData.logged = true
               app.globalData.username = res.userInfo.nickName
               app.globalData.avatar = res.userInfo.avatarUrl
