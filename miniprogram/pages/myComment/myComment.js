@@ -6,6 +6,8 @@ var dbArticle = new DBArticle();
 var cache = new Cache()
 var dbComment = new DBComment()
 
+const log = require('../../util/log.js')
+
 Page({
 
   /**
@@ -105,6 +107,7 @@ Page({
       }
 
       console.log('myComment', myComment)
+      log.info('myComment', myComment)
 
       this.setData({
         myComment: myComment,

@@ -3,6 +3,8 @@ const app = getApp()
 
 import { Util } from '../util/util';
 
+const log = require('../util/log.js')
+
 class DBLike {
     constructor() {
 
@@ -21,9 +23,11 @@ class DBLike {
                 }
             }).then(res => {
                 console.log('[DBLike] [添加like] 成功: ', res)
+                log.info('[DBLike] [添加like] 成功: ', res)
                 resolve(res._id)
             }).catch(err => {
                 console.error('[DBLike] [添加like] 失败: ', err)
+                log.error('[DBLike] [添加like] 失败: ', err)
                 reject()
             })
         })
@@ -40,9 +44,11 @@ class DBLike {
                 })
                 .get().then(res => {
                     console.log('[DBLike] [查询like] 成功: ', res.data)
+                    log.info('[DBLike] [查询like] 成功: ', res.data)
                     resolve(res.data)
                 }).catch(err => {
                     console.error('[DBLike] [查询like] 失败: ', err)
+                    log.error('[DBLike] [查询like] 失败: ', err)
                     reject()
                 })
         })
@@ -55,9 +61,11 @@ class DBLike {
                 .remove()
                 .then(res => {
                     console.log('[DBLike] [删除like] 成功: ', res.stats)
+                    log.info('[DBLike] [删除like] 成功: ', res.stats)
                     resolve()
                 }).catch(err => {
                     console.error('[DBLike] [删除like] 失败: ', err)
+                    log.error('[DBLike] [删除like] 失败: ', err)
                     reject()
                 })
         })

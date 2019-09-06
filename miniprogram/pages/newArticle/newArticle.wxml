@@ -1,4 +1,4 @@
-<cu-custom bgColor="bg-gradual-pink" bgImage="../../images/navibar/3.jpg" isBack="{{true}}">
+<cu-custom bgColor="bg-gradual-pink" bgImage="https://image.weilanwl.com/color2.0/plugin/cjkz2329.jpg" isBack="{{true}}">
   <view slot="backText">返回</view>
     <view slot="content">新建文章</view>
 </cu-custom>

@@ -1,7 +1,10 @@
 const db = wx.cloud.database()
 const _ = db.command
 const app = getApp()
+
 import { Util } from '../util/util.js';
+
+const log = require('../util/log.js')
 
 class DBUser {
     constructor() {
@@ -26,10 +29,12 @@ class DBUser {
                         }
                     }).then(res => {
                         console.log('[DBUser] [未查询到用户->添加用户] 成功', res)
+                        log.info('[DBUser] [未查询到用户->添加用户] 成功', res)
                         app.globalData.id = res._id
                         resolve()
                     }).catch(err => {
                         console.error('[DBUser] [未查询到用户->添加用户] 失败：', err)
+                        log.error('[DBUser] [未查询到用户->添加用户] 失败：', err)
                         reject()
                     })
                 } else {
@@ -37,6 +42,7 @@ class DBUser {
                 }
             }).catch(err => {
                 console.error('[DBUser] [查询用户] 失败：', err)
+                log.error('[DBUser] [查询用户] 失败：', err)
                 reject()
             })
         })
@@ -56,9 +62,11 @@ class DBUser {
                     }
                 }).then(res => {
                     console.log('[DBUser] [更新用户] 成功: ', res)
+                    log.info('[DBUser] [更新用户] 成功: ', res)
                     resolve()
                 }).catch(err => {
                     console.error('[DBUser] [更新用户] 失败: ', err)
+                    log.error('[DBUser] [更新用户] 失败: ', err)
                     reject()
                 })
         })
@@ -71,9 +79,11 @@ class DBUser {
                 _id: id
             }).get().then(res => {
                 console.log('[DBUser] [查询用户] 成功: ', res.data[0])
+                log.info('[DBUser] [查询用户] 成功: ', res.data[0])
                 resolve(res.data[0])
             }).catch(err => {
                 console.error('[DBUser] [查询用户] 失败: ', err)
+                log.error('[DBUser] [查询用户] 失败: ', err)
                 reject()
             })
         })
@@ -87,11 +97,13 @@ class DBUser {
             }).get().then(res => {
                 if (res.data[0]) {
                     console.log('[DBUser] [查询用户ByOpenid] 成功: ', res.data[0])
+                    log.info('[DBUser] [查询用户ByOpenid] 成功: ', res.data[0])
                     app.globalData.id = res.data[0]._id
                 }
                 resolve(res.data[0])
             }).catch(err => {
                 console.error('[DBUser] [查询用户ByOpenid] 失败: ', err)
+                log.error('[DBUser] [查询用户ByOpenid] 失败: ', err)
                 reject()
             })
         })

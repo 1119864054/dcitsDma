@@ -1,7 +1,7 @@
-<cu-custom bgImage="../../images/navibar/1.jpg">
+<!-- <cu-custom bgImage="../../images/navibar/1.png">
   <view slot="content">个人主页</view>
-</cu-custom>
-<view class="margin-sm padding-xl bg-white radius shadow-warp margin-top">
+</cu-custom> -->
+<!-- <view class="margin-sm padding-xl bg-white radius shadow-warp margin-top">
   <view class="flex justify-center">
     <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo" class='cu-btn round bg-green shadow'>
       获取头像昵称
@@ -13,43 +13,54 @@
       </view>
     </block>
   </view>
-</view>
-<view class="cu-list menu card-menu margin-top">
-  <navigator class="cu-item arrow" url="/pages/myArticle/myArticle">
-    <view class="content">
-      <text class="cuIcon-writefill text-blue"></text>
-      <text class="text-grey">我的文章</text>
-    </view>
-    <view class="action">
-      <view class="cu-tag round bg-grey">{{articleCount}}</view>
-    </view>
-  </navigator>
-  <navigator class="cu-item arrow" hover-class="" url="/pages/message/message">
-    <view class="content">
-      <text class="cuIcon-messagefill text-orange"></text>
-      <text class="text-grey">我的消息</text>
-    </view>
-    <view class="action">
-      <view class="cu-tag round bg-red" wx:if="{{!checked}}">{{newMessageCount}}</view>
-      <view class="cu-tag round bg-grey" wx:else>{{messageCount}}</view>
-    </view>
-  </navigator>
-  <navigator class="cu-item arrow" hover-class="" url="/pages/favor/favor">
-    <view class="content">
-      <text class="cuIcon-favorfill text-cyan"></text>
-      <text class="text-grey">我的收藏</text>
-    </view>
-    <view class="action">
-      <view class="cu-tag round bg-grey">{{favorCount}}</view>
-    </view>
-  </navigator>
-  <navigator class="cu-item arrow" hover-class="" url="/pages/myComment/myComment">
-    <view class="content">
-      <text class="cuIcon-commentfill text-grey"></text>
-      <text class="text-grey">我的评论</text>
-    </view>
-  </navigator>
-</view>
-<view class="padding flex flex-direction">
-  <button class="cu-btn bg-grey round lg" catch:tap="onTapClearCache">清除数据缓存</button>
-</view>
+</view> -->
+<scroll-view scroll-y class="scrollPage">
+  <view class="UCenter-bg">
+    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo" class='cu-btn round bg-green shadow'>
+      获取头像昵称
+    </button>
+    <block wx:else>
+      <view class="cu-avatar xl round solids" style="background-image:url({{avatar}})"></view>
+      <view class="text-xl padding">{{username}}</view>
+    </block>
+  </view>
+  <view class="cu-list menu card-menu margin-top">
+    <navigator class="cu-item arrow" url="/pages/myArticle/myArticle">
+      <view class="content">
+        <text class="cuIcon-writefill text-blue"></text>
+        <text class="text-grey">我的文章</text>
+      </view>
+      <view class="action">
+        <view class="cu-tag round bg-grey">{{articleCount}}</view>
+      </view>
+    </navigator>
+    <navigator class="cu-item arrow" hover-class="" url="/pages/message/message">
+      <view class="content">
+        <text class="cuIcon-messagefill text-orange"></text>
+        <text class="text-grey">我的消息</text>
+      </view>
+      <view class="action">
+        <view class="cu-tag round bg-red" wx:if="{{!checked}}">{{newMessageCount}}</view>
+        <view class="cu-tag round bg-grey" wx:else>{{messageCount}}</view>
+      </view>
+    </navigator>
+    <navigator class="cu-item arrow" hover-class="" url="/pages/favor/favor">
+      <view class="content">
+        <text class="cuIcon-favorfill text-cyan"></text>
+        <text class="text-grey">我的收藏</text>
+      </view>
+      <view class="action">
+        <view class="cu-tag round bg-grey">{{favorCount}}</view>
+      </view>
+    </navigator>
+    <navigator class="cu-item arrow" hover-class="" url="/pages/myComment/myComment">
+      <view class="content">
+        <text class="cuIcon-commentfill text-grey"></text>
+        <text class="text-grey">我的评论</text>
+      </view>
+    </navigator>
+  </view>
+  <view class="padding flex flex-direction">
+    <button class="cu-btn bg-grey round lg" catch:tap="onTapClearCache">清除数据缓存</button>
+  </view>
+</scroll-view>

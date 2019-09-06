@@ -11,6 +11,7 @@ var dbMessage = new DBMessage()
 var dbFavor = new DBFavor()
 
 const app = getApp()
+const log = require('../../util/log.js')
 
 Page({
 
@@ -28,34 +29,32 @@ Page({
   },
 
   onLoad: function (options) {
-    if (app.globalData.logged) {
-      this.login()
-    } else if (this.data.canIUse) {
-      // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-      // 所以此处加入 callback 以防止这种情况
-      app.userInfoReadyCallback = res => {
-        this.login()
-      }
-    } else {
-      // 在没有 open-type=getUserInfo 版本的兼容处理
-      wx.getUserInfo({
-        lang: 'zh_CN',
-        timeout: 10000,
-        success: (res) => {
-          console.log('[login] [获取用户信息userInfo] 成功 ', res)
-          this.globalData.username = res.userInfo.nickName
-          this.globalData.avatar = res.userInfo.avatarUrl
-          this.globalData.logged = true
-          wx.hideLoading();
-          if (this.userInfoReadyCallback) {
-            this.userInfoReadyCallback(res)
-          }
-        },
-        fail: () => {
-          console.error('[login] [获取用户信息userInfo] 失败')
-        }
-      });
-    }
+    // if (app.globalData.logged) {
+    //   this.login()
+    // } else if (this.data.canIUse) {
+    //   app.userInfoReadyCallback = res => {
+    //     this.login()
+    //   }
+    // } else {
+    //   wx.getUserInfo({
+    //     lang: 'zh_CN',
+    //     timeout: 10000,
+    //     success: (res) => {
+    //       console.log('[user] [获取用户信息userInfo] 成功 ', res)
+    //       log.info('[user] [获取用户信息userInfo] 成功 ', res)
+    //       this.globalData.username = res.userInfo.nickName
+    //       this.globalData.avatar = res.userInfo.avatarUrl
+    //       this.globalData.logged = true
+    //       wx.hideLoading();
+    //       if (this.userInfoReadyCallback) {
+    //         this.userInfoReadyCallback(res)
+    //       }
+    //     },
+    //     fail: () => {
+    //       console.error('[user] [获取用户信息userInfo] 失败')
+    //     }
+    //   });
+    // }
   },
 
   onShow: function () {
@@ -87,6 +86,7 @@ Page({
           wx.getUserInfo({
             success(res) {
               console.log("[user] [获取用户信息userInfo] 成功 ", res)
+              log.info("[user] [获取用户信息userInfo] 成功 ", res)
               app.globalData.logged = true
               app.globalData.username = res.userInfo.nickName
               app.globalData.avatar = res.userInfo.avatarUrl
@@ -94,6 +94,7 @@ Page({
             },
             fail(err) {
               console.error("[user] [获取用户信息userInfo] 失败", err)
+              log.error("[user] [获取用户信息userInfo] 失败", err)
             }
           })
         }
@@ -123,9 +124,15 @@ Page({
   onTapClearCache: function (e) {
     try {
       wx.clearStorageSync();
-      console.log('[清除缓存成功]', e)
+      wx.showToast({
+        title: '清除缓存成功',
+        icon: 'none',
+      });
     } catch (err) {
-      console.log('[清除缓存错误]', err)
+      wx.showToast({
+        title: '清除缓存错误',
+        icon: 'none',
+      });
     }
   },
 

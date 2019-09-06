@@ -4,6 +4,8 @@ const app = getApp()
 import { Util } from '../util/util';
 const _ = db.command
 
+const log = require('../util/log.js')
+
 class DBComment {
     constructor() {
 
@@ -26,9 +28,11 @@ class DBComment {
                 }
             }).then(res => {
                 console.log('[DBComment] [添加comment] 成功: ', res)
+                log.info('[DBComment] [添加comment] 成功: ', res)
                 resolve()
             }).catch(err => {
                 console.error('[DBComment] [添加comment] 失败: ', err)
+                log.error('[DBComment] [添加comment] 失败: ', err)
                 reject()
             })
         })
@@ -45,9 +49,11 @@ class DBComment {
                 .orderBy('date', 'desc')
                 .get().then(res => {
                     console.log('[DBComment] [查询comment] 成功: ', res.data)
+                    log.info('[DBComment] [查询comment] 成功: ', res.data)
                     resolve(res.data)
                 }).catch(err => {
                     console.error('[DBComment] [查询comment] 失败: ', err)
+                    log.error('[DBComment] [查询comment] 失败: ', err)
                     reject()
                 })
         })
@@ -65,9 +71,11 @@ class DBComment {
                 .orderBy('date', 'desc')
                 .get().then(res => {
                     console.log('[DBComment] [查询mycomment] 成功: ', res.data)
+                    log.info('[DBComment] [查询mycomment] 成功: ', res.data)
                     resolve(res.data)
                 }).catch(err => {
                     console.error('[DBComment] [查询mycomment] 失败: ', err)
+                    log.error('[DBComment] [查询mycomment] 失败: ', err)
                     reject()
                 })
         })
@@ -80,9 +88,11 @@ class DBComment {
                 articleId: articleId
             }).count().then(res => {
                 console.log('[DBComment] [获取评论数量] 成功: ', res.total)
+                log.info('[DBComment] [获取评论数量] 成功: ', res.total)
                 resolve(res.total)
             }).catch(err => {
                 console.error('[DBComment] [获取评论数量] 失败: ', err)
+                log.error('[DBComment] [获取评论数量] 失败: ', err)
                 reject()
             })
         })
@@ -99,9 +109,11 @@ class DBComment {
                 }
             }).then(res => {
                 console.log('[DBComment] [更新点赞数] 成功: ', res.result.stats)
+                log.info('[DBComment] [更新点赞数] 成功: ', res.result.stats)
                 resolve()
             }).catch(err => {
                 console.error('[DBComment] [更新点赞数] 失败: ', err)
+                log.error('[DBComment] [更新点赞数] 失败: ', err)
                 reject()
             })
         })

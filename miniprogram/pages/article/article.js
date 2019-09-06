@@ -24,6 +24,7 @@ var myData = {
 };
 
 const app = getApp();
+const log = require('../../util/log.js')
 
 Page({
 
@@ -227,6 +228,7 @@ Page({
       }
 
       console.log('comment', comment);
+      log.info('comment', comment)
       cache.setCache(myData.articleId + '_comment', comment)
       this.setData({
         comment: comment,
@@ -353,6 +355,7 @@ Page({
       }
     }
     console.log('relationDetail: ', relationDetail);
+    log.info('relationDetail: ', relationDetail);
     this.setData({
       relationDetail: relationDetail
     })

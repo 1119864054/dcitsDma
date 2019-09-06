@@ -7,6 +7,7 @@ var cache = new Cache()
 var dbRelation = new DBRelation()
 
 const app = getApp()
+const log = require('../../util/log.js')
 
 let myData = {
   imagesCloudId: [],
@@ -93,6 +94,7 @@ Page({
   onShow: function () {
     let relation = this.data.relation
     console.log('relation', relation)
+    log.info('relation', relation)
     let relationTitle = []
     if (relation.length > 0) {
       for (let i = 0; i < relation.length; i++) {

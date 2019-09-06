@@ -3,6 +3,8 @@ const app = getApp()
 
 import { Util } from '../util/util';
 
+const log = require('../util/log.js')
+
 class DBFavor {
     constructor() {
 
@@ -17,9 +19,11 @@ class DBFavor {
                 userId: userId,
             }).get().then(res => {
                 console.log('[DBFavor] [查询favor] 成功: ', res.data[0])
+                log.info('[DBFavor] [查询favor] 成功: ', res.data[0])
                 resolve(res.data[0])
             }).catch(err => {
                 console.error('[DBFavor] [查询favor] 失败: ', err)
+                log.error('[DBFavor] [查询favor] 失败: ', err)
                 reject()
             })
         })
@@ -30,9 +34,11 @@ class DBFavor {
         return new Promise((resolve, reject) => {
             db.collection('favor').doc(favorId).remove().then(res => {
                 console.log('[DBFavor] [删除favor] 成功: ', res)
+                log.info('[DBFavor] [删除favor] 成功: ', res)
                 resolve(res)
             }).catch(err => {
                 console.error('[DBFavor] [删除favor] 失败: ', err)
+                log.error('[DBFavor] [删除favor] 失败: ', err)
                 reject()
             })
         })
@@ -52,9 +58,11 @@ class DBFavor {
                 }
             }).then(res => {
                 console.log('[DBFavor] [添加favor] 成功: ', res)
+                log.info('[DBFavor] [添加favor] 成功: ', res)
                 resolve(res)
             }).catch(err => {
                 console.error('[DBFavor] [添加favor] 失败: ', err)
+                log.error('[DBFavor] [添加favor] 失败: ', err)
                 reject()
             })
         })
@@ -70,9 +78,11 @@ class DBFavor {
             }).orderBy('date', 'desc')
                 .get().then(res => {
                     console.log('[DBFavor] [查询favor] 成功: ', res)
+                    log.info('[DBFavor] [查询favor] 成功: ', res)
                     resolve(res.data)
                 }).catch(err => {
                     console.error('[DBFavor] [查询favor] 失败: ', err)
+                    log.error('[DBFavor] [查询favor] 失败: ', err)
                     reject()
                 })
         })
@@ -85,9 +95,11 @@ class DBFavor {
                 articleId: articleId
             }).count().then(res => {
                 console.log('[DBRelation] [获取收藏数量] 成功: ', res.total)
+                log.info('[DBRelation] [获取收藏数量] 成功: ', res.total)
                 resolve(res.total)
             }).catch(err => {
                 console.error('[DBRelation] [获取收藏数量] 失败: ', err)
+                log.error('[DBRelation] [获取收藏数量] 失败: ', err)
                 reject()
             })
         })
@@ -101,9 +113,11 @@ class DBFavor {
                 userId: userId
             }).count().then(res => {
                 console.log('[DBArticle] [根据用户id获取收藏数] 成功: ', res.total)
+                log.info('[DBArticle] [根据用户id获取收藏数] 成功: ', res.total)
                 resolve(res.total)
             }).catch(err => {
                 console.error('[DBArticle] [根据用户id获取收藏数] 失败: ', err)
+                log.error('[DBArticle] [根据用户id获取收藏数] 失败: ', err)
                 reject()
             })
         })

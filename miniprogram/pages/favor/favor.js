@@ -9,6 +9,7 @@ var cache = new Cache()
 var dbFavor = new DBFavor()
 
 const app = getApp();
+const log = require('../../util/log.js')
 
 Page({
 
@@ -103,6 +104,7 @@ Page({
         favorSuggestion = favorSuggestion.concat(article)
       }
       console.log('favorSuggestion', favorSuggestion);
+      log.info('favorSuggestion', favorSuggestion);
       cache.setCache('favorSuggestion', favorSuggestion)
     }
 
@@ -126,6 +128,7 @@ Page({
         favorDemand = favorDemand.concat(article)
       }
       console.log('favorDemand', favorDemand);
+      log.info('favorDemand', favorDemand);
       cache.setCache('favorDemand', favorDemand)
     }
 
@@ -149,6 +152,7 @@ Page({
         favorTechnology = favorTechnology.concat(article)
       }
       console.log('favorTechnology', favorTechnology);
+      log.info('favorTechnology', favorTechnology);
       cache.setCache('favorTechnology', favorTechnology)
     }
 

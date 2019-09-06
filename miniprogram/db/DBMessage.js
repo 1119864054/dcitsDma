@@ -4,6 +4,7 @@ const app = getApp()
 import { Util } from '../util/util';
 
 const util = new Util()
+const log = require('../util/log.js')
 
 class DBMessage {
     constructor() {
@@ -24,9 +25,11 @@ class DBMessage {
                 }
             }).then(res => {
                 console.log('[DBMessage] [新增message] 成功: ', res._id)
+                log.info('[DBMessage] [新增message] 成功: ', res._id)
                 resolve()
             }).catch(err => {
                 console.error('[DBMessage] [新增message] 失败: ', err)
+                log.error('[DBMessage] [新增message] 失败: ', err)
                 reject()
             })
         })
@@ -43,9 +46,11 @@ class DBMessage {
                 .get()
                 .then(res => {
                     console.log('[DBMessage] [查询message] 成功: ', res)
+                    log.info('[DBMessage] [查询message] 成功: ', res)
                     resolve(res)
                 }).catch(err => {
                     console.error('[DBMessage] [查询message] 失败: ', err)
+                    log.error('[DBMessage] [查询message] 失败: ', err)
                     reject()
                 })
         })
@@ -59,9 +64,11 @@ class DBMessage {
                 beRelated: id
             }).count().then(res => {
                 console.log('[DBMessage] [查询MessageCount] 成功: ', res.total)
+                log.info('[DBMessage] [查询MessageCount] 成功: ', res.total)
                 resolve(res.total)
             }).catch(err => {
                 console.error('[DBMessage] [查询MessageCount] 失败: ', err)
+                log.error('[DBMessage] [查询MessageCount] 失败: ', err)
                 reject()
             })
         })
@@ -77,9 +84,11 @@ class DBMessage {
             }).get()
                 .then(res => {
                     console.log('[DBMessage] [查询未读message] 成功: ', res)
+                    log.info('[DBMessage] [查询未读message] 成功: ', res)
                     resolve(res)
                 }).catch(err => {
                     console.error('[DBMessage] [查询未读message] 失败: ', err)
+                    log.error('[DBMessage] [查询未读message] 失败: ', err)
                     reject()
                 })
         })
@@ -94,8 +103,10 @@ class DBMessage {
             }
         }).then(res => {
             console.log('[DBMessage] [更新message] 成功: ', res.result.stats)
+            log.info('[DBMessage] [更新message] 成功: ', res.result.stats)
         }).catch(err => {
             console.error('[DBMessage] [更新message] 失败: ', err)
+            log.error('[DBMessage] [更新message] 失败: ', err)
         })
     }
 
@@ -109,9 +120,11 @@ class DBMessage {
                 }
             }).then(res => {
                 console.log('[DBRelation] [删除关联消息] 成功: ', res.result)
+                log.info('[DBRelation] [删除关联消息] 成功: ', res.result)
                 resolve()
             }).catch(err => {
                 console.error('[DBRelation] [删除关联消息] 失败: ', err)
+                log.error('[DBRelation] [删除关联消息] 失败: ', err)
                 reject()
             })
         })

@@ -91,6 +91,7 @@ App({
         data: {},
         success: res => {
           console.log('[云函数login] [login] [获取openid] 成功: ', res.result.openid)
+          log.info('[云函数login] [login] [获取openid] 成功: ', res.result.openid)
           that.globalData.openid = res.result.openid
           let db = wx.cloud.database()
           db.collection('user').where({
@@ -98,6 +99,7 @@ App({
           }).get().then(user => {
             if (user.data[0]) {
               console.log('[onGetOpenid] [查询用户ByOpenid] 成功: ', user.data[0])
+              log.info('[onGetOpenid] [查询用户ByOpenid] 成功: ', user.data[0])
               this.globalData.id = user.data[0]._id
             }
           }).catch(err => {
@@ -107,6 +109,7 @@ App({
         },
         fail: err => {
           console.error('[云函数login] [login] [获取openid] 失败: ', err)
+          log.error('[云函数login] [login] [获取openid] 失败: ', err)
           reject()
         }
       })

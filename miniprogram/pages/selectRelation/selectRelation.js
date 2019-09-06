@@ -12,6 +12,8 @@ var myData = {
   value: [],
 }
 
+const log = require('../../util/log.js')
+
 Page({
   data: {
     articleList: []

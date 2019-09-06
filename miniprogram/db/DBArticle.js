@@ -16,6 +16,7 @@ const db = wx.cloud.database()
 const _ = db.command
 
 const app = getApp()
+const log = require('../util/log.js')
 
 class DBArticle {
   constructor() {
@@ -37,8 +38,10 @@ class DBArticle {
           let result = res.data
           if (result.length > 0) {
             console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', result)
+            log.info('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', result)
           } else {
             console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 未查询到记录', result)
+            log.info('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 未查询到记录', result)
           }
           resolve(result)
         })
@@ -48,6 +51,7 @@ class DBArticle {
             title: '查询记录失败'
           })
           console.error('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 失败：', err)
+          log.error('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 失败：', err)
           reject()
         })
     })
@@ -65,8 +69,10 @@ class DBArticle {
           let result = res.data
           if (result.length > 0) {
             console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', result)
+            log.info('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', result)
           } else {
             console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 未查询到记录', result)
+            log.info('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 未查询到记录', result)
           }
           resolve(result)
         })
@@ -76,6 +82,7 @@ class DBArticle {
             title: '查询记录失败'
           })
           console.error('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 失败：', err)
+          log.error('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 失败：', err)
           reject()
         })
     })
@@ -103,6 +110,7 @@ class DBArticle {
         }
       })
       console.log('[DBArticle] [' + articleType + '] [新增文章] 成功: _id=', res._id)
+      log.info('[DBArticle] [' + articleType + '] [新增文章] 成功: _id=', res._id)
       //关联关系
       let relationType = ''
       if (articleType == app.globalData.demandKey) {
@@ -123,6 +131,7 @@ class DBArticle {
         title: '新增文章失败'
       })
       console.error('[DBArticle] [' + articleType + '] [新增文章] 失败：', err)
+      log.error('[DBArticle] [' + articleType + '] [新增文章] 失败：', err)
     }
   }
 
@@ -165,6 +174,7 @@ class DBArticle {
     }
 
     console.log('[DBArticle] [' + articleType + '] [更新文章] 返回信息: ', res)
+    log.info('[DBArticle] [' + articleType + '] [更新文章] 返回信息: ', res)
   }
 
   //更新文章（收藏）
@@ -179,8 +189,10 @@ class DBArticle {
       }
     }).then(res => {
       console.log('[DBArticle] [更新收藏数] 成功: ', res)
+      log.info('[DBArticle] [更新收藏数] 成功: ', res)
     }).catch(err => {
       console.error('[DBArticle] [更新收藏数] 失败: ', err)
+      log.error('[DBArticle] [更新收藏数] 失败: ', err)
     })
   }
 
@@ -196,8 +208,10 @@ class DBArticle {
       }
     }).then(res => {
       console.log('[DBArticle] [更新评论数] 成功: ', res)
+      log.info('[DBArticle] [更新评论数] 成功: ', res)
     }).catch(err => {
       console.error('[DBArticle] [更新评论数] 失败: ', err)
+      log.error('[DBArticle] [更新评论数] 失败: ', err)
     })
   }
 
@@ -213,8 +227,10 @@ class DBArticle {
       }
     }).then(res => {
       console.log('[DBArticle] [更新访问数] 成功: ', res)
+      log.info('[DBArticle] [更新访问数] 成功: ', res)
     }).catch(err => {
       console.error('[DBArticle] [更新访问数] 失败: ', err)
+      log.error('[DBArticle] [更新访问数] 失败: ', err)
     })
   }
 
@@ -229,9 +245,11 @@ class DBArticle {
         .limit(pageSize)
         .get().then(res => {
           console.log('[DBArticle] [根据userId查询article信息] 成功: ', res.data)
+          log.info('[DBArticle] [根据userId查询article信息] 成功: ', res.data)
           resolve(res.data)
         }).catch(err => {
           console.error('[DBArticle] [根据userId查询article信息] 失败: ', err)
+          log.error('[DBArticle] [根据userId查询article信息] 失败: ', err)
           reject()
         })
     })
@@ -245,9 +263,11 @@ class DBArticle {
         _id: articleId,
       }).get().then(res => {
         console.log('[DBArticle] [根据articleId查询article信息] 成功: ', res.data)
+        log.info('[DBArticle] [根据articleId查询article信息] 成功: ', res.data)
         resolve(res.data)
       }).catch(err => {
         console.error('[DBArticle] [根据articleId查询article信息] 失败: ', err)
+        log.error('[DBArticle] [根据articleId查询article信息] 失败: ', err)
         reject()
       })
     })
@@ -270,11 +290,13 @@ class DBArticle {
             removed: false
           }).count().then(res3 => {
             console.log('[DBArticle] [根据用户id获取文章数] 成功: ', res1.total, '+', res2.total, '+', res3.total)
+            log.info('[DBArticle] [根据用户id获取文章数] 成功: ', res1.total, '+', res2.total, '+', res3.total)
             resolve(res1.total + res2.total + res3.total)
           })
         })
       }).catch(err => {
         console.error('[DBArticle] [根据用户id获取文章数] 失败: ', err)
+        log.error('[DBArticle] [根据用户id获取文章数] 失败: ', err)
         reject()
       })
     })
@@ -289,10 +311,12 @@ class DBArticle {
         }
       }).then(res => {
         console.log('[DBArticle] [删除article（标记）] 成功: ', res)
+        log.info('[DBArticle] [删除article（标记）] 成功: ', res)
         cache.removeCache(articleId)
         resolve()
       }).catch(err => {
         console.error('[DBArticle] [删除article（标记）] 失败: ', err)
+        log.error('[DBArticle] [删除article（标记）] 失败: ', err)
         reject()
       })
     })
@@ -303,10 +327,12 @@ class DBArticle {
     return new Promise((resolve, reject) => {
       db.collection(articleType).doc(articleId).remove().then(res => {
         console.log('[DBArticle] [删除article（真实）] 成功: ', res)
+        log.info('[DBArticle] [删除article（真实）] 成功: ', res)
         cache.removeCache(articleId)
         resolve()
       }).catch(err => {
         console.error('[DBArticle] [删除article（真实）] 失败: ', err)
+        log.error('[DBArticle] [删除article（真实）] 失败: ', err)
         reject()
       })
     })
@@ -325,9 +351,11 @@ class DBArticle {
         .limit(pageSize)
         .get().then(res => {
           console.log('[DBArticle] [search] 成功: ', res.data)
+          log.info('[DBArticle] [search] 成功: ', res.data)
           resolve(res.data)
         }).catch(err => {
           console.error('[DBArticle] [search] 失败: ', err)
+          log.error('[DBArticle] [search] 失败: ', err)
           reject(res)
         })
     })

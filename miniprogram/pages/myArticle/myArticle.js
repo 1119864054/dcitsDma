@@ -18,6 +18,8 @@ var myData = {
   articleType: ''
 }
 
+const log = require('../../util/log.js')
+
 Page({
 
   /**

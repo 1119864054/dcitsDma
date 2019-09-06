@@ -4,6 +4,8 @@ import { Util } from '../util/util';
 
 const util = new Util()
 
+const log = require('../util/log.js')
+
 class DBRelation {
     constructor() {
 
@@ -21,9 +23,11 @@ class DBRelation {
                     }
                 }).then(res => {
                     console.log('[DBRelation] [新增' + relationType + '] 成功: ', res._id)
+                   log.info('[DBRelation] [新增' + relationType + '] 成功: ', res._id)
                     resolve(res._id)
                 }).catch(err => {
                     console.error('[DBRelation] [新增' + relationType + '] 失败: ', err)
+                    log.error('[DBRelation] [新增' + relationType + '] 失败: ', err)
                     reject()
                 })
             })
@@ -37,9 +41,11 @@ class DBRelation {
                     }
                 }).then(res => {
                     console.log('[DBRelation] [新增' + relationType + '] 成功: ', res._id)
+                    log.info('[DBRelation] [新增' + relationType + '] 成功: ', res._id)
                     resolve(res._id)
                 }).catch(err => {
                     console.error('[DBRelation] [新增' + relationType + '] 失败: ', err)
+                    log.error('[DBRelation] [新增' + relationType + '] 失败: ', err)
                     reject()
                 })
             })
@@ -57,9 +63,11 @@ class DBRelation {
                     .orderBy('date', 'desc').get()
                     .then(res => {
                         console.log('[DBRelation] [查询SDRelation] 成功: ', res)
+                        log.info('[DBRelation] [查询SDRelation] 成功: ', res)
                         resolve(res)
                     }).catch(err => {
                         console.error('[DBRelation] [查询SDRelation] 失败: ', err)
+                        log.error('[DBRelation] [查询SDRelation] 失败: ', err)
                         reject()
                     })
             } else if (articleType == 'technology') {
@@ -70,9 +78,11 @@ class DBRelation {
                     .orderBy('date', 'desc').get()
                     .then(res => {
                         console.log('[DBRelation] [查询DTRelation] 成功: ', res)
+                        log.info('[DBRelation] [查询DTRelation] 成功: ', res)
                         resolve(res)
                     }).catch(err => {
                         console.error('[DBRelation] [查询DTRelation] 失败: ', err)
+                        log.error('[DBRelation] [查询DTRelation] 失败: ', err)
                         reject()
                     })
             } else {
@@ -90,9 +100,11 @@ class DBRelation {
                 }).get()
                 .then(res => {
                     console.log('[DBRelation] [查询' + relationType + '] 成功: ', res)
+                    log.info('[DBRelation] [查询' + relationType + '] 成功: ', res)
                     resolve(res)
                 }).catch(err => {
                     console.error('[DBRelation] [查询' + relationType + '] 失败: ', err)
+                    log.error('[DBRelation] [查询' + relationType + '] 失败: ', err)
                     reject()
                 })
         })
@@ -109,9 +121,11 @@ class DBRelation {
                 }
             }).then(res => {
                 console.log('[DBRelation] [删除关联关系] 成功: ', res.result)
+                log.info('[DBRelation] [删除关联关系] 成功: ', res.result)
                 resolve()
             }).catch(err => {
                 console.error('[DBRelation] [删除关联关系] 失败: ', err)
+                log.error('[DBRelation] [删除关联关系] 失败: ', err)
                 reject()
             })
         })

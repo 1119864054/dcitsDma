@@ -11,6 +11,7 @@ var dbMessage = new DBMessage()
 var dbRelation = new DBRelation()
 
 const app = getApp()
+const log = require('../../util/log.js')
 
 Page({
 
@@ -129,6 +130,7 @@ Page({
         }
       }
       console.log('message', message)
+      log.info('message', message)
       cache.setCache('message', message)
       this.setData({
         message: message,
