@@ -23,10 +23,11 @@ class DBArticle {
   }
 
   //从数据库读取文章列表
-  getAllArticleData(storageKeyName, pageSize = constPageSize, currentPage = 0) {
+  getAllArticleData(storageKeyName, pageSize = constPageSize, currentPage = 0, userId) {
     return new Promise((resolve, reject) => {
       db.collection(storageKeyName).where({
-        removed: false
+        removed: false,
+        userId: userId
       })
         .orderBy('date', 'desc')
         .skip(currentPage * pageSize)
@@ -98,7 +99,7 @@ class DBArticle {
 
           favorCount: 0,
           commentCount: 0,
-          visitCount: 0
+          visitCount: 1
         }
       })
       console.log('[DBArticle] [' + articleType + '] [新增文章] 成功: _id=', res._id)
@@ -133,6 +134,7 @@ class DBArticle {
     //   await this.addNewArticle(articleType, title, content, images, relation, true)
     // } 
     cache.removeCache(articleId)
+    cache.removeCache(articleId + '_image_cache')
     let id = app.globalData.id
     let res = await db.collection(articleType).doc(articleId).update({
       data: {
@@ -140,12 +142,14 @@ class DBArticle {
         content: content,
         date: util.formatTime(new Date()),
         updated: true,
-        articleImg: images
+        articleImg: images,
+        timeStamp: new Date().getTime()
       }
     })
-    await dbRelation.removeRelationByAId(articleId, articleType)
+
     //关联关系
     if (relation.length > 0) {
+      await dbRelation.removeRelationByAId(articleId, articleType)
       let relationType = ''
       if (articleType == app.globalData.demandKey) {
         relationType = 'SDRelation'
@@ -158,16 +162,20 @@ class DBArticle {
         //消息
         await dbMessage.addMessage(relationId, relationType, idArray[1], id)
       }
-      console.log('[DBArticle] [' + articleType + '] [更新文章] 返回信息: ', res)
     }
+
+    console.log('[DBArticle] [' + articleType + '] [更新文章] 返回信息: ', res)
   }
 
   //更新文章（收藏）
   updateFavorCount(articleId, articleType, favorCount) {
     cache.removeCache(articleId)
-    db.collection(articleType).doc(articleId).update({
+    wx.cloud.callFunction({
+      name: 'updateFavorCount',
       data: {
-        favorCount: _.inc(favorCount)
+        articleType: articleType,
+        articleId: articleId,
+        favorCount: favorCount
       }
     }).then(res => {
       console.log('[DBArticle] [更新收藏数] 成功: ', res)
@@ -179,9 +187,12 @@ class DBArticle {
   //更新文章（评论）
   updateCommentCount(articleId, articleType, commentCount) {
     cache.removeCache(articleId)
-    db.collection(articleType).doc(articleId).update({
+    wx.cloud.callFunction({
+      name: 'updateCommentCount',
       data: {
-        commentCount: _.inc(commentCount)
+        articleType: articleType,
+        articleId: articleId,
+        commentCount: commentCount
       }
     }).then(res => {
       console.log('[DBArticle] [更新评论数] 成功: ', res)
@@ -193,9 +204,12 @@ class DBArticle {
   //更新文章（访问）
   updateVisitCount(articleId, articleType, visitCount) {
     cache.removeCache(articleId)
-    db.collection(articleType).doc(articleId).update({
+    wx.cloud.callFunction({
+      name: 'updateVisitCount',
       data: {
-        visitCount: _.inc(visitCount)
+        articleType: articleType,
+        articleId: articleId,
+        visitCount: visitCount
       }
     }).then(res => {
       console.log('[DBArticle] [更新访问数] 成功: ', res)
@@ -244,13 +258,16 @@ class DBArticle {
     let userId = app.globalData.id
     return new Promise((resolve, reject) => {
       db.collection('suggestion').where({
-        userId: userId
+        userId: userId,
+        removed: false
       }).count().then(res1 => {
         db.collection('demand').where({
-          userId: userId
+          userId: userId,
+          removed: false
         }).count().then(res2 => {
           db.collection('technology').where({
-            userId: userId
+            userId: userId,
+            removed: false
           }).count().then(res3 => {
             console.log('[DBArticle] [根据用户id获取文章数] 成功: ', res1.total, '+', res2.total, '+', res3.total)
             resolve(res1.total + res2.total + res3.total)
@@ -300,11 +317,10 @@ class DBArticle {
     return new Promise((resolve, reject) => {
       db.collection(articleType).where({
         title: new db.RegExp({
-          regexp: '[' + key + ']',
+          regexp: key,
           options: 'i',
         })
       })
-        .orderBy('date', 'desc')
         .skip(currentPage * pageSize)
         .limit(pageSize)
         .get().then(res => {

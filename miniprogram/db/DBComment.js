@@ -44,8 +44,8 @@ class DBComment {
                 .orderBy('likeCount', 'desc')
                 .orderBy('date', 'desc')
                 .get().then(res => {
-                    console.log('[DBComment] [查询comment] 成功: ', res)
-                    resolve(res)
+                    console.log('[DBComment] [查询comment] 成功: ', res.data)
+                    resolve(res.data)
                 }).catch(err => {
                     console.error('[DBComment] [查询comment] 失败: ', err)
                     reject()
@@ -79,27 +79,29 @@ class DBComment {
             db.collection('comment').where({
                 articleId: articleId
             }).count().then(res => {
-                console.log('[DBRelation] [获取评论数量] 成功: ', res.total)
+                console.log('[DBComment] [获取评论数量] 成功: ', res.total)
                 resolve(res.total)
             }).catch(err => {
-                console.error('[DBRelation] [获取评论数量] 失败: ', err)
+                console.error('[DBComment] [获取评论数量] 失败: ', err)
                 reject()
             })
         })
     }
 
-    //点赞
+    //更新点赞数
     updateLikeCount(commentId, likeCount) {
         return new Promise((resolve, reject) => {
-            db.collection('comment').doc(commentId).update({
+            wx.cloud.callFunction({
+                name: 'updateLikeCount',
                 data: {
-                    likeCount: _.inc(likeCount)
+                    commentId: commentId,
+                    likeCount: likeCount
                 }
             }).then(res => {
-                console.log('[DBRelation] [点赞] 成功: ', res)
+                console.log('[DBComment] [更新点赞数] 成功: ', res.result.stats)
                 resolve()
             }).catch(err => {
-                console.error('[DBRelation] [点赞] 失败: ', err)
+                console.error('[DBComment] [更新点赞数] 失败: ', err)
                 reject()
             })
         })

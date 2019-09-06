@@ -85,8 +85,10 @@ class DBUser {
             db.collection('user').where({
                 _openid: openid
             }).get().then(res => {
-                console.log('[DBUser] [查询用户ByOpenid] 成功: ', res.data[0])
-                app.globalData.id = res.data[0]._id
+                if (res.data[0]) {
+                    console.log('[DBUser] [查询用户ByOpenid] 成功: ', res.data[0])
+                    app.globalData.id = res.data[0]._id
+                }
                 resolve(res.data[0])
             }).catch(err => {
                 console.error('[DBUser] [查询用户ByOpenid] 失败: ', err)

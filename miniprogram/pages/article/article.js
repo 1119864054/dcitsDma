@@ -57,7 +57,6 @@ Page({
    * 生命周期函数--监听页面加载
    */
   async onLoad(options) {
-    console.log('article options', options)
     let articleId = options.articleId
     let articleType = options.articleType
     myData.articleId = articleId;
@@ -65,20 +64,22 @@ Page({
 
     let articleData = cache.getCache(articleId)
 
-    console.log('articleData', articleData)
-
     if (articleData.removed) {
       this.setData({
         removed: articleData.removed
       })
     } else {
+      let timeStamp = cache.getCache(articleId + '_timeStamp')
+      if (!timeStamp) {
+        cache.setCache(articleId + '_timeStamp', articleData.timeStamp)
+      }
       let comment = cache.getCache(articleId + '_comment')
 
       let articleTypeZh = util.getArticleTypeZh(articleType)
-      console.log('articleTypeZh', articleTypeZh)
 
       let articleImg = cache.getCache(articleId + '_image_cache')
-      if (!articleImg) {
+      if (timeStamp != articleData.timeStamp || !articleImg) {
+        cache.setCache(articleId + '_timeStamp', articleData.timeStamp)
         articleImg = articleData.articleImg
         cache.getImageCached(articleId, articleData.articleImg)
       }
@@ -125,6 +126,10 @@ Page({
         dbArticle.updateVisitCount(articleId, articleType, 1)
         cache.setCache(articleId + '_visit', true)
       }
+
+      dbArticle.getArticleByAIdFromDB(articleId, articleType).then(res=>{
+        cache.setCache(articleId, res[0])
+      })
     }
   },
 
@@ -133,7 +138,6 @@ Page({
   },
 
   previewImage: function (e) {
-    console.log(e)
     wx.previewImage({
       current: e.currentTarget.id, // 当前显示图片的http链接
       urls: this.data.articleImg // 需要预览的图片http链接列表
@@ -164,7 +168,6 @@ Page({
             favorId: res._id
           })
           dbArticle.updateFavorCount(myData.articleId, myData.articleType, 1)
-          console.log('收藏成功：', res);
           wx.showToast({
             title: '收藏成功',
             icon: 'none',
@@ -190,7 +193,6 @@ Page({
   },
 
   onTapToRelate(e) {
-    console.log(e);
     let articleId = e.currentTarget.dataset.articleId
     let articleType = e.currentTarget.dataset.articleType
     wx.navigateTo({
@@ -199,9 +201,8 @@ Page({
   },
 
   async getComment() {
-    let res1 = await dbComment.getComment(myData.articleId)
-    if (res1) {
-      let comment = res1.data
+    let comment = await dbComment.getComment(myData.articleId)
+    if (comment && comment.length > 0) {
       for (let i = 0; i < comment.length; i++) {
         let isLiked = await dbLike.isLiked(comment[i]._id)
         if (isLiked.length > 0) {
@@ -276,7 +277,12 @@ Page({
       title: '点赞成功',
       icon: 'none'
     });
-    dbLike.addLike(e.currentTarget.dataset.commentId)
+    dbLike.addLike(e.currentTarget.dataset.commentId).then(likeId => {
+      comment[e.currentTarget.dataset.idx].likeId = likeId
+      this.setData({
+        comment: comment
+      })
+    })
     dbComment.updateLikeCount(e.currentTarget.dataset.commentId, 1)
   },
 

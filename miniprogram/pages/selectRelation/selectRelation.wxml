@@ -1,5 +1,5 @@
-<cu-custom bgColor="bg-gradual-pink" isBack="{{true}}">
-    <view slot="backText">返回</view>
+<cu-custom bgColor="bg-gradual-pink" bgImage="../../images/navibar/3.jpg" isBack="{{true}}">
+  <view slot="backText">返回</view>
     <view slot="content">选择关联文章</view>
 </cu-custom>
 <checkbox-group bind:change="onTapChange">

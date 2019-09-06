@@ -21,7 +21,7 @@ class Cache {
             if (!result || result.length < 1) {
                 console.log('[Cache] [' + storageKeyName + '] [查询缓存记录] 未查询到记录', result)
             } else {
-                console.log('[Cache] [' + storageKeyName + '] [查询缓存记录] 成功： ', result)
+                console.log('[Cache] [' + storageKeyName + '] [查询缓存记录] 成功： ', [result])
             }
             return result;
         } catch (err) {
@@ -32,8 +32,8 @@ class Cache {
     //从缓存删除一条数据
     removeCache(storageKeyName) {
         try {
-            let result = wx.removeStorageSync(storageKeyName)
-            console.log('[Cache] [' + storageKeyName + '] [删除缓存' + storageKeyName + '] 成功： ', result)
+            wx.removeStorageSync(storageKeyName)
+            console.log('[Cache] [' + storageKeyName + '] [删除缓存' + storageKeyName + '] 成功')
         } catch (e) {
             console.log('[Cache] [' + storageKeyName + '] [删除缓存' + storageKeyName + '] 失败： ', e)
         }

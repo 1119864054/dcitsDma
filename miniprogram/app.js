@@ -1,3 +1,5 @@
+const log = require('./util/log.js')
+
 App({
 
   /**
@@ -15,7 +17,6 @@ App({
       console.error('请使用 2.2.3 或以上的基础库以使用云能力')
     } else {
       wx.cloud.init({
-        env: 'test-154312',
         traceUser: true,
       })
     }
@@ -42,12 +43,12 @@ App({
             title: "正在登录",
             mask: true,
           });
-          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
           wx.getUserInfo({
             lang: 'zh_CN',
             timeout: 10000,
             success: (res) => {
-              console.log('[login] [获取用户信息userInfo] 成功 ', res)
+              console.log('[onLaunch] [获取用户信息userInfo] 成功 ', res)
+              log.info('[onLaunch] [获取用户信息userInfo] 成功 ', res)
               this.globalData.username = res.userInfo.nickName
               this.globalData.avatar = res.userInfo.avatarUrl
               this.globalData.logged = true
@@ -56,8 +57,9 @@ App({
                 this.userInfoReadyCallback(res)
               }
             },
-            fail: () => {
-              console.error('[login] [获取用户信息userInfo] 失败')
+            fail: (err) => {
+              console.error('[onLaunch] [获取用户信息userInfo] 失败', err)
+              log.error('[onLaunch] [获取用户信息userInfo] 失败', err)
             }
           });
         }
@@ -94,8 +96,10 @@ App({
           db.collection('user').where({
             _openid: res.result.openid
           }).get().then(user => {
-            console.log('[onGetOpenid] [查询用户ByOpenid] 成功: ', user.data[0])
-            this.globalData.id = user.data[0]._id
+            if (user.data[0]) {
+              console.log('[onGetOpenid] [查询用户ByOpenid] 成功: ', user.data[0])
+              this.globalData.id = user.data[0]._id
+            }
           }).catch(err => {
             console.error('[onGetOpenid] [查询用户ByOpenid] 失败: ', err)
           })
@@ -107,26 +111,5 @@ App({
         }
       })
     })
-  },
-
-  /**
-   * 当小程序启动，或从后台进入前台显示，会触发 onShow
-   */
-  onShow: function (options) {
-
-  },
-
-  /**
-   * 当小程序从前台进入后台，会触发 onHide
-   */
-  onHide: function () {
-
-  },
-
-  /**
-   * 当小程序发生脚本错误，或者 api 调用失败时，会触发 onError 并带上错误信息
-   */
-  onError: function (msg) {
-
   }
 })

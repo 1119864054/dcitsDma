@@ -30,8 +30,7 @@
     "color": "#999999",
     "backgroundColor": "#ffffff",
     "position": "bottom",
-    "list": [
-      {
+    "list": [{
         "pagePath": "pages/articleList/articleList",
         "text": "文章",
         "iconPath": "images/tabbar/suggestion.png",

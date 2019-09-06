@@ -1,4 +1,4 @@
-<cu-custom bgImage="https://image.weilanwl.com/color2.0/plugin/cjkz2329.jpg">
+<cu-custom bgImage="../../images/navibar/1.jpg">
   <view slot="content">个人主页</view>
 </cu-custom>
 <view class="margin-sm padding-xl bg-white radius shadow-warp margin-top">

@@ -45,7 +45,6 @@ Page({
       for (let i = 0; i < message.length; i++) {
         let res2 = await dbRelation.getRelationById(message[i].relationId, message[i].relationType)
         let relation = res2.data[0]
-        console.log('relation', relation)
         if (!relation) {
           dbMessage.removeMessageByRId(message[i].relationId)
         } else {
@@ -58,7 +57,6 @@ Page({
                 cache.setCache(relation.demandId, demand)
               }
             }
-            console.log('demand', demand)
 
             message[i].article = demand.title
             message[i].articleId = demand._id
@@ -72,7 +70,6 @@ Page({
                 cache.setCache(message[i].relate, user)
               }
             }
-            console.log('user', user)
 
             message[i].username = user.username
             message[i].avatar = user.avatar
@@ -85,12 +82,9 @@ Page({
                 cache.setCache(relation.suggestionId, suggestion)
               }
             }
-
-            console.log('suggestion', suggestion)
             message[i].myArticle = suggestion.title
             message[i].myArticleId = suggestion._id
             message[i].myArticleType = 'suggestion'
-            console.log('message[i]', message[i])
 
           } else if (message[i].relationType == 'DTRelation') {
 
@@ -102,7 +96,6 @@ Page({
                 cache.setCache(relation.technologyId, technology)
               }
             }
-            console.log('technology', technology)
 
             message[i].article = technology.title
             message[i].articleId = technology._id
@@ -116,7 +109,6 @@ Page({
                 cache.setCache(message[i].relate, user)
               }
             }
-            console.log('user', user)
 
             message[i].username = user.username
             message[i].avatar = user.avatar
@@ -129,16 +121,14 @@ Page({
                 cache.setCache(relation.demandId, demand)
               }
             }
-            console.log('demand', demand)
 
             message[i].myArticle = demand.title
             message[i].myArticleId = demand._id
             message[i].myArticleType = 'demand'
-            console.log('message[i]', message[i])
           }
         }
       }
-      console.log('message-after', message);
+      console.log('message', message)
       cache.setCache('message', message)
       this.setData({
         message: message,

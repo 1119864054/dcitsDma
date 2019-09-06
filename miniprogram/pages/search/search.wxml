@@ -1,6 +1,6 @@
 <import src="../../template/articleItem.wxml" />
-<cu-custom bgColor="bg-gradual-blue" isBack="{{true}}">
-    <view slot="backText"></view>
+<cu-custom bgColor="bg-gradual-pink" bgImage="../../images/navibar/1.jpg" isBack="{{true}}">
+  <view slot="backText">返回</view>
     <view wx:if="{{!isLoad}}" slot="content">加载中</view>
     <view wx:else slot="content">搜索</view>
     <view class="action" slot="right">

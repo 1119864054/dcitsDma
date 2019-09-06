@@ -1,6 +1,6 @@
 <import src="../../template/myArticleItem.wxml" />
-<cu-custom bgColor="bg-gradual-pink" isBack="{{true}}">
-  <view slot="backText"></view>
+<cu-custom bgColor="bg-gradual-pink" bgImage="../../images/navibar/2.jpg" isBack="{{true}}">
+  <view slot="backText">返回</view>
   <view wx:if="{{!isLoad}}" slot="content">加载中</view>
   <view wx:else slot="content">我的文章</view>
   <view class="action" slot="right">
@@ -54,7 +54,7 @@
     <swiper-item>
       <scroll-view scroll-y style="height:100%" bindscrolltolower='loadMore'>
         <view class="cu-card dynamic">
-          <block wx:for="{{technology}}" wx:key="_id" >
+          <block wx:for="{{technology}}" wx:key="_id">
             <template is="myArticleItem" data="{{...item}}"></template>
           </block>
         </view>
@@ -62,60 +62,4 @@
       </scroll-view>
     </swiper-item>
   </swiper>
-</view>
-<!-- 删除提示框 -->
-<view class="cu-modal bottom-modal {{modalName=='more'?'show':''}}">
-  <view class="cu-dialog">
-    <view class="cu-list text-center bg-white">
-      <view class="cu-item padding solid-bottom" data-target="edit" bind:tap="showModal">
-        <view class="content text-bold text-lg" style="color:#576b95">编辑文章</view>
-      </view>
-      <view class="cu-item padding " data-target="delete" bind:tap="showModal">
-        <view class="content text-red text-bold text-lg">删除文章</view>
-      </view>
-      <view class="cu-item bg-gray padding" bindtap="hideModal">
-        <view class="content text-grey">取消</view>
-      </view>
-    </view>
-  </view>
-</view>
-<!-- 编辑提示框 -->
-<view class="cu-modal {{modalName=='edit'?'show':''}}" bindtap="hideModal">
-  <view class="cu-dialog">
-    <view class="cu-bar bg-white justify-end">
-      <view class="content">提示</view>
-      <view class="action" bindtap="hideModal">
-        <text class="cuIcon-close text-red"></text>
-      </view>
-    </view>
-    <view class="padding-xl">
-      确定要
-      <text class="text-bold">编辑</text>
-      文章《{{editTitle}}》吗？
-    </view>
-    <view class="cu-bar bg-white">
-      <view class="text-lg flex-sub text-grey solid-left" bindtap="hideModal">取消</view>
-      <view class="text-lg flex-sub text-bold" style="color:#576b95" bindtap="onTapEdit">确定</view>
-    </view>
-  </view>
-</view>
-<!-- 底部提示框 -->
-<view class="cu-modal {{modalName=='delete'?'show':''}}" bindtap="hideModal">
-  <view class="cu-dialog">
-    <view class="cu-bar bg-white justify-end">
-      <view class="content">提示</view>
-      <view class="action" bindtap="hideModal">
-        <text class="cuIcon-close text-red"></text>
-      </view>
-    </view>
-    <view class="padding-xl">
-      确定要
-      <text class="text-red">删除</text>
-      文章《{{editTitle}}》吗？
-    </view>
-    <view class="cu-bar bg-white">
-      <view class="text-lg flex-sub text-grey solid-left" bindtap="hideModal">取消</view>
-      <view class="text-lg flex-sub text-red text-bold" bindtap="onTapDelete">删除</view>
-    </view>
-  </view>
 </view>

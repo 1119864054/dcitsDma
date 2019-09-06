@@ -86,7 +86,6 @@ Page({
     },
 
     PickerChange(e) {
-        console.log(e);
         this.setData({
             typeIndex: e.detail.value,
             relation: [],
@@ -97,7 +96,6 @@ Page({
 
     getTitle: function (e) {
         myData.title = e.detail.value
-        console.log('title', myData.title)
     },
 
     getContent: function (e) {
@@ -105,7 +103,6 @@ Page({
         this.setData({
             length: e.detail.value.length
         })
-        console.log('content', myData.content)
     },
 
     tapToSelectRelate: function (e) {

@@ -120,7 +120,6 @@ Page({
             imgList: res.tempFilePaths
           })
         }
-        console.log('imgList ', this.data.imgList)
       }
     });
   },
@@ -150,7 +149,6 @@ Page({
   },
 
   PickerChange(e) {
-    console.log(e);
     this.setData({
       typeIndex: e.detail.value,
       relation: [],
@@ -161,7 +159,6 @@ Page({
 
   getTitle: function (e) {
     this.data.title = e.detail.value
-    console.log('title', this.data.title)
   },
 
   getContent: function (e) {
@@ -169,7 +166,6 @@ Page({
     this.setData({
       length: e.detail.value.length
     })
-    console.log('content', this.data.content)
   },
 
   tapToSelectRelate: function (e) {

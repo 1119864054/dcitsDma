@@ -59,43 +59,56 @@ Page({
   },
 
   onShow: function () {
-    this.isNewMessage()
-    dbArticle.getArticleCount().then(articleCount => {
-      this.setData({
-        articleCount: articleCount
+    if (app.globalData.logged) {
+      this.isNewMessage()
+      dbArticle.getArticleCount().then(articleCount => {
+        this.setData({
+          articleCount: articleCount
+        })
       })
-    })
-    dbFavor.getFavorCount().then(favorCount => {
-      this.setData({
-        favorCount: favorCount
+      dbFavor.getFavorCount().then(favorCount => {
+        this.setData({
+          favorCount: favorCount
+        })
       })
-    })
+    }
+
   },
 
   getUserInfo: function (e) {
-    wx.showLoading({
-      title: "正在登录",
-      mask: true,
-    });
-    app.globalData.logged = true
-    app.globalData.username = e.detail.userInfo.nickName
-    app.globalData.avatar = e.detail.userInfo.avatarUrl
-    console.log('[login] [getUserInfo] 登录成功', e.detail.userInfo)
-    this.login()
+    let that = this;
+    wx.getSetting({
+      success(res) {
+        if (res.authSetting['scope.userInfo']) {
+          wx.showLoading({
+            title: "正在登录",
+            mask: true,
+          });
+          wx.getUserInfo({
+            success(res) {
+              console.log("[user] [获取用户信息userInfo] 成功 ", res)
+              app.globalData.logged = true
+              app.globalData.username = res.userInfo.nickName
+              app.globalData.avatar = res.userInfo.avatarUrl
+              that.login()
+            },
+            fail(err) {
+              console.error("[user] [获取用户信息userInfo] 失败", err)
+            }
+          })
+        }
+      }
+    })
   },
 
   login(e) {
     dbUser.addUser().then(() => {
-      this.isNewMessage()
       this.setMyCache()
       dbUser.updateUser()
-      let username = app.globalData.username;
-      let avatar = app.globalData.avatar;
-      let logged = app.globalData.logged;
       this.setData({
-        avatar: avatar,
-        username: username,
-        logged: logged,
+        avatar: app.globalData.avatar,
+        username: app.globalData.username,
+        logged: app.globalData.logged,
         hasUserInfo: true
       })
       wx.hideLoading();
@@ -135,13 +148,13 @@ Page({
   },
 
   setMyCache() {
-    dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.suggestionKey).then(res => {
+    dbArticle.getAllArticleData(app.globalData.suggestionKey, undefined, undefined, app.globalData.id).then(res => {
       cache.setCache('mySuggestion', res)
     })
-    dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.demandKey).then(res => {
+    dbArticle.getAllArticleData(app.globalData.demandKey, undefined, undefined, app.globalData.id).then(res => {
       cache.setCache('myDemand', res)
     })
-    dbArticle.getArticleByIdFromDB(app.globalData.id, app.globalData.technologyKey).then(res => {
+    dbArticle.getAllArticleData(app.globalData.technologyKey, undefined, undefined, app.globalData.id).then(res => {
       cache.setCache('myTechnology', res)
     })
   }

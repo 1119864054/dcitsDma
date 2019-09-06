@@ -1,6 +1,6 @@
 import { DBArticle } from "../../db/DBArticle";
 import { DBUser } from "../../db/DBUser";
-import { Cache } from '../../db/Cache';
+import { Cache } from "../../db/Cache";
 
 var dbArticle = new DBArticle();
 var dbUser = new DBUser();
@@ -17,7 +17,6 @@ Page({
     articleList: []
   },
   async onLoad(options) {
-    console.log(options.articleType);
     myData.articleId = options.articleId
     if (options.articleType == 'demand') {
       myData.articleType = 'suggestion'
@@ -44,7 +43,6 @@ Page({
   },
 
   onTapChange(e) {
-    console.log('选择的value', e.detail.value)
     myData.value = e.detail.value
   },
 
@@ -64,7 +62,6 @@ Page({
   submit() {
     let pages = getCurrentPages();
     let prevPage = pages[pages.length - 2];
-    console.log(prevPage)
     prevPage.setData({
       relation: myData.value
     })

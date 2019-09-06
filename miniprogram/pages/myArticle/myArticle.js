@@ -66,14 +66,12 @@ Page({
   },
 
   onSwiperChange(e) {
-    console.log(e)
     this.setData({
       current: e.detail.current
     })
   },
 
   onTapToArticle: function (e) {
-    console.log(e);
     let articleId = e.currentTarget.dataset.articleId
     let articleType = e.currentTarget.dataset.articleType
     wx.navigateTo({
@@ -81,15 +79,59 @@ Page({
     });
   },
 
+  showModal(e) {
+    let that = this
+    myData.articleId = e.currentTarget.dataset.articleId
+    myData.articleType = e.currentTarget.dataset.articleType
+    wx.showActionSheet({
+      itemList: ['编辑文章', '删除文章'],
+      itemColor: '#576b95',
+      success: (res) => {
+        if (res.tapIndex == 1) {
+          wx.showModal({
+            title: '提示',
+            content: '确定要 删除 文章《' + e.currentTarget.dataset.editTitle + '》吗？',
+            showCancel: true,
+            cancelText: '取消',
+            cancelColor: '#000000',
+            confirmText: '确定',
+            confirmColor: '#e20000',
+            success: (result) => {
+              if (result.confirm) {
+                that.onTapDelete()
+              }
+            },
+            fail: (res) => { console.error(res.errMsg)}
+          });
+        } else if (res.tapIndex == 0) {
+          wx.showModal({
+            title: '提示',
+            content: '确定要 编辑 文章《' + e.currentTarget.dataset.editTitle + '》吗？',
+            showCancel: true,
+            cancelText: '取消',
+            cancelColor: '#000000',
+            confirmText: '确定',
+            confirmColor: '#576b95',
+            success: (result) => {
+              if (result.confirm) {
+                that.onTapEdit()
+              }
+            },
+            fail: (res) => { console.error(res.errMsg)}
+          });
+        }
+      },
+      fail: (res) => { console.error(res.errMsg)}
+    });
+  },
+
   onTapEdit(e) {
-    this.hideModal()
     wx.navigateTo({
       url: '/pages/editArticle/editArticle?articleId=' + myData.articleId + '&articleType=' + myData.articleType,
     });
   },
 
   async onTapDelete(e) {
-    this.hideModal()
     wx.showLoading({
       title: '删除文章中',
       mask: true
@@ -106,27 +148,6 @@ Page({
     })
   },
 
-  showModal(e) {
-    console.log('e.currentTarget.dataset.target', e.currentTarget.dataset.target)
-    this.setData({
-      modalName: e.currentTarget.dataset.target,
-    })
-    console.log('this.data.modalName', this.data.modalName)
-    if (e.currentTarget.dataset.target == 'more') {
-      this.setData({
-        editTitle: e.currentTarget.dataset.editTitle
-      })
-      myData.articleId = e.currentTarget.dataset.articleId
-      myData.articleType = e.currentTarget.dataset.articleType
-    }
-  },
-
-  hideModal(e) {
-    this.setData({
-      modalName: null
-    })
-  },
-
   async getMyArticle(articleType) {
     this.setData({
       isLoad: false
@@ -137,7 +158,7 @@ Page({
 
     let userId = app.globalData.id
 
-    let myArticleList = await dbArticle.getArticleByIdFromDB(userId, articleType)
+    let myArticleList = await dbArticle.getAllArticleData(articleType, undefined, undefined, userId)
     cache.setCache(myArticleType, myArticleList)
     for (let i = 0; i < myArticleList.length; i++) {
       cache.setCache(myArticleList[i]._id, myArticleList[i])
@@ -166,7 +187,7 @@ Page({
   },
 
   async getMoreData(articleType) {
-    console.log('currentPage——————', currentPage)
+    console.log('currentPage', currentPage)
     let key = 'loadMore_' + [articleType]
     this.setData({
       [key]: true,
@@ -174,7 +195,7 @@ Page({
 
     let myArticleList = this.data[articleType]
 
-    let newMyArticleList = await dbArticle.getArticleByIdFromDB(app.globalData.id, articleType, pageSize, currentPage)
+    let newMyArticleList = await dbArticle.getAllArticleData(articleType, pageSize, currentPage, app.globalData.id)
     if (newMyArticleList && newMyArticleList.length > 0) {
       currentPage++;
       myArticleList = myArticleList.concat(newMyArticleList)

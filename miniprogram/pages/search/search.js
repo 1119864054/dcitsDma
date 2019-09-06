@@ -53,7 +53,7 @@ Page({
   },
 
   onTapToSearch() {
-    this.getNewData(articleType[this.data.current], myData.search)
+    if (myData.search) { this.getNewData(articleType[this.data.current], myData.search) }
   },
 
   loadMore: function () {
@@ -64,7 +64,6 @@ Page({
   },
 
   onTapToArticle: function (e) {
-    console.log(e);
     let articleId = e.currentTarget.dataset.articleId
     let articleType = e.currentTarget.dataset.articleType
     wx.navigateTo({
@@ -79,7 +78,6 @@ Page({
   },
 
   onSwiperChange(e) {
-    console.log(e)
     this.setData({
       current: e.detail.current
     })
@@ -118,7 +116,7 @@ Page({
   },
 
   async getMoreData(articleType) {
-    console.log('currentPage——————', currentPage)
+    console.log('currentPage', currentPage)
     let key = 'loadMore_' + [articleType]
     this.setData({
       [key]: true,

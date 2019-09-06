@@ -1,6 +1,6 @@
 <import src="../../template/favorItem.wxml" />
-<cu-custom bgColor="bg-gradual-pink" isBack="{{true}}">
-  <view slot="backText"></view>
+<cu-custom bgColor="bg-gradual-pink" bgImage="../../images/navibar/2.jpg" isBack="{{true}}">
+  <view slot="backText">返回</view>
   <view wx:if="{{!isLoad}}" slot="content">加载中</view>
   <view wx:else slot="content">我的收藏</view>
   <view class="action" slot="right">
@@ -9,13 +9,13 @@
 </cu-custom>
 <scroll-view scroll-x class="bg-white nav fixed" style="top:{{CustomBar}}px;height:45px">
   <view class="flex text-center" style="height:100%">
-    <view class="cu-item flex-sub {{current==0?'text-orange cur':''}}" bindtap="tabSelect" data-id="0" style="height:100%">
+    <view class="cu-item flex-sub {{current==0?'text-black cur text-bold':''}}" bindtap="tabSelect" data-id="0" style="height:100%">
       需求意见箱
     </view>
-    <view class="cu-item flex-sub {{current==1?'text-orange cur':''}}" bindtap="tabSelect" data-id="1" style="height:100%">
+    <view class="cu-item flex-sub {{current==1?'text-black cur text-bold':''}}" bindtap="tabSelect" data-id="1" style="height:100%">
       业务需求
     </view>
-    <view class="cu-item flex-sub {{current==2?'text-orange cur':''}}" bindtap="tabSelect" data-id="2" style="height:100%">
+    <view class="cu-item flex-sub {{current==2?'text-black cur text-bold':''}}" bindtap="tabSelect" data-id="2" style="height:100%">
       项目需求
     </view>
   </view>

@@ -35,7 +35,6 @@ Page({
     myFavorList.push(favorSuggestion)
     myFavorList.push(favorDemand)
     myFavorList.push(favorTechnology)
-    console.log('myFavorList: ', myFavorList)
     this.setData({
       CustomBar: app.globalData.CustomBar,
       windowWidth: app.globalData.windowWidth,
@@ -51,14 +50,12 @@ Page({
   },
 
   onSwiperChange(e) {
-    console.log(e)
     this.setData({
       current: e.detail.current
     })
   },
 
   onTapToArticle: function (e) {
-    console.log(e);
     let articleId = e.currentTarget.dataset.articleId
     let articleType = e.currentTarget.dataset.articleType
     wx.navigateTo({
@@ -73,9 +70,9 @@ Page({
     });
 
     let that = this
-
-    console.log('取消收藏', e)
+    
     dbFavor.removeFavor(e.currentTarget.dataset.favorId).then(res => {
+      dbArticle.updateFavorCount(e.currentTarget.dataset.articleId, e.currentTarget.dataset.articleType, -1)
       that.getFavor()
       wx.hideLoading();
     })

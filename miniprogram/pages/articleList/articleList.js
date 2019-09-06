@@ -63,7 +63,6 @@ Page({
   },
 
   onTapToArticle: function (e) {
-    console.log(e);
     let articleId = e.currentTarget.dataset.articleId
     let articleType = e.currentTarget.dataset.articleType
     wx.navigateTo({
@@ -78,14 +77,13 @@ Page({
   },
 
   onSwiperChange(e) {
-    console.log(e)
     this.setData({
       current: e.detail.current
     })
   },
 
   async getMoreData(articleType) {
-    console.log('currentPage——————', currentPage)
+    console.log('currentPage', currentPage)
     let key = 'loadMore_' + [articleType]
     this.setData({
       [key]: true,
@@ -142,7 +140,7 @@ Page({
       }
       cache.setCache(articleType, articleList)
     }
-    console.log(articleType, ':articleList:', articleList)
+    console.log(articleType, ' :articleList: ', articleList)
     if (articleList.length < pageSize) {
       this.setData({
         [key]: false

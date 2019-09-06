@@ -87,12 +87,13 @@ class DBMessage {
 
     //消息已读
     checkMessage(messageId) {
-        db.collection('message').doc(messageId).update({
+        wx.cloud.callFunction({
+            name: 'checkMessage',
             data: {
-                checked: true
+                messageId: messageId,
             }
         }).then(res => {
-            console.log('[DBMessage] [更新message] 成功: ', res)
+            console.log('[DBMessage] [更新message] 成功: ', res.result.stats)
         }).catch(err => {
             console.error('[DBMessage] [更新message] 失败: ', err)
         })

@@ -21,7 +21,7 @@ class DBLike {
                 }
             }).then(res => {
                 console.log('[DBLike] [添加like] 成功: ', res)
-                resolve()
+                resolve(res._id)
             }).catch(err => {
                 console.error('[DBLike] [添加like] 失败: ', err)
                 reject()
@@ -54,7 +54,7 @@ class DBLike {
             db.collection('like').doc(likeId)
                 .remove()
                 .then(res => {
-                    console.log('[DBLike] [删除like] 成功: ', res)
+                    console.log('[DBLike] [删除like] 成功: ', res.stats)
                     resolve()
                 }).catch(err => {
                     console.error('[DBLike] [删除like] 失败: ', err)
