@@ -127,7 +127,7 @@ Page({
         cache.setCache(articleId + '_visit', true)
       }
 
-      dbArticle.getArticleByAIdFromDB(articleId, articleType).then(res=>{
+      dbArticle.getArticleByAIdFromDB(articleId, articleType).then(res => {
         cache.setCache(articleId, res[0])
       })
     }
@@ -267,23 +267,30 @@ Page({
   },
 
   like(e) {
-    let comment = this.data.comment
-    comment[e.currentTarget.dataset.idx].isLiked = true
-    comment[e.currentTarget.dataset.idx].likeCount++
-    this.setData({
-      comment: comment
-    })
-    wx.showToast({
-      title: '点赞成功',
-      icon: 'none'
-    });
-    dbLike.addLike(e.currentTarget.dataset.commentId).then(likeId => {
-      comment[e.currentTarget.dataset.idx].likeId = likeId
+    if (app.globalData.logged) {
+      let comment = this.data.comment
+      comment[e.currentTarget.dataset.idx].isLiked = true
+      comment[e.currentTarget.dataset.idx].likeCount++
       this.setData({
         comment: comment
       })
-    })
-    dbComment.updateLikeCount(e.currentTarget.dataset.commentId, 1)
+      wx.showToast({
+        title: '点赞成功',
+        icon: 'none'
+      });
+      dbLike.addLike(e.currentTarget.dataset.commentId).then(likeId => {
+        comment[e.currentTarget.dataset.idx].likeId = likeId
+        this.setData({
+          comment: comment
+        })
+      })
+      dbComment.updateLikeCount(e.currentTarget.dataset.commentId, 1)
+    } else {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+    }
   },
 
   cancelLike(e) {

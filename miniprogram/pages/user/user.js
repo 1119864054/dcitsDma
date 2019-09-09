@@ -29,13 +29,14 @@ Page({
   },
 
   onLoad: function (options) {
-    // if (app.globalData.logged) {
-    //   this.login()
-    // } else if (this.data.canIUse) {
-    //   app.userInfoReadyCallback = res => {
-    //     this.login()
-    //   }
-    // } else {
+    if (app.globalData.logged) {
+      this.login()
+    } else if (this.data.canIUse) {
+      app.userInfoReadyCallback = res => {
+        this.login()
+      }
+    } 
+    // else {
     //   wx.getUserInfo({
     //     lang: 'zh_CN',
     //     timeout: 10000,
