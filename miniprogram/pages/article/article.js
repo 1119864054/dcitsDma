@@ -90,7 +90,7 @@ Page({
         cache.setCache(articleData.userId, res)
       }
 
-      let content = articleData.content.split("。")
+      let content = articleData.content.split(" ")
 
       this.setData({
         comment: comment,

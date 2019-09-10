@@ -106,7 +106,7 @@ class DBArticle {
 
           favorCount: 0,
           commentCount: 0,
-          visitCount: 1
+          visitCount: 0
         }
       })
       console.log('[DBArticle] [' + articleType + '] [新增文章] 成功: _id=', res._id)
