@@ -20,7 +20,7 @@
                     <view class="cu-avatar round lg shadow-blur" style="background-image:url({{avatar}});"></view>
                     <view class="content flex-sub">
                         <view>{{username}}</view>
-                        <view class="text-gray text-sm flex justify-between">
+                        <view class="text-grey text-sm flex justify-between">
                             <block wx:if="{{updated}}">更新于</block>
                             {{date}}
                         </view>
@@ -43,14 +43,14 @@
                     </view>
                 </block>
             </view>
-            <view class="text-gray text-lg text-left padding solids-bottom">
+            <view class="text-grey text-lg text-left padding solids-bottom">
                 <view class="cu-capsule round">
-                    <view class="cu-tag bg-blue">浏览</view>
-                    <view class="cu-tag line-blue">{{visitCount}}</view>
+                    <view class="cu-tag bg-grey">浏览</view>
+                    <view class="cu-tag line-grey">{{visitCount}}</view>
                 </view>
                 <view class="cu-capsule round">
-                    <view class="cu-tag bg-blue">评论</view>
-                    <view class="cu-tag line-blue">{{comment.length}}</view>
+                    <view class="cu-tag bg-grey">评论</view>
+                    <view class="cu-tag line-grey">{{comment.length}}</view>
                 </view>
                 <block wx:if="{{isFavor}}">
                     <view class="cu-capsule round" catch:tap="onTapUnFavor" data-favor-id='{{favorId}}'>
@@ -60,14 +60,14 @@
                 </block>
                 <block wx:else>
                     <view class="cu-capsule round" catch:tap="onTapFavor">
-                        <view class="cu-tag bg-blue">收藏</view>
-                        <view class="cu-tag line-blue">{{favorCount}}</view>
+                        <view class="cu-tag bg-grey">收藏</view>
+                        <view class="cu-tag line-grey">{{favorCount}}</view>
                     </view>
                 </block>
             </view>
             <view class="cu-bar bg-white solid-bottom">
                 <view class='action'>
-                    <text class="cuIcon-titles text-blue"></text>
+                    <text class="cuIcon-titles text-black"></text>
                     <text class="text-lg text-bold">关联的文章</text>
                 </view>
             </view>
@@ -76,14 +76,14 @@
                     暂无关联文章
                 </view>
                 <block wx:for="{{relationDetail}}" wx:key="_id">
-                    <view class="text-blue text-left padding-bottom-sm" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' catch:tap="onTapToRelate">
+                    <view class="text-black text-left padding-bottom-sm" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' catch:tap="onTapToRelate">
                         {{item.title}} .{{item.username}}
                     </view>
                 </block>
             </view>
             <view class="cu-bar bg-white solids-top solid-bottom">
                 <view class='action'>
-                    <text class="cuIcon-titles text-green"></text>
+                    <text class="cuIcon-titles text-black"></text>
                     <text class="text-lg text-bold">评论</text>
                 </view>
             </view>

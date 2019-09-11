@@ -1,5 +1,5 @@
 <cu-custom bgColor="bg-gradual-pink" bgImage="https://image.weilanwl.com/color2.0/plugin/cjkz2329.jpg" isBack="{{true}}">
-  <view slot="backText">返回</view>
+    <view slot="backText">返回</view>
     <view slot="content">新建文章</view>
 </cu-custom>
 <form>
@@ -46,10 +46,11 @@
                 <text class="cuIcon-link text-blue margin-right-xs"></text>
                 关联的文章
             </view>
-            <block wx:for="{{relationTitle}}" wx:key="*this">
-                <view class="text-gray text-sm">
+            <block wx:for="{{relationTitle}}" wx:key="*this" wx:for-index="idx">
+                <view class="text-gray text-sm" catch:tap="delRelation" data-index='{{idx}}'>
                     <text class="cuIcon-list margin-right-xs"></text>
                     {{item}}
+                    <text class="cuIcon-close text-red">取消关联</text>
                 </view>
             </block>
         </view>

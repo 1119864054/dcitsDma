@@ -1,4 +1,6 @@
-import { DBArticle } from '../../db/DBArticle';
+import {
+    DBArticle
+} from '../../db/DBArticle';
 
 var dbArticle = new DBArticle();
 
@@ -23,10 +25,13 @@ Page({
         relationTitle: []
     },
 
-    onLoad: function (options) {
-    },
+    onLoad: function (options) {},
 
     onShow: function () {
+        this.getRelation()
+    },
+
+    getRelation() {
         let relation = this.data.relation
         console.log('relation', relation)
         let relationTitle = []
@@ -107,8 +112,18 @@ Page({
 
     tapToSelectRelate: function (e) {
         wx.navigateTo({
-            url: '/pages/selectRelation/selectRelation?articleType=' + myData.articleType + '&articleId=' + myData.articleId
+            url: '/pages/selectRelation/selectRelation?articleType=' + myData.articleType
         });
+    },
+
+    delRelation(e) {
+        console.log('relation index:', e.currentTarget.dataset.index)
+        let relation = this.data.relation
+        relation.splice(e.currentTarget.dataset.index, 1)
+        this.setData({
+            relation: relation
+        })
+        this.getRelation()
     },
 
     async tapToSubmit() {
