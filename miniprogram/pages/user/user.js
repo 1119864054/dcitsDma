@@ -4,11 +4,11 @@ import { Cache } from '../../db/Cache';
 import { DBMessage } from '../../db/DBMessage';
 import { DBFavor } from '../../db/DBFavor';
 
-var dbArticle = new DBArticle();
-var dbUser = new DBUser();
-var cache = new Cache()
-var dbMessage = new DBMessage()
-var dbFavor = new DBFavor()
+const dbArticle = new DBArticle();
+const dbUser = new DBUser();
+const cache = new Cache()
+const dbMessage = new DBMessage()
+const dbFavor = new DBFavor()
 
 const app = getApp()
 const log = require('../../util/log.js')

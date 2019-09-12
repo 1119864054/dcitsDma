@@ -4,11 +4,11 @@ import { Cache } from '../../db/Cache';
 import { DBMessage } from '../../db/DBMessage';
 import { DBRelation } from '../../db/DBRelation';
 
-var dbArticle = new DBArticle();
-var dbUser = new DBUser();
-var cache = new Cache()
-var dbMessage = new DBMessage()
-var dbRelation = new DBRelation()
+const dbArticle = new DBArticle();
+const dbUser = new DBUser();
+const cache = new Cache()
+const dbMessage = new DBMessage()
+const dbRelation = new DBRelation()
 
 Page({
 

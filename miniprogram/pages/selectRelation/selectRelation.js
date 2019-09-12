@@ -8,8 +8,8 @@ import {
   Cache
 } from "../../db/Cache";
 
-var dbArticle = new DBArticle();
-var dbUser = new DBUser();
+const dbArticle = new DBArticle();
+const dbUser = new DBUser();
 const cache = new Cache()
 const app = getApp()
 
@@ -18,7 +18,7 @@ import config from '../../util/config.js'
 let pageSize = config.getPageSize
 let currentPage = 0
 
-var myData = {
+const myData = {
   articleType: '',
   value: [],
   search: '',

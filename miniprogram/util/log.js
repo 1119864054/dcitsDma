@@ -1,4 +1,4 @@
-var log = wx.getRealtimeLogManager ? wx.getRealtimeLogManager() : null
+let log = wx.getRealtimeLogManager ? wx.getRealtimeLogManager() : null
 
 module.exports = {
   debug() {

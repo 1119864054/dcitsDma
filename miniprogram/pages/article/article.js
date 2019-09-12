@@ -8,16 +8,16 @@ import { DBComment } from '../../db/DBComment';
 import { DBRelation } from '../../db/DBRelation';
 import { DBLike } from '../../db/DBLike';
 
-var util = new Util();
-var dbArticle = new DBArticle();
-var dbUser = new DBUser();
-var cache = new Cache()
-var dbFavor = new DBFavor()
-var dbComment = new DBComment()
-var dbRelation = new DBRelation()
-var dbLike = new DBLike()
+const util = new Util();
+const dbArticle = new DBArticle();
+const dbUser = new DBUser();
+const cache = new Cache()
+const dbFavor = new DBFavor()
+const dbComment = new DBComment()
+const dbRelation = new DBRelation()
+const dbLike = new DBLike()
 
-var myData = {
+const myData = {
   articleId: '',
   articleType: '',
   commentContent: ''

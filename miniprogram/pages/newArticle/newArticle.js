@@ -2,7 +2,7 @@ import {
     DBArticle
 } from '../../db/DBArticle';
 
-var dbArticle = new DBArticle();
+const dbArticle = new DBArticle();
 
 const app = getApp()
 
@@ -176,9 +176,9 @@ Page({
             mask: true
         })
 
-        var that = this
+        let that = this
 
-        for (var i = 0; i < this.data.imgList.length; i++) {
+        for (let i = 0; i < this.data.imgList.length; i++) {
             const filePath = this.data.imgList[i]
             // 上传图片
             const cloudPath = app.globalData.openid + i + (new Date()).valueOf() + filePath.match(/\.[^.]+?$/)

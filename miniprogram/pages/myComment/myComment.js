@@ -2,9 +2,9 @@ import { DBArticle } from '../../db/DBArticle';
 import { Cache } from '../../db/Cache';
 import { DBComment } from '../../db/DBComment';
 
-var dbArticle = new DBArticle();
-var cache = new Cache()
-var dbComment = new DBComment()
+const dbArticle = new DBArticle();
+const cache = new Cache()
+const dbComment = new DBComment()
 
 Page({
 

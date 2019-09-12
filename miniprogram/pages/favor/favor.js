@@ -3,10 +3,10 @@ import { DBUser } from "../../db/DBUser";
 import { Cache } from '../../db/Cache';
 import { DBFavor } from '../../db/DBFavor';
 
-var dbArticle = new DBArticle();
-var dbUser = new DBUser();
-var cache = new Cache()
-var dbFavor = new DBFavor()
+const dbArticle = new DBArticle();
+const dbUser = new DBUser();
+const cache = new Cache()
+const dbFavor = new DBFavor()
 
 const app = getApp();
 

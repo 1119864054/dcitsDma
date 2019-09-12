@@ -1,4 +1,4 @@
-var PAGESIZE = 20;
+const PAGESIZE = 20;
 
 
 export default {

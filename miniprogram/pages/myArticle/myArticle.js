@@ -1,8 +1,8 @@
 import { DBArticle } from '../../db/DBArticle';
 import { Cache } from '../../db/Cache';
 
-var dbArticle = new DBArticle();
-var cache = new Cache()
+const dbArticle = new DBArticle();
+const cache = new Cache()
 
 const app = getApp();
 
@@ -13,7 +13,7 @@ let pageSize = config.getPageSize
 let currentPage = 0
 let articleType = ['suggestion', 'demand', 'technology']
 
-var myData = {
+const myData = {
   articleId: '',
   articleType: ''
 }

@@ -2,9 +2,9 @@ import { DBArticle } from '../../db/DBArticle';
 import { Cache } from '../../db/Cache';
 import { DBRelation } from '../../db/DBRelation';
 
-var dbArticle = new DBArticle();
-var cache = new Cache()
-var dbRelation = new DBRelation()
+const dbArticle = new DBArticle();
+const cache = new Cache()
+const dbRelation = new DBRelation()
 
 const app = getApp()
 
@@ -215,9 +215,9 @@ Page({
       mask: true
     })
 
-    var that = this
+    let that = this
 
-    for (var i = 0; i < this.data.imgList.length; i++) {
+    for (let i = 0; i < this.data.imgList.length; i++) {
       const filePath = this.data.imgList[i]
       if (!filePath.startsWith('cloud')) {
         // 上传图片
