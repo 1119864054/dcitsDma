@@ -118,6 +118,7 @@ class DBArticle {
       } else if (articleType == app.globalData.technologyKey) {
         relationType = 'DTRelation'
       }
+      relation = Array.from(new Set(relation))
       for (let i = 0; i < relation.length; i++) {
         let idArray = relation[i].split('^^^')
         let relationId = await dbRelation.addRelation(relationType, idArray[0], res._id)

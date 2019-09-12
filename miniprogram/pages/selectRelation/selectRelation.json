@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "选择关联信息",
   "usingComponents": {
-  }
+  },
+  "enablePullDownRefresh": false
 }

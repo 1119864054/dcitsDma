@@ -1,6 +1,12 @@
-import { DBArticle } from "../../db/DBArticle";
-import { DBUser } from "../../db/DBUser";
-import { Cache } from '../../db/Cache';
+import {
+  DBArticle
+} from "../../db/DBArticle";
+import {
+  DBUser
+} from "../../db/DBUser";
+import {
+  Cache
+} from '../../db/Cache';
 
 var dbArticle = new DBArticle();
 var dbUser = new DBUser();
@@ -13,6 +19,10 @@ import config from '../../util/config.js'
 let pageSize = config.getPageSize
 let currentPage = 0
 let articleType = ['suggestion', 'demand', 'technology']
+
+var myData = {
+  search: ''
+}
 
 Page({
 
@@ -27,7 +37,6 @@ Page({
     windowWidth: '',
     CustomBar: '',
     isLoad: false,
-    search: ''
   },
 
   onLoad: function (options) {
@@ -152,15 +161,13 @@ Page({
   },
 
   getSearch(e) {
-    this.data.search = e.detail.value
+    myData.search = e.detail.value
   },
 
   onTapToSearch() {
-    let search = this.data.search
+    let search = myData.search
     if (search) {
-      this.setData({
-        search: ''
-      })
+      myData.search = ''
       wx.navigateTo({
         url: '/pages/search/search?search=' + search
       });
