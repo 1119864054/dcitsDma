@@ -1,10 +1,16 @@
 import {
     DBArticle
 } from '../../db/DBArticle';
+import {
+    Cache
+} from "../../db/Cache";
 
+const cache = new Cache()
 const dbArticle = new DBArticle();
 
 const app = getApp()
+
+let timer = 0
 
 let myData = {
     title: '',
@@ -19,30 +25,152 @@ Page({
     data: {
         imgList: [],
         relation: [],
+        articleIdList: [],
         typeIndex: 0,
-        picker: ['需求意见', '业务需求', '项目需求'],
+        picker: ['我的需求', '业务需求', '项目需求'],
         length: 0,
-        relationTitle: []
     },
 
-    onLoad: function (options) {},
-
-    onShow: function () {
-        this.getRelation()
-    },
-
-    getRelation() {
-        let relation = this.data.relation
-        console.log('relation', relation)
-        let relationTitle = []
-        if (relation.length > 0) {
-            for (let i = 0; i < relation.length; i++) {
-                let array = relation[i].split('^^^')
-                relationTitle.push(array[2])
+    onLoad: function (options) {
+        let articleType = options.articleType
+        let articleId = options.articleId
+        let articleIdList = []
+        if (articleId) {
+            articleIdList.push(articleId)
+        }
+        if (articleType) {
+            if (articleType == 'suggestion') {
+                this.setData({
+                    typeIndex: 1,
+                    articleIdList
+                })
+                myData.articleType = 'demand'
+            } else if (articleType == 'demand') {
+                this.setData({
+                    typeIndex: 2,
+                    articleIdList
+                })
+                myData.articleType = 'technology'
             }
         }
+    },
+
+    async onShow() {
+        let articleIdList = Array.from(new Set(this.data.articleIdList))
+        let relation = []
+        if (articleIdList.length > 0) {
+            for (let i = 0; i < articleIdList.length; i++) {
+                let article = cache.getCache(articleIdList[i])
+                if (!article) {
+                    article = await dbArticle.getArticleByAIdFromDB(articleIdList[i], myData.articleType)[0]
+                }
+                relation.push(article)
+            }
+            this.setData({
+                relation,
+                articleIdList
+            })
+        }
+    },
+
+    PickerChange(e) {
         this.setData({
-            relationTitle: relationTitle
+            typeIndex: e.detail.value,
+            relation: [],
+            articleIdList: []
+        })
+        myData.articleType = myData.articleTypeList[e.detail.value]
+    },
+
+    getTitle: function (e) {
+        myData.title = e.detail.value
+    },
+
+    getContent: function (e) {
+        myData.content = e.detail.value
+        this.setData({
+            length: e.detail.value.length
+        })
+    },
+
+    tapToSelectRelate: function (e) {
+        wx.navigateTo({
+            url: '/pages/selectRelation/selectRelation?articleType=' + myData.articleType
+        });
+    },
+
+    delRelation(e) {
+        console.log('relation index:', e.currentTarget.dataset.index)
+        let relation = this.data.relation
+        let articleIdList = this.data.articleIdList
+        relation.splice(e.currentTarget.dataset.index, 1)
+        articleIdList.splice(e.currentTarget.dataset.index, 1)
+        this.setData({
+            relation,
+            articleIdList
+        })
+    },
+
+    tapToSubmit() {
+        let that = this
+        if (!myData.title) {
+            wx.showToast({
+                title: '标题不能为空',
+                icon: 'none',
+            })
+        } else if (!myData.content) {
+            wx.showToast({
+                title: '正文不能为空',
+                icon: 'none',
+            })
+        } else {
+            wx.showModal({
+                title: '提示',
+                content: '确定要提交了吗？',
+                showCancel: true,
+                cancelText: '取消',
+                cancelColor: '#000000',
+                confirmText: '确定',
+                confirmColor: '#3CC51F',
+                success: (result) => {
+                    if (result.confirm) {
+                        that.submit()
+                    }
+                },
+                fail: () => {},
+                complete: () => {}
+            });
+        }
+    },
+
+    async submit() {
+        await this.uploadImage()
+        wx.showLoading({
+            title: '上传中...',
+        })
+        let res = dbArticle.addNewArticle(myData.articleType, myData.title, myData.content, myData.imagesCloudId, this.data.relation)
+        res.then(articleId => {
+            myData = {
+                title: '',
+                content: '',
+                imagesCloudId: [],
+                articleTypeList: ['suggestion', 'demand', 'technology'],
+                articleType: 'suggestion',
+            }
+            wx.hideLoading();
+            wx.switchTab({
+                url: '/pages/articleList/articleList',
+                success: (result) => {
+                    wx.showToast({
+                        title: '新增需求成功',
+                    })
+                    timer = setTimeout(() => {
+                        wx.navigateTo({
+                            url: '/pages/article/article?articleId=' + articleId + '&articleType=' + myData.articleType
+                        });
+                    }, 800);
+                },
+            });
         })
     },
 
@@ -88,86 +216,6 @@ Page({
                 }
             }
         })
-    },
-
-    PickerChange(e) {
-        this.setData({
-            typeIndex: e.detail.value,
-            relation: [],
-            relationTitle: []
-        })
-        myData.articleType = myData.articleTypeList[e.detail.value]
-    },
-
-    getTitle: function (e) {
-        myData.title = e.detail.value
-    },
-
-    getContent: function (e) {
-        myData.content = e.detail.value
-        this.setData({
-            length: e.detail.value.length
-        })
-    },
-
-    tapToSelectRelate: function (e) {
-        wx.navigateTo({
-            url: '/pages/selectRelation/selectRelation?articleType=' + myData.articleType
-        });
-    },
-
-    delRelation(e) {
-        console.log('relation index:', e.currentTarget.dataset.index)
-        let relation = this.data.relation
-        relation.splice(e.currentTarget.dataset.index, 1)
-        this.setData({
-            relation: relation
-        })
-        this.getRelation()
-    },
-
-    async tapToSubmit() {
-        if (!myData.title) {
-            wx.showToast({
-                title: '标题不能为空',
-                icon: 'none',
-            })
-        } else if (!myData.content) {
-            wx.showToast({
-                title: '正文不能为空',
-                icon: 'none',
-            })
-        } else {
-            await this.uploadImage()
-            wx.showLoading({
-                title: '上传文章',
-            })
-            let res = dbArticle.addNewArticle(myData.articleType, myData.title, myData.content, myData.imagesCloudId, this.data.relation)
-            res.then(articleId => {
-                myData = {
-                    title: '',
-                    content: '',
-                    imagesCloudId: [],
-                    articleTypeList: ['suggestion', 'demand', 'technology'],
-                    articleType: 'suggestion',
-                }
-                wx.hideLoading();
-                wx.switchTab({
-                    url: '/pages/articleList/articleList',
-                    success: (result) => {
-                        wx.showToast({
-                            title: '新增文章成功',
-                        })
-                        setTimeout(() => {
-                            wx.navigateTo({
-                                url: '/pages/article/article?articleId=' + articleId + '&articleType=' + myData.articleType
-                            });
-                        }, 800);
-                    },
-                });
-            })
-
-        }
     },
 
     async uploadImage() {
@@ -217,5 +265,10 @@ Page({
 
     onUnload() {
         console.log('确定放弃此次编辑？')
+        clearTimeout(timer)
+    },
+
+    onHide() {
+        clearTimeout(timer)
     }
 });

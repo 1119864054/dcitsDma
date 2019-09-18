@@ -20,6 +20,8 @@ let pageSize = config.getPageSize
 let currentPage = 0
 let articleType = ['suggestion', 'demand', 'technology']
 
+let timer = 0
+
 Page({
 
   data: {
@@ -33,7 +35,6 @@ Page({
     windowWidth: '',
     CustomBar: '',
     isLoad: false,
-    search: ''
   },
 
   onLoad: function (options) {
@@ -62,7 +63,7 @@ Page({
 
   loadMore: function () {
     let that = this
-    setTimeout(function () {
+    timer = setTimeout(function () {
       that.getMoreData(articleType[that.data.current])
     }, 600)
   },
@@ -157,21 +158,72 @@ Page({
     })
   },
 
-  getSearch(e) {
-    this.setData({
-      search: e.detail.value
-    })
+  onTapToSearch() {
+    wx.navigateTo({
+      url: '/pages/search/search'
+    });
   },
 
-  onTapToSearch() {
-    let search = this.data.search
-    if (search) {
-      this.setData({
-        search: ''
-      })
-      wx.navigateTo({
-        url: '/pages/search/search?search=' + search
+  onTapToNewArticle(e) {
+    let articleType = e.currentTarget.dataset.articleType
+    let articleId = e.currentTarget.dataset.articleId
+    let title = e.currentTarget.dataset.title
+    if (articleType == 'suggestion') {
+      wx.showModal({
+        title: '新的业务需求',
+        content: '是否依据需求《' + title + '》加工新的业务需求？',
+        showCancel: true,
+        cancelText: '取消',
+        cancelColor: '#000000',
+        confirmText: '确定',
+        confirmColor: '#3CC51F',
+        success: (result) => {
+          if (result.confirm) {
+            this.toNewArticle(articleType, articleId)
+          }
+        },
+        fail: () => {},
+        complete: () => {}
+      });
+    } else if (articleType == 'demand') {
+      wx.showModal({
+        title: '新的项目需求',
+        content: '是否依据业务需求《' + title + '》加工新的项目需求？',
+        showCancel: true,
+        cancelText: '取消',
+        cancelColor: '#000000',
+        confirmText: '确定',
+        confirmColor: '#3CC51F',
+        success: (result) => {
+          if (result.confirm) {
+            this.toNewArticle(articleType, articleId)
+          }
+        },
+        fail: () => {},
+        complete: () => {}
       });
     }
+  },
+
+  toNewArticle(articleType, articleId) {
+    if (app.globalData.logged) {
+      wx.navigateTo({
+        url: '/pages/newArticle/newArticle?articleType=' + articleType + '&articleId=' + articleId
+      });
+    } else {
+      wx.switchTab({
+        url: '/pages/user/user',
+        success: () => {
+          wx.showToast({
+            title: '请先登录',
+            icon: 'none',
+          });
+        }
+      });
+    }
+  },
+
+  onHide(){
+    clearTimeout(timer)
   }
 })

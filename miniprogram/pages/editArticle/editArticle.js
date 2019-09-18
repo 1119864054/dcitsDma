@@ -1,6 +1,12 @@
-import { DBArticle } from '../../db/DBArticle';
-import { Cache } from '../../db/Cache';
-import { DBRelation } from '../../db/DBRelation';
+import {
+  DBArticle
+} from '../../db/DBArticle';
+import {
+  Cache
+} from '../../db/Cache';
+import {
+  DBRelation
+} from '../../db/DBRelation';
 
 const dbArticle = new DBArticle();
 const cache = new Cache()
@@ -13,7 +19,6 @@ let myData = {
   articleTypeList: ['suggestion', 'demand', 'technology'],
   articleType: 'suggestion',
   articleId: '',
-  oldArticleType: ''
 }
 
 Page({
@@ -24,10 +29,10 @@ Page({
 
     imgList: [],
     relation: [],
+    articleIdList: [],
     typeIndex: 0,
     picker: ['需求意见', '业务需求', '项目需求'],
     length: 0,
-    relationTitle: []
   },
 
   async onLoad(options) {
@@ -35,7 +40,6 @@ Page({
     let articleType = options.articleType
     myData.articleId = articleId
     myData.articleType = articleType
-    myData.oldArticleType = articleType
 
     let article = cache.getCache(articleId)
     if (!article) {
@@ -51,30 +55,18 @@ Page({
       }
     }
 
-    let relation = []
-    let localRelation = []
+    let articleIdList = []
     if (articleType != 'suggestion') {
+      let relation = []
       let res = await dbRelation.getRelation(articleId, articleType)
       relation = res.data
       if (articleType == 'demand') {
         for (let i = 0; i < relation.length; i++) {
-          let article = cache.getCache(relation[i].suggestionId)
-          if (!article) {
-            article = (await dbArticle.getArticleByAIdFromDB(relation[i].suggestionId, 'suggestion'))[0]
-            cache.setCache(relation[i].suggestionId, article)
-          }
-          let temp = [article._id, article.userId, article.title].join('^^^')
-          localRelation.push(temp)
+          articleIdList.push(relation[i].suggestionId)
         }
       } else if (articleType == 'technology') {
         for (let i = 0; i < relation.length; i++) {
-          let article = cache.getCache(relation[i].demandId)
-          if (!article) {
-            article = (await dbArticle.getArticleByAIdFromDB(relation[i].demandId, 'demand'))[0]
-            cache.setCache(relation[i].demandId, article)
-          }
-          let temp = [article._id, article.userId, article.title].join('^^^')
-          localRelation.push(temp)
+          articleIdList.push(relation[i].demandId)
         }
       }
     }
@@ -84,25 +76,113 @@ Page({
       content: article.content,
       imgList: article.articleImg,
       typeIndex: typeIndex,
-      relation: localRelation
+      articleIdList: articleIdList
     })
 
     this.onShow()
   },
 
-  onShow: function () {
-    let relation = this.data.relation
-    console.log('relation', relation)
-    let relationTitle = []
-    if (relation.length > 0) {
-      for (let i = 0; i < relation.length; i++) {
-        let array = relation[i].split('^^^')
-        relationTitle.push(array[2])
+  async onShow() {
+    let articleIdList = Array.from(new Set(this.data.articleIdList))
+    console.log('articleIdList',articleIdList)
+    let relation = []
+    if (articleIdList.length > 0) {
+      for (let i = 0; i < articleIdList.length; i++) {
+        let article = cache.getCache(articleIdList[i])
+        if (!article) {
+          article = await dbArticle.getArticleByAIdFromDB(articleIdList[i], myData.articleType)[0]
+        }
+        relation.push(article)
       }
+      this.setData({
+        relation,
+        articleIdList
+      })
     }
+  },
+
+  getTitle: function (e) {
+    this.data.title = e.detail.value
+  },
+
+  getContent: function (e) {
+    this.data.content = e.detail.value
     this.setData({
-      relationTitle: relationTitle
+      length: e.detail.value.length
     })
+  },
+
+  tapToSelectRelate: function (e) {
+    wx.navigateTo({
+      url: '/pages/selectRelation/selectRelation?articleType=' + myData.articleType
+    });
+  },
+
+  delRelation(e) {
+    console.log('relation index:', e.currentTarget.dataset.index)
+    let relation = this.data.relation
+    let articleIdList = this.data.articleIdList
+    relation.splice(e.currentTarget.dataset.index, 1)
+    articleIdList.splice(e.currentTarget.dataset.index, 1)
+    this.setData({
+      relation,
+      articleIdList
+    })
+  },
+
+  tapToSubmit() {
+    let that = this
+    if (!this.data.title) {
+      wx.showToast({
+        title: '标题不能为空',
+        icon: 'none',
+      })
+    } else if (!this.data.content) {
+      wx.showToast({
+        title: '正文不能为空',
+        icon: 'none',
+      })
+    } else {
+      wx.showModal({
+        title: '提示',
+        content: '确定编辑完成了吗？',
+        showCancel: true,
+        cancelText: '取消',
+        cancelColor: '#000000',
+        confirmText: '确定',
+        confirmColor: '#3CC51F',
+        success: (result) => {
+          if (result.confirm) {
+            that.submit()
+          }
+        },
+        fail: () => {},
+        complete: () => {}
+      });
+    }
+  },
+
+  async submit() {
+    await this.uploadImage()
+    wx.showLoading({
+      title: '上传中...',
+    })
+    await dbArticle.updateArticle(myData.articleId, myData.articleType, this.data.title, this.data.content, myData.imagesCloudId, this.data.relation)
+    myData = {
+      imagesCloudId: [],
+      articleTypeList: ['suggestion', 'demand', 'technology'],
+      articleType: 'suggestion',
+      articleId: '',
+    }
+    wx.hideLoading();
+    wx.navigateBack({
+      delta: 1,
+      success: (result) => {
+        wx.showToast({
+          title: '更新文章成功',
+        })
+      },
+    });
   },
 
   chooseImage() {
@@ -146,67 +226,6 @@ Page({
         }
       }
     })
-  },
-
-  PickerChange(e) {
-    this.setData({
-      typeIndex: e.detail.value,
-      relation: [],
-      relationTitle: []
-    })
-    myData.articleType = myData.articleTypeList[e.detail.value]
-  },
-
-  getTitle: function (e) {
-    this.data.title = e.detail.value
-  },
-
-  getContent: function (e) {
-    this.data.content = e.detail.value
-    this.setData({
-      length: e.detail.value.length
-    })
-  },
-
-  tapToSelectRelate: function (e) {
-    wx.navigateTo({
-      url: '/pages/selectRelation/selectRelation?articleType=' + myData.articleType + '&articleId=' + myData.articleId
-    });
-  },
-
-  async tapToSubmit() {
-    if (!this.data.title) {
-      wx.showToast({
-        title: '标题不能为空',
-        icon: 'none',
-      })
-    } else if (!this.data.content) {
-      wx.showToast({
-        title: '正文不能为空',
-        icon: 'none',
-      })
-    } else {
-      await this.uploadImage()
-      wx.showLoading({
-        title: '上传文章',
-      })
-      await dbArticle.updateArticle(myData.articleId, myData.articleType, myData.oldArticleType, this.data.title, this.data.content, myData.imagesCloudId, this.data.relation)
-      myData = {
-        imagesCloudId: [],
-        articleTypeList: ['suggestion', 'demand', 'technology'],
-        articleType: 'suggestion',
-        articleId: '',
-      }
-      wx.hideLoading();
-      wx.navigateBack({
-        delta: 1,
-        success: (result) => {
-          wx.showToast({
-            title: '更新文章成功',
-          })
-        },
-      });
-    }
   },
 
   async uploadImage() {

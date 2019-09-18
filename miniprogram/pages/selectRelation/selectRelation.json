@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "选择关联信息",
   "usingComponents": {
+    "searchHighlightTextView": "../../components/searchHighlightTextView/searchHighlightTextView"
   },
   "enablePullDownRefresh": false
 }

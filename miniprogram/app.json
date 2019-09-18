@@ -32,7 +32,7 @@
     "position": "bottom",
     "list": [{
         "pagePath": "pages/articleList/articleList",
-        "text": "文章",
+        "text": "需求",
         "iconPath": "images/tabbar/suggestion.png",
         "selectedIconPath": "images/tabbar/suggestion_selected.png"
       },

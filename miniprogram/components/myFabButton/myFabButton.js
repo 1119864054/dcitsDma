@@ -8,7 +8,7 @@ Component({
     buttons: {
       type: Array,
       value: [{
-        label: '新建文章',
+        label: '新建需求',
         icon: '../../images/fabbutton/write_fill.svg'
       }]
     }
@@ -30,8 +30,7 @@ Component({
         wx.navigateTo({
           url: '/pages/newArticle/newArticle'
         });
-      }
-      else {
+      } else {
         wx.switchTab({
           url: '/pages/user/user',
           success: () => {
@@ -41,7 +40,6 @@ Component({
             });
           }
         });
-
       }
     }
   }

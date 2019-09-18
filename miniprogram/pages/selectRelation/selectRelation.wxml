@@ -1,26 +1,28 @@
 <cu-custom bgColor="bg-gradual-pink" bgImage="https://image.weilanwl.com/color2.0/plugin/cjkz2329.jpg" isBack="{{true}}">
     <view slot="backText">返回</view>
-    <view slot="content">选择关联文章</view>
+    <view slot="content">选择关联的需求</view>
 </cu-custom>
-<view class="cu-bar bg-white search shadow">
-    <view class="search-form radius">
-        <text class="cuIcon-search"></text>
-        <input type="text" placeholder="搜索文章" value="{{search}}"  confirm-type="search" bindblur="getSearch"></input>
-    </view>
-    <view class="action" bind:tap="getClear">
-        <text class="cuIcon-close"></text>
-        <text>取消</text>
-    </view>
+<view class="cu-bar search bg-white fixed" style="top:{{CustomBar}}px;height:50px">
+  <view class="search-form round">
+    <text class="cuIcon-search"></text>
+    <input focus='auto' type="text" placeholder="搜索需求" confirm-type="search" bindinput="onTapToSearch" value="{{search}}"></input>
+  </view>
+  <view class="action">
+    <view class="text-black text-bold text-shadow" catch:tap="onTapToCancel">取消</view>
+  </view>
 </view>
 <view style="position:fixed;top:{{CustomBar+50}}px;width:{{windowWidth}}px;bottom:140rpx">
     <scroll-view scroll-y style="height:100%" bindscrolltolower='loadMore'>
         <checkbox-group bind:change="onTapChange">
             <block wx:for="{{articleList}}" wx:key="_id">
                 <view class="cu-form-group">
-                    <view class="title text-cut text-blue" data-target="detail" data-detail="{{item}}" catch:tap="showModal">
-                        {{item.title}}
+                    <view class="title text-cut" style="color:#576B95" data-target="detail" data-detail="{{item}}" catch:tap="showModal">
+                        <block wx:if="{{isSearch}}">
+                            <searchHighlightTextView key="{{search}}" str="{{item.title}}" />
+                        </block>
+                        <block wx:else>{{item.title}}</block>
                     </view>
-                    <checkbox value="{{item._id}}^^^{{item.userId}}^^^{{item.title}}" checked="{{item.checked}}"></checkbox>
+                    <checkbox value="{{item._id}}" checked="{{item.checked}}"></checkbox>
                 </view>
             </block>
         </checkbox-group>

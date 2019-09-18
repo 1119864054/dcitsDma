@@ -18,11 +18,12 @@ import config from '../../util/config.js'
 let pageSize = config.getPageSize
 let currentPage = 0
 
+let timer1 = 0
+let timer2 = 0
+
 const myData = {
   articleType: '',
-  value: [],
-  search: '',
-  isSearch: false
+  articleIdList: [],
 }
 
 Page({
@@ -30,7 +31,8 @@ Page({
   data: {
     articleList: [],
     loadMore: true,
-    search: ''
+    search: '',
+    isSearch: false
   },
 
   onLoad: function (options) {
@@ -47,8 +49,8 @@ Page({
     this.getNewData()
   },
 
-  onTapChange(e) {
-    myData.value = e.detail.value
+  async onTapChange(e) {
+    myData.articleIdList = e.detail.value
   },
 
   showModal(e) {
@@ -68,7 +70,7 @@ Page({
     let pages = getCurrentPages();
     let prevPage = pages[pages.length - 2];
     prevPage.setData({
-      relation: prevPage.data.relation.concat(myData.value)
+      articleIdList: prevPage.data.articleIdList.concat(myData.articleIdList)
     })
     wx.navigateBack({
       delta: 1
@@ -92,18 +94,18 @@ Page({
       })
     }
     this.setData({
-      articleList: articleList,
+      articleList
     })
   },
 
   loadMore: function () {
     let that = this
-    if (myData.isSearch) {
-      setTimeout(function () {
-        that.searchMoreData(myData.search)
+    if (this.data.isSearch) {
+      timer1 = setTimeout(function () {
+        that.searchMoreData(this.data.search)
       }, 600)
     } else {
-      setTimeout(function () {
+      timer2 = setTimeout(function () {
         that.getMoreData()
       }, 600)
     }
@@ -133,7 +135,7 @@ Page({
       }
       articleList = articleList.concat(newArticleList)
       this.setData({
-        articleList: articleList
+        articleList
       })
       if (newArticleList.length < pageSize) {
         this.setData({
@@ -147,18 +149,21 @@ Page({
     }
   },
 
-  getSearch(e) {
-    myData.search = e.detail.value
-    if (myData.search) {
-      myData.isSearch = true
-      this.searchNewData(myData.search)
+  onTapToSearch(e) {
+    let search = e.detail.value
+    if (search) {
+      this.setData({
+        isSearch: true,
+        search: search
+      })
+      this.searchNewData(search)
     }
   },
 
-  getClear(e) {
-    myData.isSearch = false
+  onTapToCancel(e) {
     this.setData({
-      search: ''
+      search: '',
+      isSearch: false
     })
     this.getNewData()
   },
@@ -180,7 +185,7 @@ Page({
       })
     }
     this.setData({
-      articleList: articleList,
+      articleList
     })
   },
 
@@ -207,7 +212,7 @@ Page({
       }
       articleList = articleList.concat(newArticleList)
       this.setData({
-        articleList: articleList
+        articleList
       })
       if (newArticleList.length < pageSize) {
         this.setData({
@@ -220,4 +225,9 @@ Page({
       });
     }
   },
+
+  onHide() {
+    clearTimeout(timer1)
+    clearTimeout(timer2)
+  }
 })

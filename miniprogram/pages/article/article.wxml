@@ -30,12 +30,12 @@
             <view class="cu-bar bg-white">
                 <view class="action border-title">
                     <text class="text-xl text-bold text-black text-shadow">{{title}}</text>
-                    <text class="bg-gradual-blue" style="width:3rem"></text>
+                    <!-- <text class="bg-gray" style="width:3rem"></text> -->
                 </view>
             </view>
-            <block wx:for="{{content}}" wx:for-index="idx" wx:key="idx">
-                <view class="text-left padding-xs padding-lr">{{item}}</view>
-            </block>
+            <!-- <block wx:for="{{content}}" wx:for-index="idx" wx:key="idx"> -->
+                <view class="text-left padding-xs padding-lr">{{content}}</view>
+            <!-- </block> -->
             <view class="grid flex-sub padding-lr col-1">
                 <block wx:for="{{articleImg}}" wx:key="*this">
                     <view class="padding-tb-xs">
@@ -44,25 +44,15 @@
                 </block>
             </view>
             <view class="text-grey text-lg text-left padding solids-bottom">
-                <view class="cu-capsule round">
-                    <view class="cu-tag bg-grey">浏览</view>
-                    <view class="cu-tag line-grey">{{visitCount}}</view>
-                </view>
-                <view class="cu-capsule round">
-                    <view class="cu-tag bg-grey">评论</view>
-                    <view class="cu-tag line-grey">{{comment.length}}</view>
-                </view>
+                <view class="cu-tag radius">浏览·{{visitCount}}</view>
+                <view class="cu-tag radius">评论·{{comment.length}}</view>
                 <block wx:if="{{isFavor}}">
-                    <view class="cu-capsule round" catch:tap="onTapUnFavor" data-favor-id='{{favorId}}'>
-                        <view class="cu-tag bg-red">取消收藏</view>
-                        <view class="cu-tag line-red">{{favorCount}}</view>
+                    <view class="cu-tag bg-red radius" catch:tap="onTapUnFavor" data-favor-id='{{favorId}}'>
+                        取消收藏·{{favorCount}}
                     </view>
                 </block>
                 <block wx:else>
-                    <view class="cu-capsule round" catch:tap="onTapFavor">
-                        <view class="cu-tag bg-grey">收藏</view>
-                        <view class="cu-tag line-grey">{{favorCount}}</view>
-                    </view>
+                    <view class="cu-tag radius" catch:tap="onTapFavor">收藏·{{favorCount}}</view>
                 </block>
             </view>
             <view class="cu-bar bg-white solid-bottom">
@@ -76,8 +66,8 @@
                     暂无关联文章
                 </view>
                 <block wx:for="{{relationDetail}}" wx:key="_id">
-                    <view class="text-black text-left padding-bottom-sm" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' catch:tap="onTapToRelate">
-                        {{item.title}} .{{item.username}}
+                    <view class="text-left padding-bottom-sm" style="color:#576B95" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' catch:tap="onTapToRelate">
+                        {{item.title}} by {{item.username}}
                     </view>
                 </block>
             </view>

@@ -1,7 +1,15 @@
-import { Util } from '../util/util';
-import { DBRelation } from '../db/DBRelation';
-import { DBMessage } from '../db/DBMessage';
-import { Cache } from '../db/Cache';
+import {
+  Util
+} from '../util/util';
+import {
+  DBRelation
+} from '../db/DBRelation';
+import {
+  DBMessage
+} from '../db/DBMessage';
+import {
+  Cache
+} from '../db/Cache';
 
 const util = new Util()
 const dbRelation = new DBRelation()
@@ -27,9 +35,9 @@ class DBArticle {
   getAllArticleData(storageKeyName, pageSize = constPageSize, currentPage = 0, userId) {
     return new Promise((resolve, reject) => {
       db.collection(storageKeyName).where({
-        removed: false,
-        userId: userId
-      })
+          removed: false,
+          userId: userId
+        })
         .orderBy('date', 'desc')
         .skip(currentPage * pageSize)
         .limit(pageSize)
@@ -61,8 +69,8 @@ class DBArticle {
   getAllArticleDataUnlimited(storageKeyName) {
     return new Promise((resolve, reject) => {
       db.collection(storageKeyName).where({
-        removed: false
-      })
+          removed: false
+        })
         .orderBy('date', 'desc')
         .get()
         .then(res => {
@@ -118,12 +126,10 @@ class DBArticle {
       } else if (articleType == app.globalData.technologyKey) {
         relationType = 'DTRelation'
       }
-      relation = Array.from(new Set(relation))
       for (let i = 0; i < relation.length; i++) {
-        let idArray = relation[i].split('^^^')
-        let relationId = await dbRelation.addRelation(relationType, idArray[0], res._id)
+        let relationId = await dbRelation.addRelation(relationType, relation[i]._id, res._id)
         //消息
-        await dbMessage.addMessage(relationId, relationType, idArray[1], id)
+        await dbMessage.addMessage(relationId, relationType, relation[i].userId, id)
       }
       return res._id
     } catch (err) {
@@ -137,12 +143,7 @@ class DBArticle {
   }
 
   //更新文章（编辑）
-  async updateArticle(articleId, articleType, oldArticleType, title, content, images, relation) {
-    // if (articleType != oldArticleType) {
-    //   await dbRelation.removeRelationByAId(articleId, oldArticleType)
-    //   await this.removeArticle(articleId, oldArticleType)
-    //   await this.addNewArticle(articleType, title, content, images, relation, true)
-    // } 
+  async updateArticle(articleId, articleType, title, content, images, relation) {
     cache.removeCache(articleId)
     cache.removeCache(articleId + '_image_cache')
     let id = app.globalData.id
@@ -167,10 +168,9 @@ class DBArticle {
         relationType = 'DTRelation'
       }
       for (let i = 0; i < relation.length; i++) {
-        let idArray = relation[i].split('^^^')
-        let relationId = await dbRelation.addRelation(relationType, idArray[0], articleId)
-        //消息
-        await dbMessage.addMessage(relationId, relationType, idArray[1], id)
+          let relationId = await dbRelation.addRelation(relationType, relation[i]._id, articleId)
+          //消息
+          await dbMessage.addMessage(relationId, relationType, relation[i].userId, id)
       }
     }
 
@@ -239,9 +239,9 @@ class DBArticle {
   getArticleByIdFromDB(userId, articleType, pageSize = constPageSize, currentPage = 0) {
     return new Promise((resolve, reject) => {
       db.collection(articleType).where({
-        userId: userId,
-        removed: false
-      }).orderBy('date', 'desc')
+          userId: userId,
+          removed: false
+        }).orderBy('date', 'desc')
         .skip(currentPage * pageSize)
         .limit(pageSize)
         .get().then(res => {
@@ -343,11 +343,11 @@ class DBArticle {
   searchArticle(articleType, key, pageSize = constPageSize, currentPage = 0) {
     return new Promise((resolve, reject) => {
       db.collection(articleType).where({
-        title: new db.RegExp({
-          regexp: key,
-          options: 'i',
+          title: new db.RegExp({
+            regexp: key,
+            options: 'i',
+          })
         })
-      })
         .skip(currentPage * pageSize)
         .limit(pageSize)
         .get().then(res => {

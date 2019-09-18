@@ -1,0 +1,4 @@
+/* component/searchHilightTextView.wxss */
+.highlight {
+  color: hotpink;
+}

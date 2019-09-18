@@ -13,6 +13,8 @@ let pageSize = config.getPageSize
 let currentPage = 0
 let articleType = ['suggestion', 'demand', 'technology']
 
+let timer = 0
+
 const myData = {
   articleId: '',
   articleType: ''
@@ -181,7 +183,7 @@ Page({
 
   loadMore: function () {
     let that = this
-    setTimeout(function () {
+    timer = setTimeout(function () {
       that.getMoreData(articleType[that.data.current])
     }, 600)
   },
@@ -216,4 +218,8 @@ Page({
       });
     }
   },
+
+  onHide(){
+    clearTimeout(timer)
+  }
 })

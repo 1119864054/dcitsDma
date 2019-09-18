@@ -1,10 +1,10 @@
 <cu-custom bgColor="bg-gradual-pink" bgImage="https://image.weilanwl.com/color2.0/plugin/cjkz2329.jpg" isBack="{{true}}">
     <view slot="backText">返回</view>
-    <view slot="content">编辑文章</view>
+    <view slot="content">编辑需求</view>
 </cu-custom>
 <form>
     <view class="cu-form-group margin-top">
-        <view class="title">文章类型</view>
+        <view class="title">需求类型</view>
         <view class="picker text-bold text-shadow">{{picker[typeIndex]}}</view>
     </view>
     <view class="cu-form-group margin-top">
@@ -42,12 +42,15 @@
         <view class="content padding-tb-sm">
             <view>
                 <text class="cuIcon-link text-blue margin-right-xs"></text>
-                关联的文章
+                关联的需求
             </view>
-            <block wx:for="{{relationTitle}}" wx:key="*this">
-                <view class="text-gray text-sm">
+            <block wx:for="{{relation}}" wx:key="*this" wx:for-index="idx">
+                <view class="text-grey padding-bottom-xs">
                     <text class="cuIcon-list margin-right-xs"></text>
-                    {{item}}
+                    {{item.title}}
+                    <view class="cu-tag radius">
+                        <text class="cuIcon-close text-red" catch:tap="delRelation" data-index='{{idx}}'>取消关联</text>
+                    </view>
                 </view>
             </block>
         </view>
@@ -55,9 +58,9 @@
 </view>
 <view class="box margin-top-xl">
     <view class="cu-bar btn-group">
-        <button disabled="{{typeIndex==0?true:false}}" class="cu-btn bg-blue shadow-blur round" catch:tap="tapToSelectRelate">
-            选择关联文章
+        <button disabled="{{typeIndex==0?true:false}}" class="cu-btn bg-blue shadow" catch:tap="tapToSelectRelate">
+            关联更多需求
         </button>
-        <button class="cu-btn bg-green shadow-blur round" catch:tap="tapToSubmit">提交</button>
+        <button class="cu-btn bg-green shadow" catch:tap="tapToSubmit">提交</button>
     </view>
 </view>

@@ -12,8 +12,10 @@
                     <view class="text-gray text-sm flex justify-between">
                         <wux-timeago to="{{timeStamp}}" lang="zh_CN" refreshable />
                         <view class="text-gray text-df" data-favor-id='{{favorId}}' data-article-id="{{_id}}" data-article-type="{{articleType}}" catch:tap="onTapToUnfavor" hidden="{{false}}">
-                            <text class="cuIcon-deletefill text-red" />
-                            <text class="text-red margin-lr">取消收藏</text>
+                            <view class="cu-tag radius">
+                                <text class="cuIcon-deletefill text-red" />
+                                <text class="text-red margin-lr">取消收藏</text>
+                            </view>
                         </view>
                     </view>
                 </view>

@@ -1,23 +1,14 @@
 <import src="../../template/articleItem.wxml" />
 <cu-custom bgImage="https://image.weilanwl.com/color2.0/plugin/cjkz2329.jpg">
   <view wx:if="{{!isLoad}}" slot="content">加载中</view>
-  <view wx:else slot="content">文章</view>
+  <view wx:else slot="content">需求</view>
   <view class="action" slot="right">
     <view class="cu-load load-icon {{!isLoad?'loading':'over'}}"></view>
   </view>
 </cu-custom>
-<view class="cu-bar search bg-white fixed" style="top:{{CustomBar}}px;height:50px">
-  <view class="search-form round">
-    <text class="cuIcon-search"></text>
-    <input type="text" placeholder="搜索文章" confirm-type="search" bindinput="getSearch" value="{{search}}"></input>
-  </view>
-  <view class="action">
-    <button class="cu-btn bg-gradual-green shadow-blur round" catch:tap="onTapToSearch">搜索</button>
-  </view>
-</view>
-<scroll-view scroll-x class="bg-white nav fixed" style="top:{{CustomBar+50}}px;height:45px">
+<scroll-view scroll-x class="bg-white nav fixed" style="top:{{CustomBar}}px;height:45px">
   <view class="cu-item flex-sub {{current==0?'text-black cur text-bold':''}}" bindtap="tabSelect" data-id="0" style="height:100%">
-    需求意见箱
+    我的需求
   </view>
   <view class="cu-item flex-sub {{current==1?'text-black cur text-bold':''}}" bindtap="tabSelect" data-id="1" style="height:100%">
     业务需求
@@ -25,12 +16,13 @@
   <view class="cu-item flex-sub {{current==2?'text-black cur text-bold':''}}" bindtap="tabSelect" data-id="2" style="height:100%">
     项目需求
   </view>
+  <view class="cu-item flex-sub text-black text-bold cuIcon-search" bindtap="onTapToSearch" style="height:100%">搜索</view>
 </scroll-view>
-<view style="position:fixed;top:{{CustomBar+95}}px;width:{{windowWidth}}px;bottom:0">
+<view style="position:fixed;top:{{CustomBar+45}}px;width:{{windowWidth}}px;bottom:0">
   <swiper current="{{current}}" bindchange="onSwiperChange" style="height:100%">
     <swiper-item>
       <scroll-view scroll-y style="height:100%" bindscrolltolower='loadMore'>
-        <view class="cu-card case">
+        <view class="cu-card case no-card">
           <block wx:for="{{suggestion}}" wx:key="_id">
             <template is="articleItem" data="{{...item}}"></template>
           </block>
@@ -40,7 +32,7 @@
     </swiper-item>
     <swiper-item>
       <scroll-view scroll-y style="height:100%" bindscrolltolower='loadMore'>
-        <view class="cu-card case">
+        <view class="cu-card case no-card">
           <block wx:for="{{demand}}" wx:key="_id">
             <template is="articleItem" data="{{...item}}"></template>
           </block>
@@ -50,7 +42,7 @@
     </swiper-item>
     <swiper-item>
       <scroll-view scroll-y style="height:100%" bindscrolltolower='loadMore'>
-        <view class="cu-card case">
+        <view class="cu-card case no-card">
           <block wx:for="{{technology}}" wx:key="_id">
             <template is="articleItem" data="{{...item}}"></template>
           </block>

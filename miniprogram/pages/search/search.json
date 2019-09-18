@@ -1,4 +1,6 @@
 {
-  "usingComponents": {},
-  "enablePullDownRefresh": false
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "searchHighlightTextView": "../../components/searchHighlightTextView/searchHighlightTextView"
+  }
 }

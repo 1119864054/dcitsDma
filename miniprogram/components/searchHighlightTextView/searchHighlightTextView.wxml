@@ -1,0 +1,4 @@
+<!--component/searchHilightTextView.wxml-->
+<view>
+  <text wx:for="{{strArray}}" wx:key="*this" class="{{item == key ? 'highlight' : '' }}">{{item}}</text>
+</view>

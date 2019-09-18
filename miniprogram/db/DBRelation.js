@@ -1,6 +1,8 @@
 const db = wx.cloud.database()
 
-import { Util } from '../util/util';
+import {
+    Util
+} from '../util/util';
 
 const util = new Util()
 
@@ -23,7 +25,7 @@ class DBRelation {
                     }
                 }).then(res => {
                     console.log('[DBRelation] [新增' + relationType + '] 成功: ', res._id)
-                   log.info('[DBRelation] [新增' + relationType + '] 成功: ', res._id)
+                    log.info('[DBRelation] [新增' + relationType + '] 成功: ', res._id)
                     resolve(res._id)
                 }).catch(err => {
                     console.error('[DBRelation] [新增' + relationType + '] 失败: ', err)
@@ -130,7 +132,6 @@ class DBRelation {
             })
         })
     }
-
 }
 
 export {

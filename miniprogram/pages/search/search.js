@@ -1,6 +1,12 @@
-import { DBArticle } from "../../db/DBArticle";
-import { DBUser } from "../../db/DBUser";
-import { Cache } from '../../db/Cache';
+import {
+  DBArticle
+} from "../../db/DBArticle";
+import {
+  DBUser
+} from "../../db/DBUser";
+import {
+  Cache
+} from '../../db/Cache';
 
 const dbArticle = new DBArticle();
 const dbUser = new DBUser();
@@ -14,50 +20,48 @@ let pageSize = config.getPageSize
 let currentPage = 0
 let articleType = ['suggestion', 'demand', 'technology']
 
-const myData = {
-  search: ''
-}
+let timer = 0
 
 Page({
 
   data: {
-    isLoad: false,
+    isLoad: true,
     articleList: '',
-    loadMore_suggestion: true,
-    loadMore_demand: true,
-    loadMore_technology: true,
+    loadMore_suggestion: false,
+    loadMore_demand: false,
+    loadMore_technology: false,
     current: 0,
-    windowHeight: '',
+    windowWidth: '',
     CustomBar: 0,
     search: ''
   },
 
   async onLoad(options) {
-    let search = options.search
-    myData.search = search
-
-    this.getNewData('suggestion', search)
-    this.getNewData('demand', search)
-    this.getNewData('technology', search)
-
     this.setData({
-      windowHeight: app.globalData.windowHeight,
       CustomBar: app.globalData.CustomBar,
-      search: search
+      windowWidth: app.globalData.windowWidth,
     })
   },
 
-  getSearch(e) {
-    myData.search = e.detail.value
+  onTapToSearch(e) {
+    let search = e.detail.value
+    if (search) {
+      this.getNewData(articleType[this.data.current], search)
+      this.setData({
+        search: search
+      })
+    }
   },
 
-  onTapToSearch() {
-    if (myData.search) { this.getNewData(articleType[this.data.current], myData.search) }
+  onTapToCancel(e) {
+    this.setData({
+      search: ''
+    })
   },
 
   loadMore: function () {
     let that = this
-    setTimeout(function () {
+    timer = setTimeout(function () {
       that.getMoreData(articleType[that.data.current])
     }, 600)
   },
@@ -74,6 +78,9 @@ Page({
     this.setData({
       current: e.currentTarget.dataset.id
     })
+    if (this.data.search) {
+      this.getNewData(articleType[this.data.current], this.data.search)
+    }
   },
 
   onSwiperChange(e) {
@@ -91,14 +98,15 @@ Page({
     let articleList = await dbArticle.searchArticle(articleType, search)
     if (articleList) {
       for (let i = 0; i < articleList.length; i++) {
-        let userInfo = cache.getCache(articleList[i].userId)
-        if (!userInfo) {
-          userInfo = await dbUser.getUser(articleList[i].userId)
-          cache.setCache(articleList[i].userId, userInfo)
+        let user = cache.getCache(articleList[i].userId)
+        if (!user) {
+          user = await dbUser.getUser(articleList[i].userId)
+          cache.setCache(articleList[i].userId, user)
         }
-        articleList[i].username = userInfo.username
-        articleList[i].avatar = userInfo.avatar
+        articleList[i].avatar = user.avatar
+        articleList[i].username = user.username
         cache.setCache(articleList[i]._id, articleList[i])
+        articleList[i].search = search
       }
       cache.setCache(articleType, articleList)
     }
@@ -124,7 +132,7 @@ Page({
     let that = this;
     let articleList = this.data[articleType]
 
-    let newArticleList = await dbArticle.searchArticle(articleType, myData.search, pageSize, currentPage)
+    let newArticleList = await dbArticle.searchArticle(articleType, this.data.search, pageSize, currentPage)
     if (newArticleList && newArticleList.length > 0) {
       currentPage++;
       for (let i = 0; i < newArticleList.length; i++) {
@@ -135,6 +143,8 @@ Page({
         }
         newArticleList[i].avatar = user.avatar
         newArticleList[i].username = user.username
+        cache.setCache(articleList[i]._id, articleList[i])
+        articleList[i].search = this.data.search
       }
       articleList = articleList.concat(newArticleList)
       this.setData({
@@ -151,4 +161,8 @@ Page({
       });
     }
   },
+
+  onHide() {
+    clearTimeout(timer)
+  }
 })

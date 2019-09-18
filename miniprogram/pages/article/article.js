@@ -48,7 +48,6 @@ Page({
     content: '',
     date: '',
     title: '',
-    articleTypeZh: '',
     articleType: '',
     myAvatar: "/images/tabbar/user.png"
   },
@@ -75,8 +74,6 @@ Page({
       }
       let comment = cache.getCache(articleId + '_comment')
 
-      let articleTypeZh = util.getArticleTypeZh(articleType)
-
       let articleImg = cache.getCache(articleId + '_image_cache')
       if (timeStamp != articleData.timeStamp || !articleImg) {
         cache.setCache(articleId + '_timeStamp', articleData.timeStamp)
@@ -90,7 +87,7 @@ Page({
         cache.setCache(articleData.userId, res)
       }
 
-      let content = articleData.content.split(" ")
+      let content = articleData.content
 
       this.setData({
         comment: comment,
@@ -100,7 +97,6 @@ Page({
         articleImg: articleImg,
         date: articleData.date,
         title: articleData.title,
-        articleTypeZh: articleTypeZh,
         articleType: articleType,
         myAvatar: app.globalData.avatar,
         favorCount: articleData.favorCount,

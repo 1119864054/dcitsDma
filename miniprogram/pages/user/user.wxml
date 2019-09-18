@@ -28,7 +28,7 @@
     <navigator class="cu-item arrow" url="/pages/myArticle/myArticle">
       <view class="content">
         <text class="cuIcon-writefill text-blue"></text>
-        <text class="text-grey">我的文章</text>
+        <text class="text-grey">我的需求</text>
       </view>
       <view class="action">
         <view class="cu-tag round bg-grey">{{articleCount}}</view>
