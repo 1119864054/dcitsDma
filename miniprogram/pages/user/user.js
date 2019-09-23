@@ -1,8 +1,18 @@
-import { DBArticle } from "../../db/DBArticle";
-import { DBUser } from "../../db/DBUser";
-import { Cache } from '../../db/Cache';
-import { DBMessage } from '../../db/DBMessage';
-import { DBFavor } from '../../db/DBFavor';
+import {
+  DBArticle
+} from "../../db/DBArticle";
+import {
+  DBUser
+} from "../../db/DBUser";
+import {
+  Cache
+} from '../../db/Cache';
+import {
+  DBMessage
+} from '../../db/DBMessage';
+import {
+  DBFavor
+} from '../../db/DBFavor';
 
 const dbArticle = new DBArticle();
 const dbUser = new DBUser();
@@ -35,7 +45,7 @@ Page({
       app.userInfoReadyCallback = res => {
         this.login()
       }
-    } 
+    }
     // else {
     //   wx.getUserInfo({
     //     lang: 'zh_CN',
@@ -110,6 +120,7 @@ Page({
         avatar: app.globalData.avatar,
         username: app.globalData.username,
         logged: app.globalData.logged,
+        point: app.globalData.point,
         hasUserInfo: true
       })
       wx.hideLoading();
@@ -138,10 +149,10 @@ Page({
 
   isNewMessage() {
     dbMessage.getUncheckedMessage().then(res1 => {
-      if (res1.data.length > 0) {
+      if (res1.length > 0) {
         this.setData({
           checked: false,
-          newMessageCount: res1.data.length
+          newMessageCount: res1.length
         })
       } else {
         dbMessage.getMessageCount().then(res2 => {

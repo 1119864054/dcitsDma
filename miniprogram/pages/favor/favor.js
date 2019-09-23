@@ -89,7 +89,7 @@ Page({
       for (let i = 0; i < sugList.length; i++) {
         let article = cache.getCache(sugList[i].articleId)
         if (!article) {
-          article = (await dbArticle.getArticleByAIdFromDB(sugList[i].articleId, app.globalData.suggestionKey))[0]
+          article = (await dbArticle.getArticleByAIdFromDB(sugList[i].articleId, app.globalData.suggestionKey))
           cache.setCache(sugList[i].articleId, article)
         }
         let user = cache.getCache(article.userId)
@@ -112,7 +112,7 @@ Page({
       for (let i = 0; i < demList.length; i++) {
         let article = cache.getCache(demList[i].articleId)
         if (!article) {
-          article = (await dbArticle.getArticleByAIdFromDB(demList[i].articleId, app.globalData.demandKey))[0]
+          article = (await dbArticle.getArticleByAIdFromDB(demList[i].articleId, app.globalData.demandKey))
           cache.setCache(demList[i].articleId, article)
         }
         let user = cache.getCache(article.userId)
@@ -135,7 +135,7 @@ Page({
       for (let i = 0; i < tecList.length; i++) {
         let article = cache.getCache(tecList[i].articleId)
         if (!article) {
-          article = (await dbArticle.getArticleByAIdFromDB(tecList[i].articleId, app.globalData.technologyKey))[0]
+          article = (await dbArticle.getArticleByAIdFromDB(tecList[i].articleId, app.globalData.technologyKey))
           cache.setCache(tecList[i].articleId, article)
         }
         let user = cache.getCache(article.userId)

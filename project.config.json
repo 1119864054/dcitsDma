@@ -25,7 +25,7 @@
 		}
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.8.2",
+	"libVersion": "2.8.3",
 	"appid": "wx8c248cdfb82112cf",
 	"projectname": "new_mypro",
 	"cloudfunctionTemplateRoot": "cloudfunctionTemplate",
@@ -140,6 +140,19 @@
 					"name": "pages/myArticle/myArticle",
 					"pathName": "pages/myArticle/myArticle",
 					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/integral/integral",
+					"pathName": "pages/integral/integral",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/point/point",
+					"pathName": "pages/point/point",
 					"scene": null
 				}
 			]

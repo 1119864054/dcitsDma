@@ -37,21 +37,18 @@ Page({
       isLoad: false
     })
 
-    let res1 = await dbMessage.getMessage()
-    let message = res1.data
+    let message = await dbMessage.getMessage()
     if (message.length > 0) {
       for (let i = 0; i < message.length; i++) {
-        let res2 = await dbRelation.getRelationById(message[i].relationId, message[i].relationType)
-        let relation = res2.data[0]
+        let relation = await dbRelation.getRelationById(message[i].relationId)
         if (!relation) {
           dbMessage.removeMessageByRId(message[i].relationId)
         } else {
-          if (message[i].relationType == 'SDRelation') {
+          if (message[i].articleType == 'demand') {
             let demand = cache.getCache(relation.demandId)
             if (!demand) {
-              let res3 = await dbArticle.getArticleByAIdFromDB(relation.demandId, 'demand')
-              if (res3) {
-                demand = res3[0]
+              let demand = await dbArticle.getArticleByAIdFromDB(relation.demandId, 'demand')
+              if (demand) {
                 cache.setCache(relation.demandId, demand)
               }
             }
@@ -74,9 +71,8 @@ Page({
 
             let suggestion = cache.getCache(relation.suggestionId)
             if (!suggestion) {
-              let res5 = await dbArticle.getArticleByAIdFromDB(relation.suggestionId, 'suggestion')
-              if (res5) {
-                suggestion = res5[0]
+              let suggestion = await dbArticle.getArticleByAIdFromDB(relation.suggestionId, 'suggestion')
+              if (suggestion) {
                 cache.setCache(relation.suggestionId, suggestion)
               }
             }
@@ -84,13 +80,12 @@ Page({
             message[i].myArticleId = suggestion._id
             message[i].myArticleType = 'suggestion'
 
-          } else if (message[i].relationType == 'DTRelation') {
+          } else if (message[i].articleType == 'technology') {
 
             let technology = cache.getCache(relation.technologyId)
             if (!technology) {
-              let res3 = await dbArticle.getArticleByAIdFromDB(relation.technologyId, 'technology')
-              if (res3) {
-                technology = res3[0]
+              let technology = await dbArticle.getArticleByAIdFromDB(relation.technologyId, 'technology')
+              if (technology) {
                 cache.setCache(relation.technologyId, technology)
               }
             }
@@ -113,9 +108,8 @@ Page({
 
             let demand = cache.getCache(relation.demandId)
             if (!demand) {
-              let res5 = await dbArticle.getArticleByAIdFromDB(relation.demandId, 'demand')
-              if (res5) {
-                demand = res5[0]
+              let demand = await dbArticle.getArticleByAIdFromDB(relation.demandId, 'demand')
+              if (demand) {
                 cache.setCache(relation.demandId, demand)
               }
             }
@@ -165,7 +159,7 @@ Page({
     } else {
       dbArticle.getArticleByAIdFromDB(articleId, articleType).then(res => {
         if (res) {
-          cache.setCache(articleId, res[0])
+          cache.setCache(articleId, res)
         }
         wx.navigateTo({
           url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType

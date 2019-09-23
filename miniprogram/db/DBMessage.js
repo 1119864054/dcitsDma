@@ -12,12 +12,12 @@ class DBMessage {
     }
 
     //添加消息
-    addMessage(relationId, relationType, beRelated, relate) {
+    addMessage(relationId, articleType, beRelated, relate) {
         return new Promise((resolve, reject) => {
             db.collection('message').add({
                 data: {
                     relationId: relationId,
-                    relationType: relationType,
+                    articleType: articleType,
                     date: util.formatTime(new Date()),
                     checked: false,
                     beRelated: beRelated,
@@ -45,9 +45,9 @@ class DBMessage {
                 .orderBy('date', 'desc')
                 .get()
                 .then(res => {
-                    console.log('[DBMessage] [查询message] 成功: ', res)
-                    log.info('[DBMessage] [查询message] 成功: ', res)
-                    resolve(res)
+                    console.log('[DBMessage] [查询message] 成功: ', res.data)
+                    log.info('[DBMessage] [查询message] 成功: ', res.data)
+                    resolve(res.data)
                 }).catch(err => {
                     console.error('[DBMessage] [查询message] 失败: ', err)
                     log.error('[DBMessage] [查询message] 失败: ', err)
@@ -83,9 +83,9 @@ class DBMessage {
                 checked: false
             }).get()
                 .then(res => {
-                    console.log('[DBMessage] [查询未读message] 成功: ', res)
-                    log.info('[DBMessage] [查询未读message] 成功: ', res)
-                    resolve(res)
+                    console.log('[DBMessage] [查询未读message] 成功: ', res.data)
+                    log.info('[DBMessage] [查询未读message] 成功: ', res.data)
+                    resolve(res.data)
                 }).catch(err => {
                     console.error('[DBMessage] [查询未读message] 失败: ', err)
                     log.error('[DBMessage] [查询未读message] 失败: ', err)
@@ -111,24 +111,24 @@ class DBMessage {
     }
 
     //删除一篇文章的所有关联文章的消息
-    removeMessageByRId(relationId) {
-        return new Promise((resolve, reject) => {
-            wx.cloud.callFunction({
-                name: 'removeMessage',
-                data: {
-                    relationId: relationId,
-                }
-            }).then(res => {
-                console.log('[DBRelation] [删除关联消息] 成功: ', res.result)
-                log.info('[DBRelation] [删除关联消息] 成功: ', res.result)
-                resolve()
-            }).catch(err => {
-                console.error('[DBRelation] [删除关联消息] 失败: ', err)
-                log.error('[DBRelation] [删除关联消息] 失败: ', err)
-                reject()
-            })
-        })
-    }
+    // removeMessageByRId(relationId) {
+    //     return new Promise((resolve, reject) => {
+    //         wx.cloud.callFunction({
+    //             name: 'removeMessage',
+    //             data: {
+    //                 relationId: relationId,
+    //             }
+    //         }).then(res => {
+    //             console.log('[DBRelation] [删除关联消息] 成功: ', res.result)
+    //             log.info('[DBRelation] [删除关联消息] 成功: ', res.result)
+    //             resolve()
+    //         }).catch(err => {
+    //             console.error('[DBRelation] [删除关联消息] 失败: ', err)
+    //             log.error('[DBRelation] [删除关联消息] 失败: ', err)
+    //             reject()
+    //         })
+    //     })
+    // }
 }
 
 

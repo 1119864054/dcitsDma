@@ -4,9 +4,13 @@ import {
 import {
     Cache
 } from "../../db/Cache";
+import {
+    DBPoint
+} from "../../db/DBPoint";
 
 const cache = new Cache()
 const dbArticle = new DBArticle();
+const dbPoint = new DBPoint();
 
 const app = getApp()
 
@@ -62,7 +66,7 @@ Page({
             for (let i = 0; i < articleIdList.length; i++) {
                 let article = cache.getCache(articleIdList[i])
                 if (!article) {
-                    article = await dbArticle.getArticleByAIdFromDB(articleIdList[i], myData.articleType)[0]
+                    article = await dbArticle.getArticleByAIdFromDB(articleIdList[i], myData.articleType)
                 }
                 relation.push(article)
             }
@@ -150,6 +154,10 @@ Page({
         })
         let res = dbArticle.addNewArticle(myData.articleType, myData.title, myData.content, myData.imagesCloudId, this.data.relation)
         res.then(articleId => {
+            dbPoint.addPoint(app.globalData.id, "提出新的需求", 1, articleId, myData.title,myData.articleType)
+            for (let i = 0; i < this.data.relation.length; i++) {
+                dbPoint.addPoint(this.data.relation[i].userId, "需求被关联", 1, this.data.relation[i]._id, this.data.relation[i].title, this.data.relation[i].articleType)
+            }
             myData = {
                 title: '',
                 content: '',

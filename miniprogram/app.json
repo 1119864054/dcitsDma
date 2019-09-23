@@ -10,7 +10,9 @@
     "pages/myComment/myComment",
     "pages/selectRelation/selectRelation",
     "pages/editArticle/editArticle",
-    "pages/search/search"
+    "pages/search/search",
+    "pages/history/history",
+    "pages/point/point"
   ],
   "window": {
     "navigationBarBackgroundColor": "#fff",
@@ -30,7 +32,8 @@
     "color": "#999999",
     "backgroundColor": "#ffffff",
     "position": "bottom",
-    "list": [{
+    "list": [
+      {
         "pagePath": "pages/articleList/articleList",
         "text": "需求",
         "iconPath": "images/tabbar/suggestion.png",

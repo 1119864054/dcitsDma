@@ -77,8 +77,8 @@ class DBFavor {
                 userId: userId
             }).orderBy('date', 'desc')
                 .get().then(res => {
-                    console.log('[DBFavor] [查询favor] 成功: ', res)
-                    log.info('[DBFavor] [查询favor] 成功: ', res)
+                    console.log('[DBFavor] [查询favor] 成功: ', res.data)
+                    log.info('[DBFavor] [查询favor] 成功: ', res.data)
                     resolve(res.data)
                 }).catch(err => {
                     console.error('[DBFavor] [查询favor] 失败: ', err)
@@ -94,12 +94,12 @@ class DBFavor {
             db.collection('favor').where({
                 articleId: articleId
             }).count().then(res => {
-                console.log('[DBRelation] [获取收藏数量] 成功: ', res.total)
-                log.info('[DBRelation] [获取收藏数量] 成功: ', res.total)
+                console.log('[DBFavor] [获取收藏数量] 成功: ', res.total)
+                log.info('[DBFavor] [获取收藏数量] 成功: ', res.total)
                 resolve(res.total)
             }).catch(err => {
-                console.error('[DBRelation] [获取收藏数量] 失败: ', err)
-                log.error('[DBRelation] [获取收藏数量] 失败: ', err)
+                console.error('[DBFavor] [获取收藏数量] 失败: ', err)
+                log.error('[DBFavor] [获取收藏数量] 失败: ', err)
                 reject()
             })
         })
@@ -112,12 +112,12 @@ class DBFavor {
             db.collection('favor').where({
                 userId: userId
             }).count().then(res => {
-                console.log('[DBArticle] [根据用户id获取收藏数] 成功: ', res.total)
-                log.info('[DBArticle] [根据用户id获取收藏数] 成功: ', res.total)
+                console.log('[DBFavor] [根据用户id获取收藏数] 成功: ', res.total)
+                log.info('[DBFavor] [根据用户id获取收藏数] 成功: ', res.total)
                 resolve(res.total)
             }).catch(err => {
-                console.error('[DBArticle] [根据用户id获取收藏数] 失败: ', err)
-                log.error('[DBArticle] [根据用户id获取收藏数] 失败: ', err)
+                console.error('[DBFavor] [根据用户id获取收藏数] 失败: ', err)
+                log.error('[DBFavor] [根据用户id获取收藏数] 失败: ', err)
                 reject()
             })
         })

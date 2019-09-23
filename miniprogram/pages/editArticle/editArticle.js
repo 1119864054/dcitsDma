@@ -7,10 +7,14 @@ import {
 import {
   DBRelation
 } from '../../db/DBRelation';
+import {
+  DBHistory
+} from '../../db/DBHistory';
 
-const dbArticle = new DBArticle();
+const dbArticle = new DBArticle()
 const cache = new Cache()
 const dbRelation = new DBRelation()
+const dbHistory = new DBHistory()
 
 const app = getApp()
 
@@ -19,6 +23,7 @@ let myData = {
   articleTypeList: ['suggestion', 'demand', 'technology'],
   articleType: 'suggestion',
   articleId: '',
+  oldArticle: ''
 }
 
 Page({
@@ -43,9 +48,10 @@ Page({
 
     let article = cache.getCache(articleId)
     if (!article) {
-      article = (await dbArticle.getArticleByAIdFromDB(articleId, articleType))[0]
+      article = (await dbArticle.getArticleByAIdFromDB(articleId, articleType))
       cache.setCache(articleId, article)
     }
+    myData.oldArticle = article
 
     let typeIndex = 0
     for (let i = 0; i < myData.articleTypeList.length; i++) {
@@ -57,12 +63,12 @@ Page({
 
     let articleIdList = []
     if (articleType != 'suggestion') {
-      let relation = []
-      let res = await dbRelation.getRelation(articleId, articleType)
-      relation = res.data
+      let relation = await dbRelation.getRelation(articleId, articleType)
       if (articleType == 'demand') {
         for (let i = 0; i < relation.length; i++) {
-          articleIdList.push(relation[i].suggestionId)
+          if (relation[i].suggestionId) {
+            articleIdList.push(relation[i].suggestionId)
+          }
         }
       } else if (articleType == 'technology') {
         for (let i = 0; i < relation.length; i++) {
@@ -84,13 +90,13 @@ Page({
 
   async onShow() {
     let articleIdList = Array.from(new Set(this.data.articleIdList))
-    console.log('articleIdList',articleIdList)
+    console.log('articleIdList', articleIdList)
     let relation = []
     if (articleIdList.length > 0) {
       for (let i = 0; i < articleIdList.length; i++) {
         let article = cache.getCache(articleIdList[i])
         if (!article) {
-          article = await dbArticle.getArticleByAIdFromDB(articleIdList[i], myData.articleType)[0]
+          article = await dbArticle.getArticleByAIdFromDB(articleIdList[i], myData.articleType)
         }
         relation.push(article)
       }
@@ -167,6 +173,7 @@ Page({
     wx.showLoading({
       title: '上传中...',
     })
+    dbHistory.addHistory(myData.oldArticle)
     await dbArticle.updateArticle(myData.articleId, myData.articleType, this.data.title, this.data.content, myData.imagesCloudId, this.data.relation)
     myData = {
       imagesCloudId: [],

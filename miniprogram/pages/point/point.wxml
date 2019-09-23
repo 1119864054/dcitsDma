@@ -1,0 +1,32 @@
+<cu-custom bgColor="bg-gradual-pink" bgImage="https://image.weilanwl.com/color2.0/plugin/cjkz2329.jpg" isBack="{{true}}">
+    <view slot="backText">返回</view>
+    <view slot="content">我的积分</view>
+</cu-custom>
+<view class="margin-xs padding-xs bg-white radius shadow shadow-lg">
+    <view class="flex justify-center">
+        <view class='text-center'>
+            <view class="padding text-xl text-bold">积分：{{point}}</view>
+        </view>
+    </view>
+</view>
+<view class="cu-bar bg-white solids-bottom">
+    <view class='action'>
+        <text class="cuIcon-titles text-black"></text>
+        <text class="text-lg text-bold">积分明细</text>
+    </view>
+</view>
+<scroll-view scroll-y class="scrollPage">
+    <view class="cu-list menu">
+        <block wx:for="{{pointDetail}}" wx:key="_id">
+            <view class="cu-item">
+                <view class="content padding-tb-sm" bind:tap="onTapToArticle" data-article-id="{{item.articleId}}" data-article-type="{{item.articleType}}">
+                    <text class="margin-right-xs">{{item.detail}}（标题：{{item.title}}）</text>
+                    <view class="text-gray text-xs margin-right-xs">{{item.date}}</view>
+                </view>
+                <view class="action">
+                    <text class="text-red text-xl text-bold">+{{item.point}}</text>
+                </view>
+            </view>
+        </block>
+    </view>
+</scroll-view>

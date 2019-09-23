@@ -1,12 +1,31 @@
 // pages/article/article.js
-import { Util } from '../../util/util';
-import { DBArticle } from "../../db/DBArticle";
-import { DBUser } from "../../db/DBUser";
-import { Cache } from '../../db/Cache';
-import { DBFavor } from '../../db/DBFavor';
-import { DBComment } from '../../db/DBComment';
-import { DBRelation } from '../../db/DBRelation';
-import { DBLike } from '../../db/DBLike';
+import {
+  Util
+} from '../../util/util';
+import {
+  DBArticle
+} from "../../db/DBArticle";
+import {
+  DBUser
+} from "../../db/DBUser";
+import {
+  Cache
+} from '../../db/Cache';
+import {
+  DBFavor
+} from '../../db/DBFavor';
+import {
+  DBComment
+} from '../../db/DBComment';
+import {
+  DBRelation
+} from '../../db/DBRelation';
+import {
+  DBLike
+} from '../../db/DBLike';
+import {
+  DBHistory
+} from '../../db/DBHistory';
 
 const util = new Util();
 const dbArticle = new DBArticle();
@@ -16,6 +35,7 @@ const dbFavor = new DBFavor()
 const dbComment = new DBComment()
 const dbRelation = new DBRelation()
 const dbLike = new DBLike()
+const dbHistory = new DBHistory()
 
 const myData = {
   articleId: '',
@@ -38,10 +58,11 @@ Page({
     favorId: '',
     favorCount: 0,
     visitCount: 0,
-    updated: false,
 
+    history: [],
     comment: [],
     relationDetail: [],
+    _relationDetail: [],
     username: '',
     articleImg: [],
     avatar: '',
@@ -49,19 +70,23 @@ Page({
     date: '',
     title: '',
     articleType: '',
-    myAvatar: "/images/tabbar/user.png"
+    myAvatar: '',
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  async onLoad(options) {
+  onLoad: async function (options) {
     let articleId = options.articleId
     let articleType = options.articleType
     myData.articleId = articleId;
     myData.articleType = articleType;
 
     let articleData = cache.getCache(articleId)
+    if(!articleData){
+      articleData = await dbArticle.getArticleByAIdFromDB(articleId, articleType)
+      cache.setCache(articleId, articleData)
+    }
 
     if (articleData.removed) {
       this.setData({
@@ -81,19 +106,17 @@ Page({
         cache.getImageCached(articleId, articleData.articleImg)
       }
 
-      let res = cache.getCache(articleData.userId)
-      if (res) {
-        res = await dbUser.getUser(articleData.userId)
-        cache.setCache(articleData.userId, res)
+      let user = cache.getCache(articleData.userId)
+      if (!user) {
+        user = await dbUser.getUser(articleData.userId)
+        cache.setCache(articleData.userId, user)
       }
-
-      let content = articleData.content
 
       this.setData({
         comment: comment,
-        username: res.username,
-        avatar: res.avatar,
-        content: content,
+        username: user.username,
+        avatar: user.avatar,
+        content: articleData.content,
         articleImg: articleImg,
         date: articleData.date,
         title: articleData.title,
@@ -101,7 +124,6 @@ Page({
         myAvatar: app.globalData.avatar,
         favorCount: articleData.favorCount,
         visitCount: articleData.visitCount,
-        updated: articleData.updated
       })
 
       dbFavor.isFavor(articleId).then(res => {
@@ -115,8 +137,9 @@ Page({
         }
       })
 
-      this.getComment()
+      this.getHistory()
       this.getRelation()
+      this.getComment()
 
       if (!cache.getCache(articleId + '_visit')) {
         dbArticle.updateVisitCount(articleId, articleType, 1)
@@ -124,13 +147,9 @@ Page({
       }
 
       dbArticle.getArticleByAIdFromDB(articleId, articleType).then(res => {
-        cache.setCache(articleId, res[0])
+        cache.setCache(articleId, res)
       })
     }
-  },
-
-  onPullDownRefresh: function () {
-    wx.stopPullDownRefresh()
   },
 
   previewImage: function (e) {
@@ -140,15 +159,11 @@ Page({
     })
   },
 
-  onTapToComment: function (event) {
+  onTapToRelate(e) {
+    let articleId = e.currentTarget.dataset.articleId
+    let articleType = e.currentTarget.dataset.articleType
     wx.navigateTo({
-      url: '/pages/comment/comment?articleId=' + myData.articleId + '&articleType=' + myData.articleType
-    });
-  },
-
-  onTapToRelate: function (event) {
-    wx.navigateTo({
-      url: '/pages/relation/relation?articleId=' + myData.articleId + '&articleType=' + myData.articleType
+      url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType
     });
   },
 
@@ -188,22 +203,14 @@ Page({
     dbArticle.updateFavorCount(myData.articleId, myData.articleType, -1)
   },
 
-  onTapToRelate(e) {
-    let articleId = e.currentTarget.dataset.articleId
-    let articleType = e.currentTarget.dataset.articleType
-    wx.navigateTo({
-      url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType
-    });
-  },
-
   async getComment() {
     let comment = await dbComment.getComment(myData.articleId)
     if (comment && comment.length > 0) {
       for (let i = 0; i < comment.length; i++) {
         let isLiked = await dbLike.isLiked(comment[i]._id)
-        if (isLiked.length > 0) {
+        if (isLiked) {
           comment[i].isLiked = true
-          comment[i].likeId = isLiked[0]._id
+          comment[i].likeId = isLiked._id
         } else {
           comment[i].isLiked = false
         }
@@ -310,17 +317,17 @@ Page({
 
   async getRelation() {
     let relationDetail = []
-    let res = await dbRelation.getRelation(myData.articleId, myData.articleType)
-    if (res) {
-      let relation = res.data
+    let _relationDetail = []
+    let relation = await dbRelation.getRelation(myData.articleId, myData.articleType)
+    if (relation) {
 
-      if (myData.articleType == 'demand') {
+      if (myData.articleType == 'suggestion') {
         for (let i = 0; i < relation.length; i++) {
           let temp = {}
-          let article = cache.getCache(relation[i].suggestionId)
+          let article = cache.getCache(relation[i].demandId)
           if (!article) {
-            article = (await dbArticle.getArticleByAIdFromDB(relation[i].suggestionId, 'suggestion'))[0]
-            cache.setCache(relation[i].suggestionId, article)
+            article = (await dbArticle.getArticleByAIdFromDB(relation[i].demandId, 'demand'))
+            cache.setCache(relation[i].demandId, article)
           }
           temp.title = article.title
           temp.articleId = article._id
@@ -333,13 +340,50 @@ Page({
           temp.username = user.username
           relationDetail.push(temp)
         }
-      }
-      else if (myData.articleType == 'technology') {
+      } else if (myData.articleType == 'demand') {
+        for (let i = 0; i < relation.length; i++) {
+          if (relation[i].suggestionId) {
+            let temp = {}
+            let article = cache.getCache(relation[i].suggestionId)
+            if (!article) {
+              article = (await dbArticle.getArticleByAIdFromDB(relation[i].suggestionId, 'suggestion'))
+              cache.setCache(relation[i].suggestionId, article)
+            }
+            temp.title = article.title
+            temp.articleId = article._id
+            temp.articleType = article.articleType
+            let user = cache.getCache(article.userId)
+            if (!user) {
+              user = await dbUser.getUser(article.userId)
+              cache.setCache(article.userId, user)
+            }
+            temp.username = user.username
+            relationDetail.push(temp)
+          } else if (relation[i].technologyId) {
+            let temp = {}
+            let article = cache.getCache(relation[i].technologyId)
+            if (!article) {
+              article = (await dbArticle.getArticleByAIdFromDB(relation[i].technologyId, 'technology'))
+              cache.setCache(relation[i].technologyId, article)
+            }
+            temp.title = article.title
+            temp.articleId = article._id
+            temp.articleType = article.articleType
+            let user = cache.getCache(article.userId)
+            if (!user) {
+              user = await dbUser.getUser(article.userId)
+              cache.setCache(article.userId, user)
+            }
+            temp.username = user.username
+            _relationDetail.push(temp)
+          }
+        }
+      } else if (myData.articleType == 'technology') {
         for (let i = 0; i < relation.length; i++) {
           let temp = {}
           let article = cache.getCache(relation[i].demandId)
           if (!article) {
-            article = (await dbArticle.getArticleByAIdFromDB(relation[i].demandId, 'demand'))[0]
+            article = (await dbArticle.getArticleByAIdFromDB(relation[i].demandId, 'demand'))
             cache.setCache(relation[i].demandId, article)
           }
           temp.title = article.title
@@ -356,8 +400,28 @@ Page({
       }
     }
     console.log('relationDetail: ', relationDetail);
+    console.log('_relationDetail: ', _relationDetail);
     this.setData({
-      relationDetail: relationDetail
+      relationDetail,
+      _relationDetail
     })
+  },
+
+  getHistory() {
+    dbHistory.getHistory(myData.articleId).then(res => {
+      for(let i=0; i<res.length; i++){
+        cache.setCache(res[i]._id, res[i])
+      }
+      this.setData({
+        history: res
+      })
+    })
+  },
+
+  onTapToHistory(e) {
+    let historyId = e.currentTarget.dataset.historyId
+    wx.navigateTo({
+      url: '/pages/history/history?historyId=' + historyId
+    });
   }
 })

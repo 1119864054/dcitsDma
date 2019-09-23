@@ -43,7 +43,7 @@ Page({
       });
     } else {
       dbArticle.getArticleByAIdFromDB(articleId, articleType).then(res => {
-        cache.setCache(articleId, res[0])
+        cache.setCache(articleId, res)
         wx.navigateTo({
           url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType
         });
@@ -66,7 +66,7 @@ Page({
       let headAType = commentList[0].articleType
       let article = cache.getCache(headAId)
       if (!article) {
-        article = (await dbArticle.getArticleByAIdFromDB(headAId, headAType))[0]
+        article = (await dbArticle.getArticleByAIdFromDB(headAId, headAType))
       }
       let headATitle = article.title
       let temp = {}
@@ -85,7 +85,7 @@ Page({
 
           article = cache.getCache(nowAId)
           if (!article) {
-            article = (await dbArticle.getArticleByAIdFromDB(nowAId, nowAType))[0]
+            article = (await dbArticle.getArticleByAIdFromDB(nowAId, nowAType))
           }
 
           headAId = article._id

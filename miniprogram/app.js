@@ -30,6 +30,7 @@ App({
       username: '',
       avatar: '',
       sign: '',
+      point: 0,
       logged: false,
     }
 

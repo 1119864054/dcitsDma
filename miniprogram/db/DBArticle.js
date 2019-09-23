@@ -43,21 +43,11 @@ class DBArticle {
         .limit(pageSize)
         .get()
         .then(res => {
-          let result = res.data
-          if (result.length > 0) {
-            console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', result)
-            log.info('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', result)
-          } else {
-            console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 未查询到记录', result)
-            log.info('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 未查询到记录', result)
-          }
-          resolve(result)
+          console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', res.data)
+          log.info('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', res.data)
+          resolve(res.data)
         })
         .catch(err => {
-          wx.showToast({
-            icon: 'none',
-            title: '查询记录失败'
-          })
           console.error('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 失败：', err)
           log.error('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 失败：', err)
           reject()
@@ -66,38 +56,38 @@ class DBArticle {
   }
 
   //从数据库读取文章列表(不分页)
-  getAllArticleDataUnlimited(storageKeyName) {
-    return new Promise((resolve, reject) => {
-      db.collection(storageKeyName).where({
-          removed: false
-        })
-        .orderBy('date', 'desc')
-        .get()
-        .then(res => {
-          let result = res.data
-          if (result.length > 0) {
-            console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', result)
-            log.info('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', result)
-          } else {
-            console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 未查询到记录', result)
-            log.info('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 未查询到记录', result)
-          }
-          resolve(result)
-        })
-        .catch(err => {
-          wx.showToast({
-            icon: 'none',
-            title: '查询记录失败'
-          })
-          console.error('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 失败：', err)
-          log.error('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 失败：', err)
-          reject()
-        })
-    })
-  }
+  // getAllArticleDataUnlimited(storageKeyName) {
+  //   return new Promise((resolve, reject) => {
+  //     db.collection(storageKeyName).where({
+  //         removed: false
+  //       })
+  //       .orderBy('date', 'desc')
+  //       .get()
+  //       .then(res => {
+  //         let result = res.data
+  //         if (result.length > 0) {
+  //           console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', result)
+  //           log.info('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', result)
+  //         } else {
+  //           console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 未查询到记录', result)
+  //           log.info('[DBArticle] [' + sto rageKeyName + '] [查询数据库记录] 未查询到记录', result)
+  //         }
+  //         resolve(result)
+  //       })
+  //       .catch(err => {
+  //         wx.showToast({
+  //           icon: 'none',
+  //           title: '查询记录失败'
+  //         })
+  //         console.error('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 失败：', err)
+  //         log.error('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 失败：', err)
+  //         reject()
+  //       })
+  //   })
+  // }
 
   //新增文章到数据库
-  async addNewArticle(articleType, title, content, images, relation, updated = false) {
+  async addNewArticle(articleType, title, content, images, relation) {
     let id = app.globalData.id
     try {
       let res = await db.collection(articleType).add({
@@ -110,7 +100,6 @@ class DBArticle {
           timeStamp: new Date().getTime(),
           articleType: articleType,
           removed: false,
-          updated: updated,
 
           favorCount: 0,
           commentCount: 0,
@@ -120,16 +109,10 @@ class DBArticle {
       console.log('[DBArticle] [' + articleType + '] [新增文章] 成功: _id=', res._id)
       log.info('[DBArticle] [' + articleType + '] [新增文章] 成功: _id=', res._id)
       //关联关系
-      let relationType = ''
-      if (articleType == app.globalData.demandKey) {
-        relationType = 'SDRelation'
-      } else if (articleType == app.globalData.technologyKey) {
-        relationType = 'DTRelation'
-      }
       for (let i = 0; i < relation.length; i++) {
-        let relationId = await dbRelation.addRelation(relationType, relation[i]._id, res._id)
+        let relationId = await dbRelation.addRelation(articleType, relation[i]._id, res._id)
         //消息
-        await dbMessage.addMessage(relationId, relationType, relation[i].userId, id)
+        await dbMessage.addMessage(relationId, articleType, relation[i].userId, id)
       }
       return res._id
     } catch (err) {
@@ -152,27 +135,26 @@ class DBArticle {
         title: title,
         content: content,
         date: util.formatTime(new Date()),
-        updated: true,
         articleImg: images,
         timeStamp: new Date().getTime()
       }
     })
 
     //关联关系
-    if (relation.length > 0) {
-      await dbRelation.removeRelationByAId(articleId, articleType)
-      let relationType = ''
-      if (articleType == app.globalData.demandKey) {
-        relationType = 'SDRelation'
-      } else if (articleType == app.globalData.technologyKey) {
-        relationType = 'DTRelation'
-      }
-      for (let i = 0; i < relation.length; i++) {
-          let relationId = await dbRelation.addRelation(relationType, relation[i]._id, articleId)
-          //消息
-          await dbMessage.addMessage(relationId, relationType, relation[i].userId, id)
-      }
-    }
+    // if (relation.length > 0) {
+    //   await dbRelation.removeRelationByAId(articleId, articleType)
+    //   let relationType = ''
+    //   if (articleType == app.globalData.demandKey) {
+    //     relationType = 'SDRelation'
+    //   } else if (articleType == app.globalData.technologyKey) {
+    //     relationType = 'DTRelation'
+    //   }
+    //   for (let i = 0; i < relation.length; i++) {
+    //       let relationId = await dbRelation.addRelation(relationType, relation[i]._id, articleId)
+    //       //消息
+    //       await dbMessage.addMessage(relationId, relationType, relation[i].userId, id)
+    //   }
+    // }
 
     console.log('[DBArticle] [' + articleType + '] [更新文章] 返回信息: ', res)
     log.info('[DBArticle] [' + articleType + '] [更新文章] 返回信息: ', res)
@@ -263,9 +245,9 @@ class DBArticle {
       db.collection(articleType).where({
         _id: articleId,
       }).get().then(res => {
-        console.log('[DBArticle] [根据articleId查询article信息] 成功: ', res.data)
-        log.info('[DBArticle] [根据articleId查询article信息] 成功: ', res.data)
-        resolve(res.data)
+        console.log('[DBArticle] [根据articleId查询article信息] 成功: ', res.data[0])
+        log.info('[DBArticle] [根据articleId查询article信息] 成功: ', res.data[0])
+        resolve(res.data[0])
       }).catch(err => {
         console.error('[DBArticle] [根据articleId查询article信息] 失败: ', err)
         log.error('[DBArticle] [根据articleId查询article信息] 失败: ', err)
@@ -323,22 +305,6 @@ class DBArticle {
     })
   }
 
-  //删除文章（真实）
-  removeArticleReal(articleId, articleType) {
-    return new Promise((resolve, reject) => {
-      db.collection(articleType).doc(articleId).remove().then(res => {
-        console.log('[DBArticle] [删除article（真实）] 成功: ', res)
-        log.info('[DBArticle] [删除article（真实）] 成功: ', res)
-        cache.removeCache(articleId)
-        resolve()
-      }).catch(err => {
-        console.error('[DBArticle] [删除article（真实）] 失败: ', err)
-        log.error('[DBArticle] [删除article（真实）] 失败: ', err)
-        reject()
-      })
-    })
-  }
-
   //搜索文章
   searchArticle(articleType, key, pageSize = constPageSize, currentPage = 0) {
     return new Promise((resolve, reject) => {
@@ -346,7 +312,8 @@ class DBArticle {
           title: new db.RegExp({
             regexp: key,
             options: 'i',
-          })
+          }),
+          removed: false
         })
         .skip(currentPage * pageSize)
         .limit(pageSize)

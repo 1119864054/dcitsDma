@@ -2,7 +2,9 @@ const db = wx.cloud.database()
 const _ = db.command
 const app = getApp()
 
-import { Util } from '../util/util.js';
+import {
+    Util
+} from '../util/util.js';
 
 const log = require('../util/log.js')
 
@@ -23,6 +25,7 @@ class DBUser {
                 if (!res) {
                     db.collection('user').add({
                         data: {
+                            point: 0,
                             username: username,
                             avatar: avatar,
                             date: util.formatTime(new Date())

@@ -22,8 +22,8 @@ class DBLike {
                     date: util.formatTime(new Date()),
                 }
             }).then(res => {
-                console.log('[DBLike] [添加like] 成功: ', res)
-                log.info('[DBLike] [添加like] 成功: ', res)
+                console.log('[DBLike] [添加like] 成功: ', res._id)
+                log.info('[DBLike] [添加like] 成功: ', res._id)
                 resolve(res._id)
             }).catch(err => {
                 console.error('[DBLike] [添加like] 失败: ', err)
@@ -43,9 +43,9 @@ class DBLike {
                     userId: userId
                 })
                 .get().then(res => {
-                    console.log('[DBLike] [查询like] 成功: ', res.data)
-                    log.info('[DBLike] [查询like] 成功: ', res.data)
-                    resolve(res.data)
+                    console.log('[DBLike] [查询like] 成功: ', res.data[0])
+                    log.info('[DBLike] [查询like] 成功: ', res.data[0])
+                    resolve(res.data[0])
                 }).catch(err => {
                     console.error('[DBLike] [查询like] 失败: ', err)
                     log.error('[DBLike] [查询like] 失败: ', err)
