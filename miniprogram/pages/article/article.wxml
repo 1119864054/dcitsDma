@@ -16,15 +16,16 @@
     <view class="cu-card dynamic no-card" style="margin-bottom:50px">
         <view class="cu-item shadow">
             <view class="cu-list menu-avatar">
-                <view class="cu-item">
+                <view class="cu-item" catch:tap="onTapToNewArticle">
                     <view class="cu-avatar round lg shadow-blur" style="background-image:url({{avatar}});"></view>
                     <view class="content flex-sub">
                         <view>{{username}}</view>
                         <view class="text-grey text-sm flex justify-between">{{date}}</view>
                     </view>
-                    <view class="action">
-                        <view class="cuIcon-editfill text-gray"></view>
-                        <view class="text-grey text-xs">建立需求</view>
+                    <view wx:if="{{articleType!='technology'}}" class="cu-tag radius text-df text-bold" style="width:100px">
+                        <view class="cuIcon-copy " style="color:#576B95">
+                             建立需求
+                        </view>
                     </view>
                 </view>
             </view>

@@ -154,7 +154,13 @@ Page({
         })
         let res = dbArticle.addNewArticle(myData.articleType, myData.title, myData.content, myData.imagesCloudId, this.data.relation)
         res.then(articleId => {
-            dbPoint.addPoint(app.globalData.id, "提出新的需求", 1, articleId, myData.title,myData.articleType)
+            if (myData.articleType == 'suggestion') {
+                dbPoint.addPoint(app.globalData.id, "提出新的需求", 1, articleId, myData.title, myData.articleType)
+            } else if (myData.articleType == 'demand') {
+                dbPoint.addPoint(app.globalData.id, "创建业务需求", 1, articleId, myData.title, myData.articleType)
+            } else if (myData.articleType == 'technology') {
+                dbPoint.addPoint(app.globalData.id, "创建项目需求", 1, articleId, myData.title, myData.articleType)
+            }
             for (let i = 0; i < this.data.relation.length; i++) {
                 dbPoint.addPoint(this.data.relation[i].userId, "需求被关联", 1, this.data.relation[i]._id, this.data.relation[i].title, this.data.relation[i].articleType)
             }

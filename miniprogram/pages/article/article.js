@@ -83,7 +83,7 @@ Page({
     myData.articleType = articleType;
 
     let articleData = cache.getCache(articleId)
-    if(!articleData){
+    if (!articleData) {
       articleData = await dbArticle.getArticleByAIdFromDB(articleId, articleType)
       cache.setCache(articleId, articleData)
     }
@@ -409,7 +409,7 @@ Page({
 
   getHistory() {
     dbHistory.getHistory(myData.articleId).then(res => {
-      for(let i=0; i<res.length; i++){
+      for (let i = 0; i < res.length; i++) {
         cache.setCache(res[i]._id, res[i])
       }
       this.setData({
@@ -423,5 +423,65 @@ Page({
     wx.navigateTo({
       url: '/pages/history/history?historyId=' + historyId
     });
-  }
+  },
+
+  onTapToNewArticle(e) {
+    console.log('e', e)
+    let articleType = myData.articleType
+    let articleId = myData.articleId
+    let title = this.data.title
+    if (articleType == 'suggestion') {
+      wx.showModal({
+        title: '新的业务需求',
+        content: '是否依据需求《' + title + '》加工新的业务需求？',
+        showCancel: true,
+        cancelText: '取消',
+        cancelColor: '#000000',
+        confirmText: '确定',
+        confirmColor: '#3CC51F',
+        success: (result) => {
+          if (result.confirm) {
+            this.toNewArticle(articleType, articleId)
+          }
+        },
+        fail: () => {},
+        complete: () => {}
+      });
+    } else if (articleType == 'demand') {
+      wx.showModal({
+        title: '新的项目需求',
+        content: '是否依据业务需求《' + title + '》加工新的项目需求？',
+        showCancel: true,
+        cancelText: '取消',
+        cancelColor: '#000000',
+        confirmText: '确定',
+        confirmColor: '#3CC51F',
+        success: (result) => {
+          if (result.confirm) {
+            this.toNewArticle(articleType, articleId)
+          }
+        },
+        fail: () => {},
+        complete: () => {}
+      });
+    }
+  },
+
+  toNewArticle(articleType, articleId) {
+    if (app.globalData.logged) {
+      wx.navigateTo({
+        url: '/pages/newArticle/newArticle?articleType=' + articleType + '&articleId=' + articleId
+      });
+    } else {
+      wx.switchTab({
+        url: '/pages/user/user',
+        success: () => {
+          wx.showToast({
+            title: '请先登录',
+            icon: 'none',
+          });
+        }
+      });
+    }
+  },
 })

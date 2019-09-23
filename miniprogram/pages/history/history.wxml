@@ -54,7 +54,7 @@
                 </view>
                 <view class="padding-sm bg-white">
                     <block wx:for="{{history}}" wx:key="_id">
-                        <view wx:if="{{historyId==item._id}}" class="text-left padding-bottom-sm" style="color:black">
+                        <view wx:if="{{historyId==item._id}}" class="text-bold text-left padding-bottom-sm text-shadow text-black">
                             - {{item.date}}
                         </view>
                         <view wx:else class="text-left padding-bottom-sm" style="color:#576B95" data-history-id='{{item._id}}' catch:tap="onTapToHistory">

@@ -84,12 +84,12 @@ Page({
     })
 
     let favorSuggestion = []
-    let sugList = await dbFavor.getFavor(app.globalData.suggestionKey)
+    let sugList = await dbFavor.getFavor('suggestion')
     if (sugList) {
       for (let i = 0; i < sugList.length; i++) {
         let article = cache.getCache(sugList[i].articleId)
         if (!article) {
-          article = (await dbArticle.getArticleByAIdFromDB(sugList[i].articleId, app.globalData.suggestionKey))
+          article = (await dbArticle.getArticleByAIdFromDB(sugList[i].articleId, 'suggestion'))
           cache.setCache(sugList[i].articleId, article)
         }
         let user = cache.getCache(article.userId)
@@ -107,12 +107,12 @@ Page({
     }
 
     let favorDemand = []
-    let demList = await dbFavor.getFavor(app.globalData.demandKey)
+    let demList = await dbFavor.getFavor('demand')
     if (demList) {
       for (let i = 0; i < demList.length; i++) {
         let article = cache.getCache(demList[i].articleId)
         if (!article) {
-          article = (await dbArticle.getArticleByAIdFromDB(demList[i].articleId, app.globalData.demandKey))
+          article = (await dbArticle.getArticleByAIdFromDB(demList[i].articleId, 'demand'))
           cache.setCache(demList[i].articleId, article)
         }
         let user = cache.getCache(article.userId)
@@ -130,12 +130,12 @@ Page({
     }
 
     let favorTechnology = []
-    let tecList = await dbFavor.getFavor(app.globalData.technologyKey)
+    let tecList = await dbFavor.getFavor('technology')
     if (tecList) {
       for (let i = 0; i < tecList.length; i++) {
         let article = cache.getCache(tecList[i].articleId)
         if (!article) {
-          article = (await dbArticle.getArticleByAIdFromDB(tecList[i].articleId, app.globalData.technologyKey))
+          article = (await dbArticle.getArticleByAIdFromDB(tecList[i].articleId, 'technology'))
           cache.setCache(tecList[i].articleId, article)
         }
         let user = cache.getCache(article.userId)

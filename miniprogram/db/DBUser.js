@@ -52,10 +52,7 @@ class DBUser {
     }
 
     //更新用户
-    updateUser() {
-        let username = app.globalData.username;
-        let avatar = app.globalData.avatar;
-
+    updateUser(username, avatar) {
         return new Promise((resolve, reject) => {
             db.collection('user').doc(app.globalData.id)
                 .update({

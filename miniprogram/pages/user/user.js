@@ -26,11 +26,10 @@ const log = require('../../util/log.js')
 Page({
 
   data: {
-    username: '',
-    avatar: '',
     logged: false,
     checked: true,
     hasUserInfo: false,
+    loading: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     articleCount: 0,
     favorCount: 0,
@@ -40,32 +39,12 @@ Page({
 
   onLoad: function (options) {
     if (app.globalData.logged) {
-      this.login()
-    } else if (this.data.canIUse) {
-      app.userInfoReadyCallback = res => {
-        this.login()
-      }
+      this.setMyCache()
+      this.setData({
+        logged: true,
+        hasUserInfo: true
+      })
     }
-    // else {
-    //   wx.getUserInfo({
-    //     lang: 'zh_CN',
-    //     timeout: 10000,
-    //     success: (res) => {
-    //       console.log('[user] [获取用户信息userInfo] 成功 ', res)
-    //       log.info('[user] [获取用户信息userInfo] 成功 ', res)
-    //       this.globalData.username = res.userInfo.nickName
-    //       this.globalData.avatar = res.userInfo.avatarUrl
-    //       this.globalData.logged = true
-    //       wx.hideLoading();
-    //       if (this.userInfoReadyCallback) {
-    //         this.userInfoReadyCallback(res)
-    //       }
-    //     },
-    //     fail: () => {
-    //       console.error('[user] [获取用户信息userInfo] 失败')
-    //     }
-    //   });
-    // }
   },
 
   onShow: function () {
@@ -82,54 +61,22 @@ Page({
         })
       })
     }
-
   },
 
   getUserInfo: function (e) {
-    let that = this;
-    wx.getSetting({
-      success(res) {
-        if (res.authSetting['scope.userInfo']) {
-          wx.showLoading({
-            title: "正在登录",
-            mask: true,
-          });
-          wx.getUserInfo({
-            success(res) {
-              console.log("[user] [获取用户信息userInfo] 成功 ", res)
-              app.globalData.logged = true
-              app.globalData.username = res.userInfo.nickName
-              app.globalData.avatar = res.userInfo.avatarUrl
-              that.login()
-            },
-            fail(err) {
-              console.error("[user] [获取用户信息userInfo] 失败", err)
-              log.error("[user] [获取用户信息userInfo] 失败", err)
-            }
-          })
-        }
-      }
+    this.setData({
+      loading: true
     })
-  },
-
-  login(e) {
+    app.globalData.username = e.detail.userInfo.nickName
+    app.globalData.avatar = e.detail.userInfo.avatarUrl
     dbUser.addUser().then(() => {
-      this.setMyCache()
-      dbUser.updateUser()
+      app.globalData.logged = true
       this.setData({
-        avatar: app.globalData.avatar,
-        username: app.globalData.username,
-        logged: app.globalData.logged,
-        point: app.globalData.point,
-        hasUserInfo: true
+        logged: true,
+        hasUserInfo: true,
+        loading: false
       })
-      wx.hideLoading();
-      wx.stopPullDownRefresh()
     })
-  },
-
-  onPullDownRefresh() {
-    this.login()
   },
 
   onTapClearCache: function (e) {
@@ -141,10 +88,22 @@ Page({
       });
     } catch (err) {
       wx.showToast({
-        title: '清除缓存错误',
+        title: '清除缓存出现错误',
         icon: 'none',
       });
     }
+  },
+
+  updateUserInfo: function (e) {
+    let username = e.detail.userInfo.nickName
+    let avatar = e.detail.userInfo.avatarUrl
+    cache.removeCache(app.globalData.id)
+    dbUser.updateUser(username, avatar).then(() => {
+      wx.showToast({
+        title: '用户信息更新成功',
+        icon: 'none',
+      });
+    })
   },
 
   isNewMessage() {
@@ -166,13 +125,13 @@ Page({
   },
 
   setMyCache() {
-    dbArticle.getAllArticleData(app.globalData.suggestionKey, undefined, undefined, app.globalData.id).then(res => {
+    dbArticle.getAllArticleData('suggestion', undefined, undefined, app.globalData.id).then(res => {
       cache.setCache('mySuggestion', res)
     })
-    dbArticle.getAllArticleData(app.globalData.demandKey, undefined, undefined, app.globalData.id).then(res => {
+    dbArticle.getAllArticleData('demand', undefined, undefined, app.globalData.id).then(res => {
       cache.setCache('myDemand', res)
     })
-    dbArticle.getAllArticleData(app.globalData.technologyKey, undefined, undefined, app.globalData.id).then(res => {
+    dbArticle.getAllArticleData('technology', undefined, undefined, app.globalData.id).then(res => {
       cache.setCache('myTechnology', res)
     })
   }

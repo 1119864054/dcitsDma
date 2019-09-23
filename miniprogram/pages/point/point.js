@@ -33,9 +33,30 @@ Page({
     let pointDetail = await dbPoint.getPoint(userId)
 
     this.setData({
-      point: user.point,
       pointDetail: pointDetail
     })
+
+    let i = 0;
+    let maxi = user.point > 20 ? 20 : user.point
+    let that = this
+    numDH();
+
+    function numDH() {
+      if (i < maxi) {
+        setTimeout(function () {
+          that.setData({
+            point: i
+          })
+          i++
+          numDH();
+        }, 40)
+      } else {
+        that.setData({
+          point: user.point,
+        })
+      }
+    }
+
   },
 
   onTapToArticle(e) {

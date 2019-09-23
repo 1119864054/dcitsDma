@@ -33,7 +33,7 @@ class DBHistory {
                     history_date: util.formatTime(new Date()),
                 }
             }).then(res => {
-                console.log('[DBHistory] [添加history] 成功: ', res)
+                console.log('[DBHistory] [添加history] 成功: ', res, article)
                 log.info('[DBHistory] [添加history] 成功: ', res)
                 resolve()
             }).catch(err => {

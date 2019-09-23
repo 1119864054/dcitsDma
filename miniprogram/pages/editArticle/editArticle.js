@@ -51,7 +51,9 @@ Page({
       article = (await dbArticle.getArticleByAIdFromDB(articleId, articleType))
       cache.setCache(articleId, article)
     }
-    myData.oldArticle = article
+    console.log('myData.oldArticle = article', article)
+    myData.oldArticle = JSON.parse(JSON.stringify(article))
+    console.log('myData.oldArticle', myData.oldArticle)
 
     let typeIndex = 0
     for (let i = 0; i < myData.articleTypeList.length; i++) {
@@ -173,6 +175,7 @@ Page({
     wx.showLoading({
       title: '上传中...',
     })
+    console.log('myData.oldArticle', myData.oldArticle)
     dbHistory.addHistory(myData.oldArticle)
     await dbArticle.updateArticle(myData.articleId, myData.articleType, this.data.title, this.data.content, myData.imagesCloudId, this.data.relation)
     myData = {
@@ -219,6 +222,7 @@ Page({
   },
 
   deleteImage(e) {
+    console.log('myData.oldArticle', myData.oldArticle)
     wx.showModal({
       title: '提示',
       content: '确定要删除这张照片吗？',
@@ -230,6 +234,7 @@ Page({
           this.setData({
             imgList: this.data.imgList
           })
+          console.log('myData.oldArticle', myData.oldArticle)
         }
       }
     })

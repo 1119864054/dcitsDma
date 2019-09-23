@@ -8,6 +8,10 @@ import {
 const dbHistory = new DBHistory()
 const cache = new Cache()
 
+let myData = {
+  user: {}
+}
+
 Page({
 
   data: {
@@ -21,6 +25,8 @@ Page({
     articleId: '',
     username: '',
     avatar: '',
+    historyId: '',
+    history: ''
   },
 
   onLoad: async function (options) {
@@ -36,7 +42,12 @@ Page({
       user = await dbUser.getUser(articleData.userId)
       cache.setCache(articleData.userId, user)
     }
+    myData.user = user
 
+    this.getHistory(article, user, options.historyId)
+  },
+
+  getHistory(article, user, historyId) {
     this.setData({
       articleImg: article.articleImg,
       commentCount: article.commentCount,
@@ -48,13 +59,8 @@ Page({
       articleId: article.articleId,
       username: user.username,
       avatar: user.avatar,
-      historyId: options.historyId
+      historyId: historyId
     })
-
-    this.getHistory()
-  },
-
-  getHistory() {
     dbHistory.getHistory(this.data.articleId).then(res => {
       this.setData({
         history: res
@@ -62,10 +68,13 @@ Page({
     })
   },
 
-  onTapToHistory(e) {
+  onTapToHistory: async function (e) {
     let historyId = e.currentTarget.dataset.historyId
-    wx.navigateTo({
-      url: '/pages/history/history?historyId=' + historyId
-    });
+    let article = cache.getCache(historyId)
+    if (!article) {
+      article = await dbHistory.getHistoryById(historyId)
+      cache.setCache(historyId, article)
+    }
+    this.getHistory(article, myData.user, historyId)
   }
 })
