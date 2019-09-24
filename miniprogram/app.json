@@ -12,7 +12,8 @@
     "pages/editArticle/editArticle",
     "pages/search/search",
     "pages/history/history",
-    "pages/point/point"
+    "pages/point/point",
+    "pages/log/log"
   ],
   "window": {
     "navigationBarBackgroundColor": "#fff",

@@ -32,7 +32,7 @@
     </navigator>
     <navigator class="cu-item arrow" url="/pages/favor/favor">
       <view class="content">
-        <text class="cuIcon-favorfill text-cyan"></text>
+        <text class="cuIcon-favorfill text-olive"></text>
         <text class="text-grey">我的收藏</text>
       </view>
       <view class="action">
@@ -41,7 +41,7 @@
     </navigator>
     <navigator class="cu-item arrow" url="/pages/myComment/myComment">
       <view class="content">
-        <text class="cuIcon-commentfill text-olive"></text>
+        <text class="cuIcon-commentfill text-cyan"></text>
         <text class="text-grey">我的评论</text>
       </view>
     </navigator>
@@ -51,17 +51,13 @@
         <text class="text-grey">我的积分</text>
       </view>
     </navigator>
-    <!-- <view class="cu-item arrow" bind:tap="onTapMore">
+    <navigator class="cu-item arrow" url="/pages/log/log">
       <view class="content">
-        <text class="cuIcon-more text-grey"></text>
-        <text class="text-grey">更多</text>
+        <text class="cuIcon-infofill text-grey"></text>
+        <text class="text-grey">日志</text>
       </view>
-    </view> -->
+    </navigator>
   </view>
-  <!-- <view class="padding flex flex-direction">
-    <button class="cu-btn bg-grey round sm" catch:tap="onTapClearCache">清除数据缓存</button>
-    <button class="cu-btn bg-grey round sm" catch:tap="onTapClearCache">更新用户信息</button>
-  </view> -->
   <view class="box margin">
     <view class="cu-bar btn-group">
       <button class="cu-btn round bg-grey" catch:tap="onTapClearCache">清除数据缓存</button>

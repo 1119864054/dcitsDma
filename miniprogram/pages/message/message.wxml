@@ -35,11 +35,11 @@
             <view class="text-content">
                 写的
                 <view class="cu-tag radius" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' bind:tap="onTapToArticle">
-                    <text class="text-bold text-sm" style="color:#576B95">{{item.article}}</text>
+                    <text class="text-bold text-sm" style="color:#576B95;{{item.removed?'text-decoration:line-through':''}}">{{item.article}}</text>
                 </view>
                 关联了我的
                 <view class="cu-tag radius" data-article-id='{{item.myArticleId}}' data-article-type='{{item.myArticleType}}' bind:tap="onTapToArticle">
-                    <text class="text-bold text-sm" style="color:#576B95">{{item.myArticle}}</text>
+                    <text class="text-bold text-sm" style="color:#576B95;{{item.myArticleRemoved?'text-decoration:line-through':''}}" >{{item.myArticle}}</text>
                 </view>
             </view>
         </view>

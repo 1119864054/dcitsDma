@@ -22,7 +22,7 @@
             <view class="cu-list padding solids-top">
                 <view class="cu-item" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' bind:tap="onTapToArticle">
                     <view class="content">
-                        <view class="text-lg text-black text-bold">原文章：{{item.title}}</view>
+                        <view class="text-lg text-black text-bold" style="{{item.removed?'text-decoration:line-through':''}}">原文章：{{item.title}}</view>
                         <block wx:for="{{item.partMyComment}}" wx:key="_id" wx:for-item="partMyComment">
                             <view class="padding-sm radius margin-top-sm  text-sm shadow-blur bg-grey">
                                 <view class="flex">

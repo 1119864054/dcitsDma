@@ -1,6 +1,12 @@
-import { DBArticle } from '../../db/DBArticle';
-import { Cache } from '../../db/Cache';
-import { DBComment } from '../../db/DBComment';
+import {
+  DBArticle
+} from '../../db/DBArticle';
+import {
+  Cache
+} from '../../db/Cache';
+import {
+  DBComment
+} from '../../db/DBComment';
 
 const dbArticle = new DBArticle();
 const cache = new Cache()
@@ -37,20 +43,14 @@ Page({
   onTapToArticle: function (e) {
     let articleId = e.currentTarget.dataset.articleId
     let articleType = e.currentTarget.dataset.articleType
-    if (cache.getCache(articleId)) {
-      wx.navigateTo({
-        url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType
-      });
-    } else {
+    if (!cache.getCache(articleId)) {
       dbArticle.getArticleByAIdFromDB(articleId, articleType).then(res => {
         cache.setCache(articleId, res)
-        wx.navigateTo({
-          url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType
-        });
       })
     }
-
-
+    wx.navigateTo({
+      url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType
+    });
   },
 
   async getMyComment() {
@@ -69,6 +69,7 @@ Page({
         article = (await dbArticle.getArticleByAIdFromDB(headAId, headAType))
       }
       let headATitle = article.title
+      let headARemoved = article.removed
       let temp = {}
       let partMyComment = []
 
@@ -79,18 +80,20 @@ Page({
           temp.articleId = headAId
           temp.articleType = headAType
           temp.title = headATitle
+          temp.removed = headARemoved
           temp.partMyComment = partMyComment
 
           myComment.push(temp)
 
           article = cache.getCache(nowAId)
           if (!article) {
-            article = (await dbArticle.getArticleByAIdFromDB(nowAId, nowAType))
+            article = await dbArticle.getArticleByAIdFromDB(nowAId, nowAType)
           }
 
           headAId = article._id
           headAType = article.articleType
           headATitle = article.title
+          headARemoved = article.removed
           partMyComment = []
           temp = {}
         }
@@ -100,6 +103,7 @@ Page({
         temp.articleId = headAId
         temp.articleType = headAType
         temp.title = headATitle
+        temp.removed = headARemoved
         temp.partMyComment = partMyComment
         myComment.push(temp)
       }

@@ -1,8 +1,18 @@
-import { DBArticle } from "../../db/DBArticle";
-import { DBUser } from "../../db/DBUser";
-import { Cache } from '../../db/Cache';
-import { DBMessage } from '../../db/DBMessage';
-import { DBRelation } from '../../db/DBRelation';
+import {
+  DBArticle
+} from "../../db/DBArticle";
+import {
+  DBUser
+} from "../../db/DBUser";
+import {
+  Cache
+} from '../../db/Cache';
+import {
+  DBMessage
+} from '../../db/DBMessage';
+import {
+  DBRelation
+} from '../../db/DBRelation';
 
 const dbArticle = new DBArticle();
 const dbUser = new DBUser();
@@ -26,9 +36,11 @@ Page({
    */
   onLoad: function (options) {
     let message = cache.getCache('message')
-    this.setData({
-      message: message
-    })
+    if (message) {
+      this.setData({
+        message: message
+      })
+    }
     this.getMessage()
   },
 
@@ -38,32 +50,29 @@ Page({
     })
 
     let message = await dbMessage.getMessage()
+
     if (message.length > 0) {
       for (let i = 0; i < message.length; i++) {
         let relation = await dbRelation.getRelationById(message[i].relationId)
         if (!relation) {
-          dbMessage.removeMessageByRId(message[i].relationId)
+          // dbMessage.removeMessageByRId(message[i].relationId)
         } else {
           if (message[i].articleType == 'demand') {
             let demand = cache.getCache(relation.demandId)
             if (!demand) {
-              let demand = await dbArticle.getArticleByAIdFromDB(relation.demandId, 'demand')
-              if (demand) {
-                cache.setCache(relation.demandId, demand)
-              }
+              demand = await dbArticle.getArticleByAIdFromDB(relation.demandId, 'demand')
+              cache.setCache(relation.demandId, demand)
             }
 
             message[i].article = demand.title
             message[i].articleId = demand._id
             message[i].articleType = 'demand'
+            message[i].removed = demand.removed
 
             let user = cache.getCache(message[i].relate)
             if (!user) {
-              let res4 = await dbUser.getUser(message[i].relate)
-              if (res4) {
-                user = res4
-                cache.setCache(message[i].relate, user)
-              }
+              user = await dbUser.getUser(message[i].relate)
+              cache.setCache(message[i].relate, user)
             }
 
             message[i].username = user.username
@@ -71,36 +80,31 @@ Page({
 
             let suggestion = cache.getCache(relation.suggestionId)
             if (!suggestion) {
-              let suggestion = await dbArticle.getArticleByAIdFromDB(relation.suggestionId, 'suggestion')
-              if (suggestion) {
-                cache.setCache(relation.suggestionId, suggestion)
-              }
+              suggestion = await dbArticle.getArticleByAIdFromDB(relation.suggestionId, 'suggestion')
+              cache.setCache(relation.suggestionId, suggestion)
             }
             message[i].myArticle = suggestion.title
             message[i].myArticleId = suggestion._id
             message[i].myArticleType = 'suggestion'
+            message[i].myArticleRemoved = suggestion.removed
 
           } else if (message[i].articleType == 'technology') {
 
             let technology = cache.getCache(relation.technologyId)
             if (!technology) {
-              let technology = await dbArticle.getArticleByAIdFromDB(relation.technologyId, 'technology')
-              if (technology) {
-                cache.setCache(relation.technologyId, technology)
-              }
+              technology = await dbArticle.getArticleByAIdFromDB(relation.technologyId, 'technology')
+              cache.setCache(relation.technologyId, technology)
             }
 
             message[i].article = technology.title
             message[i].articleId = technology._id
             message[i].articleType = 'technology'
+            message[i].removed = technology.removed
 
             let user = cache.getCache(message[i].relate)
             if (!user) {
-              let res4 = await dbUser.getUser(message[i].relate)
-              if (res4) {
-                user = res4
-                cache.setCache(message[i].relate, user)
-              }
+              user = await dbUser.getUser(message[i].relate)
+              cache.setCache(message[i].relate, user)
             }
 
             message[i].username = user.username
@@ -108,15 +112,14 @@ Page({
 
             let demand = cache.getCache(relation.demandId)
             if (!demand) {
-              let demand = await dbArticle.getArticleByAIdFromDB(relation.demandId, 'demand')
-              if (demand) {
-                cache.setCache(relation.demandId, demand)
-              }
+              demand = await dbArticle.getArticleByAIdFromDB(relation.demandId, 'demand')
+              cache.setCache(relation.demandId, demand)
             }
 
             message[i].myArticle = demand.title
             message[i].myArticleId = demand._id
             message[i].myArticleType = 'demand'
+            message[i].myArticleRemoved = demand.removed
           }
         }
       }
@@ -152,20 +155,14 @@ Page({
   onTapToArticle: function (e) {
     let articleId = e.currentTarget.dataset.articleId
     let articleType = e.currentTarget.dataset.articleType
-    if (cache.getCache(articleId)) {
-      wx.navigateTo({
-        url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType
-      });
-    } else {
+    if (!cache.getCache(articleId)) {
       dbArticle.getArticleByAIdFromDB(articleId, articleType).then(res => {
-        if (res) {
-          cache.setCache(articleId, res)
-        }
-        wx.navigateTo({
-          url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType
-        });
+        cache.setCache(articleId, res)
       })
     }
+    wx.navigateTo({
+      url: '/pages/article/article?articleId=' + articleId + '&articleType=' + articleType
+    });
   },
 
   onPullDownRefresh: function () {
