@@ -23,9 +23,7 @@
                         <view class="text-grey text-sm flex justify-between">{{date}}</view>
                     </view>
                     <view wx:if="{{articleType!='technology'}}" class="cu-tag radius text-df text-bold" style="width:100px">
-                        <view class="cuIcon-copy " style="color:#576B95">
-                             建立需求
-                        </view>
+                        <view class="cuIcon-copy " style="color:#576B95">建立需求</view>
                     </view>
                 </view>
             </view>
@@ -91,7 +89,7 @@
                     暂无关联需求
                 </view>
                 <block wx:for="{{relationDetail}}" wx:key="_id">
-                    <view class="text-left padding-bottom-sm" style="color:#576B95" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' catch:tap="onTapToRelate">
+                    <view class="text-left padding-bottom-sm" style="color:#576B95;{{item.removed?'text-decoration:line-through':''}}" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' catch:tap="onTapToRelate">
                         - {{item.title}} by {{item.username}}
                     </view>
                 </block>
@@ -104,7 +102,7 @@
                         暂无关联的项目需求
                     </view>
                     <block wx:for="{{_relationDetail}}" wx:key="_id">
-                        <view class="text-left padding-bottom-sm" style="color:#576B95" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' catch:tap="onTapToRelate">
+                        <view class="text-left padding-bottom-sm" style="color:#576B95;{{item.removed?'text-decoration:line-through':''}}" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' catch:tap="onTapToRelate">
                             - {{item.title}} by {{item.username}}
                         </view>
                     </block>

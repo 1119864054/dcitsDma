@@ -332,6 +332,7 @@ Page({
           temp.title = article.title
           temp.articleId = article._id
           temp.articleType = article.articleType
+          temp.removed = article.removed
           let user = cache.getCache(article.userId)
           if (!user) {
             user = await dbUser.getUser(article.userId)
@@ -352,6 +353,7 @@ Page({
             temp.title = article.title
             temp.articleId = article._id
             temp.articleType = article.articleType
+            temp.removed = article.removed
             let user = cache.getCache(article.userId)
             if (!user) {
               user = await dbUser.getUser(article.userId)
@@ -369,6 +371,7 @@ Page({
             temp.title = article.title
             temp.articleId = article._id
             temp.articleType = article.articleType
+            temp.removed = article.removed
             let user = cache.getCache(article.userId)
             if (!user) {
               user = await dbUser.getUser(article.userId)
