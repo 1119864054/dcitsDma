@@ -34,15 +34,22 @@ Page({
     articleCount: 0,
     favorCount: 0,
     newMessageCount: 0,
-    messageCount: 0
+    messageCount: 0,
+    CustomBar: 0
   },
 
   onLoad: function (options) {
+    this.setData({
+      CustomBar: app.globalData.CustomBar
+    })
     if (app.globalData.logged) {
       this.setMyCache()
       this.setData({
         logged: true,
-        hasUserInfo: true
+        hasUserInfo: true,
+        id: app.globalData.id,
+        username: app.globalData.username,
+        avatar: app.globalData.avatar
       })
     }
   },
@@ -69,12 +76,16 @@ Page({
     })
     app.globalData.username = e.detail.userInfo.nickName
     app.globalData.avatar = e.detail.userInfo.avatarUrl
+    app.globalData.id = e.detail.userInfo._id
     dbUser.addUser().then(() => {
       app.globalData.logged = true
       this.setData({
         logged: true,
         hasUserInfo: true,
-        loading: false
+        loading: false,
+        id: app.globalData.id,
+        username: app.globalData.username,
+        avatar: app.globalData.avatar
       })
     })
   },

@@ -1,20 +1,29 @@
 <scroll-view scroll-y class="scrollPage">
-  <view class="UCenter-bg">
-    <button wx:if="{{!hasUserInfo && canIUse}}" loading="{{loading}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo" class='cu-btn round bg-green shadow'>
-      获取头像昵称
-    </button>
-    <block wx:else>
-      <open-data class="avatar" type="userAvatarUrl" lang="zh_CN"></open-data>
-      <view class="text-xl padding">
-        <open-data type="userNickName" lang="zh_CN"></open-data>
+  <view class="UCenter-bg  shadow-warp" style="padding-top:{{CustomBar}}px">
+    <view class="padding flex flex-direction" wx:if="{{!hasUserInfo && canIUse}}">
+      <button  loading="{{loading}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo" class='cu-btn round bg-green'>
+        获取头像昵称
+      </button>
+    </view>
+    <view class="cu-list menu-avatar" wx:else>
+      <view class="cu-item ">
+        <view class="cu-avatar radius lg" style="background-image:url({{avatar}});"></view>
+        <view class="content">
+          <view class="text-pink text-shadow">
+            <text class="text-cut">{{username}}</text>
+          </view>
+          <view class="text-gray text-sm flex">
+            <text class="text-cut">ID:{{id}}</text>
+          </view>
+        </view>
       </view>
-    </block>
+    </view>
   </view>
   <view class="cu-list menu card-menu margin-top">
     <navigator class="cu-item arrow" url="/pages/myArticle/myArticle">
       <view class="content">
-        <text class="cuIcon-writefill text-blue"></text>
-        <text class="text-grey">我的需求</text>
+        <!-- <text class="cuIcon-writefill text-blue"></text> -->
+        <text class="text-black text-bold">我的需求</text>
       </view>
       <view class="action">
         <view class="cu-tag round bg-grey">{{articleCount}}</view>
@@ -22,8 +31,8 @@
     </navigator>
     <navigator class="cu-item arrow" url="/pages/message/message">
       <view class="content">
-        <text class="cuIcon-messagefill text-orange"></text>
-        <text class="text-grey">我的消息</text>
+        <!-- <text class="cuIcon-messagefill text-orange"></text> -->
+        <text class="text-black text-bold">我的消息</text>
       </view>
       <view class="action">
         <view class="cu-tag round bg-red" wx:if="{{!checked}}">{{newMessageCount}}</view>
@@ -32,8 +41,8 @@
     </navigator>
     <navigator class="cu-item arrow" url="/pages/favor/favor">
       <view class="content">
-        <text class="cuIcon-favorfill text-olive"></text>
-        <text class="text-grey">我的收藏</text>
+        <!-- <text class="cuIcon-favorfill text-olive"></text> -->
+        <text class="text-black text-bold">我的收藏</text>
       </view>
       <view class="action">
         <view class="cu-tag round bg-grey">{{favorCount}}</view>
@@ -41,20 +50,20 @@
     </navigator>
     <navigator class="cu-item arrow" url="/pages/myComment/myComment">
       <view class="content">
-        <text class="cuIcon-commentfill text-cyan"></text>
-        <text class="text-grey">我的评论</text>
+        <!-- <text class="cuIcon-commentfill text-cyan"></text> -->
+        <text class="text-black text-bold">我的评论</text>
       </view>
     </navigator>
     <navigator class="cu-item arrow" url="/pages/point/point">
       <view class="content">
-        <text class="cuIcon-moneybagfill text-red"></text>
-        <text class="text-grey">我的积分</text>
+        <!-- <text class="cuIcon-moneybagfill text-red"></text> -->
+        <text class="text-black text-bold">我的积分</text>
       </view>
     </navigator>
     <navigator class="cu-item arrow" url="/pages/log/log">
       <view class="content">
-        <text class="cuIcon-infofill text-grey"></text>
-        <text class="text-grey">日志</text>
+        <!-- <text class="cuIcon-infofill text-black text-bold"></text> -->
+        <text class="text-black text-bold">日志</text>
       </view>
     </navigator>
   </view>
