@@ -21,9 +21,6 @@ import {
   DBRelation
 } from '../../db/DBRelation';
 import {
-  DBLike
-} from '../../db/DBLike';
-import {
   DBHistory
 } from '../../db/DBHistory';
 
@@ -34,7 +31,6 @@ const cache = new Cache()
 const dbFavor = new DBFavor()
 const dbComment = new DBComment()
 const dbRelation = new DBRelation()
-const dbLike = new DBLike()
 const dbHistory = new DBHistory()
 
 const myData = {
@@ -207,13 +203,6 @@ Page({
     let comment = await dbComment.getComment(myData.articleId)
     if (comment && comment.length > 0) {
       for (let i = 0; i < comment.length; i++) {
-        let isLiked = await dbLike.isLiked(comment[i]._id)
-        if (isLiked) {
-          comment[i].isLiked = true
-          comment[i].likeId = isLiked._id
-        } else {
-          comment[i].isLiked = false
-        }
         let userInfo = cache.getCache(comment[i].userId)
         if (userInfo) {
           comment[i].username = userInfo.username
@@ -269,49 +258,8 @@ Page({
     })
   },
 
-  like(e) {
-    if (app.globalData.logged) {
-      let comment = this.data.comment
-      comment[e.currentTarget.dataset.idx].isLiked = true
-      comment[e.currentTarget.dataset.idx].likeCount++
-      this.setData({
-        comment: comment
-      })
-      wx.showToast({
-        title: '点赞成功',
-        icon: 'none'
-      });
-      dbLike.addLike(e.currentTarget.dataset.commentId).then(likeId => {
-        comment[e.currentTarget.dataset.idx].likeId = likeId
-        this.setData({
-          comment: comment
-        })
-      })
-      dbComment.updateLikeCount(e.currentTarget.dataset.commentId, 1)
-    } else {
-      wx.showToast({
-        title: '请先登录',
-        icon: 'none'
-      })
-    }
-  },
-
-  cancelLike(e) {
-    let comment = this.data.comment
-    comment[e.currentTarget.dataset.idx].isLiked = false
-    comment[e.currentTarget.dataset.idx].likeCount--
-    this.setData({
-      comment: comment
-    })
-    wx.showToast({
-      title: '取消点赞',
-      icon: 'none'
-    });
-    dbLike.removeLike(e.currentTarget.dataset.likeId)
-    dbComment.updateLikeCount(e.currentTarget.dataset.commentId, -1)
-  },
-
   getContent: function (e) {
+    // console.log(e.detail.value)
     myData.commentContent = e.detail.value
   },
 

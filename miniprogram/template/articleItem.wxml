@@ -1,12 +1,19 @@
 <template name="articleItem">
-    <view class="cu-item shadow-warp" bind:longpress="onTapToNewArticle" bindtap="onTapToArticle" data-article-id="{{_id}}" data-article-type="{{articleType}}" data-title="{{title}}">
-        <view class="text-black text-bold padding-lr-lg padding-bottom-sm padding-top-sm">
+    <view class="cu-item solid-bottom" bind:longpress="onTapToNewArticle" bindtap="onTapToArticle" data-article-id="{{_id}}" data-article-type="{{articleType}}" data-title="{{title}}">
+        <view class="line1 text-black text-bold padding-lr-lg padding-bottom-sm padding-top-sm">
             {{title}}
         </view>
-        <view class="text-cut text-df text-grey padding-lr-lg">{{content}}</view>
-        <view class="cu-list menu-avatar">
+        <view class="line2 text-cut text-df text-grey padding-lr-lg">{{content}}</view>
+        <view class="line3 text-cut text-df text-grey padding-lr-lg padding-tb-sm flex align-center">
+            <view class="cu-avatar round" style="background-image:url({{avatar}});height:20px;width:20px" />
+            <view class="text-grey padding-lr-sm">{{username}}</view>
+            <wux-timeago to="{{timeStamp}}" lang="zh_CN" refreshable />
+            <view class="text-grey padding-left-sm">浏览 {{visitCount}}</view>
+            <view class="text-grey padding-lr-sm">评论 {{commentCount}}</view>
+        </view>
+        <!-- <view class="cu-list menu-avatar">
             <view class="cu-item">
-                <view class="cu-avatar round lg" style="background-image:url({{avatar}});" />
+                <view class="cu-avatar round sm" style="background-image:url({{avatar}});" />
                 <view class="content flex-sub">
                     <view class="text-grey">{{username}}</view>
                     <view class="text-gray text-sm flex justify-between">
@@ -22,6 +29,6 @@
                     </view>
                 </view>
             </view>
-        </view>
+        </view> -->
     </view>
 </template>
