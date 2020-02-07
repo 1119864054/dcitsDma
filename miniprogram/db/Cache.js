@@ -1,3 +1,5 @@
+const log = require('../util/log.js')
+
 class Cache {
     constructor() {
 
@@ -8,9 +10,11 @@ class Cache {
         // value.createTime = new Date().getTime()
         try {
             wx.setStorageSync(key, value)
-            console.log('[Cache] [' + key + '] [同步缓存记录] 成功')
+            console.log('[Cache] [' + key + '] [新增缓存记录] 成功')
+            log.info('[Cache] [' + key + '] [新增缓存记录] 成功')
         } catch (err) {
-            console.error('[Cache] [' + key + '] [同步缓存记录] 失败：', err)
+            console.error('[Cache] [' + key + '] [新增缓存记录] 失败：', err)
+            log.error('[Cache] [' + key + '] [新增缓存记录] 失败：', err)
         }
     }
 
@@ -20,12 +24,15 @@ class Cache {
             let result = wx.getStorageSync(storageKeyName);
             if (!result || result.length < 1) {
                 console.log('[Cache] [' + storageKeyName + '] [查询缓存记录] 未查询到记录', result)
+                log.info('[Cache] [' + storageKeyName + '] [查询缓存记录] 未查询到记录')
             } else {
                 console.log('[Cache] [' + storageKeyName + '] [查询缓存记录] 成功： ', [result])
+                log.info('[Cache] [' + storageKeyName + '] [查询缓存记录] 成功', result.count)
             }
             return result;
         } catch (err) {
             console.error('[Cache] [' + storageKeyName + '] [查询缓存记录] 失败：', err)
+            log.error('[Cache] [' + storageKeyName + '] [查询缓存记录] 失败：', err)
         }
     }
 
@@ -34,8 +41,10 @@ class Cache {
         try {
             wx.removeStorageSync(storageKeyName)
             console.log('[Cache] [' + storageKeyName + '] [删除缓存' + storageKeyName + '] 成功')
+            log.info('[Cache] [' + storageKeyName + '] [删除缓存' + storageKeyName + '] 成功')
         } catch (e) {
-            console.log('[Cache] [' + storageKeyName + '] [删除缓存' + storageKeyName + '] 失败： ', e)
+            console.error('[Cache] [' + storageKeyName + '] [删除缓存' + storageKeyName + '] 失败： ', e)
+            log.error('[Cache] [' + storageKeyName + '] [删除缓存' + storageKeyName + '] 失败： ', e)
         }
     }
 
@@ -49,17 +58,20 @@ class Cache {
                 }).then(res => {
                     if (res.statusCode === 200) {
                         console.log(imageUrl[i], '=>图片下载成功=>', res.tempFilePath)
+                        log.info('[ArticleId]', articleId, '[图片下载成功]', imageUrl[i], ' => ', res.tempFilePath)
                         let fs = wx.getFileSystemManager()
                         fs.saveFile({
                             tempFilePath: res.tempFilePath, // 传入一个临时文件路径
                             success(res) {
-                                console.log('图片保存成功: ', res)
                                 image_cache = image_cache.concat(res.savedFilePath)
                                 that.setCache(articleId + '_image_cache', image_cache)
+                                console.log('[ArticleId]', articleId, ' 图片保存成功: ', res)
+                                log.info('[ArticleId]', articleId, ' [图片保存成功] ', res, '[CacheId]', articleId + '_image_cache')
                             }
                         })
                     } else {
                         console.error('图片下载响应失败: ', res.statusCode)
+                        log.error('[ArticleId]', articleId, '[图片下载响应失败]', res.statusCode)
                     }
                 })
             }

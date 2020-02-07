@@ -1,5 +1,5 @@
 <import src="../../template/favorItem.wxml" />
-<cu-custom bgColor="bg-gradual-pink" bgImage="https://image.weilanwl.com/color2.0/plugin/cjkz2329.jpg" isBack="{{true}}">
+<cu-custom bgColor="bg-white" isBack="{{true}}">
   <view slot="backText">返回</view>
   <view wx:if="{{!isLoad}}" slot="content">加载中</view>
   <view wx:else slot="content">我的收藏</view>
@@ -25,7 +25,7 @@
     <block wx:for="{{myFavorList}}" wx:key="idx" wx:for-index="idx">
       <swiper-item>
         <scroll-view scroll-y style="height:100%">
-          <view class="cu-card case">
+          <view class="cu-card case no-card">
             <block wx:for="{{item}}" wx:key="_id" wx:for-item="articleListChild">
               <template is="favorItem" data="{{...articleListChild}}"></template>
             </block>

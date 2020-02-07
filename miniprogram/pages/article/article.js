@@ -36,7 +36,7 @@ const dbHistory = new DBHistory()
 const myData = {
   articleId: '',
   articleType: '',
-  commentContent: ''
+  commentContent: '',
 };
 
 const app = getApp();
@@ -252,10 +252,10 @@ Page({
   },
 
   reply(e) {
-    let username = e.currentTarget.dataset.username
-    this.setData({
-      value: '回复 @' + username + ' : '
-    })
+    let commentId = e.currentTarget.dataset.commentId
+    wx.navigateTo({
+      url: '/pages/reply/reply?commentId=' + commentId
+    });
   },
 
   getContent: function (e) {
@@ -347,6 +347,29 @@ Page({
           }
           temp.username = user.username
           relationDetail.push(temp)
+
+          let relation_sd = await dbRelation.getRelation(relation[i].demandId, 'demand')
+          for (let j = 0; j < relation_sd.length; j++) {
+            if (relation_sd[j].suggestionId) {
+              let temp = {}
+              let article = cache.getCache(relation_sd[j].suggestionId)
+              if (!article) {
+                article = (await dbArticle.getArticleByAIdFromDB(relation_sd[j].suggestionId, 'suggestion'))
+                cache.setCache(relation_sd[j].suggestionId, article)
+              }
+              temp.title = article.title
+              temp.articleId = article._id
+              temp.articleType = article.articleType
+              temp.removed = article.removed
+              let user = cache.getCache(article.userId)
+              if (!user) {
+                user = await dbUser.getUser(article.userId)
+                cache.setCache(article.userId, user)
+              }
+              temp.username = user.username
+              _relationDetail.push(temp)
+            }
+          }
         }
       }
     }
@@ -434,5 +457,13 @@ Page({
         }
       });
     }
+  },
+
+  onPullDownRefresh: function () {
+    let options = []
+    options.articleId = myData.articleId
+    options.articleType = myData.articleType
+    this.onLoad(options)
+    wx.stopPullDownRefresh()
   },
 })

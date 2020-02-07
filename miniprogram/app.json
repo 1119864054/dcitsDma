@@ -13,7 +13,8 @@
     "pages/search/search",
     "pages/history/history",
     "pages/point/point",
-    "pages/log/log"
+    "pages/log/log",
+    "pages/reply/reply"
   ],
   "window": {
     "navigationBarBackgroundColor": "#fff",

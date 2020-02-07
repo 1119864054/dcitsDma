@@ -1,4 +1,4 @@
-<cu-custom bgColor="bg-gradual-pink" bgImage="https://image.weilanwl.com/color2.0/plugin/cjkz2329.jpg" isBack="{{true}}">
+<cu-custom bgColor="bg-white" isBack="{{true}}">
     <view slot="backText">返回</view>
     <view slot="content">日志</view>
 </cu-custom>

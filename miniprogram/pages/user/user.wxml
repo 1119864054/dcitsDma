@@ -1,11 +1,12 @@
+<cu-custom bgColor="bg-white"></cu-custom>
 <scroll-view scroll-y class="scrollPage">
-  <view class="UCenter-bg  shadow-warp" style="padding-top:{{CustomBar}}px">
+  <view class="UCenter-bg shadow-warp solid-bottom">
     <view class="padding flex flex-direction" wx:if="{{!hasUserInfo && canIUse}}">
-      <button  loading="{{loading}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo" class='cu-btn round bg-green'>
+      <button loading="{{loading}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo" class='cu-btn round bg-green'>
         获取头像昵称
       </button>
     </view>
-    <view class="cu-list menu-avatar" wx:else>
+    <view class="cu-list menu-avatar" wx:else style="padding-bottom:20px;background-color:white">
       <view class="cu-item ">
         <view class="cu-avatar radius lg" style="background-image:url({{avatar}});"></view>
         <view class="content">
@@ -19,14 +20,14 @@
       </view>
     </view>
   </view>
-  <view class="cu-list menu card-menu margin-top">
+  <view class="cu-list menu margin-top shadow-warp solid-top solid-bottom">
     <navigator class="cu-item arrow" url="/pages/myArticle/myArticle">
       <view class="content">
         <!-- <text class="cuIcon-writefill text-blue"></text> -->
         <text class="text-black text-bold">我的需求</text>
       </view>
       <view class="action">
-        <view class="cu-tag round bg-grey">{{articleCount}}</view>
+        <view class="text-gray">{{articleCount}}</view>
       </view>
     </navigator>
     <navigator class="cu-item arrow" url="/pages/message/message">
@@ -36,7 +37,7 @@
       </view>
       <view class="action">
         <view class="cu-tag round bg-red" wx:if="{{!checked}}">{{newMessageCount}}</view>
-        <view class="cu-tag round bg-grey" wx:else>{{messageCount}}</view>
+        <view class="text-gray" wx:else>{{messageCount}}</view>
       </view>
     </navigator>
     <navigator class="cu-item arrow" url="/pages/favor/favor">
@@ -45,7 +46,7 @@
         <text class="text-black text-bold">我的收藏</text>
       </view>
       <view class="action">
-        <view class="cu-tag round bg-grey">{{favorCount}}</view>
+        <view class="text-gray">{{favorCount}}</view>
       </view>
     </navigator>
     <navigator class="cu-item arrow" url="/pages/myComment/myComment">
@@ -60,6 +61,8 @@
         <text class="text-black text-bold">我的积分</text>
       </view>
     </navigator>
+  </view>
+  <view class="cu-list menu margin-top shadow-warp solid-top solid-bottom">
     <navigator class="cu-item arrow" url="/pages/log/log">
       <view class="content">
         <!-- <text class="cuIcon-infofill text-black text-bold"></text> -->

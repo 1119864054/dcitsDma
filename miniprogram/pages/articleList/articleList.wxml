@@ -6,7 +6,7 @@
     <view class="cu-load load-icon {{!isLoad?'loading':'over'}}"></view>
   </view>
 </cu-custom>
-<scroll-view scroll-x class="bg-white nav fixed" style="top:{{CustomBar}}px;height:45px">
+<scroll-view scroll-x class="bg-white nav fixed shadow" style="top:{{CustomBar}}px;height:45px">
   <view class="cu-item flex-sub {{current==0?'text-black cur text-bold':''}}" bindtap="tabSelect" data-id="0" style="height:100%">
     我的需求
   </view>
@@ -16,7 +16,9 @@
   <view class="cu-item flex-sub {{current==2?'text-black cur text-bold':''}}" bindtap="tabSelect" data-id="2" style="height:100%">
     项目需求
   </view>
-  <view class="cu-item flex-sub text-black text-bold cuIcon-search" bindtap="onTapToSearch" style="height:100%">搜索</view>
+  <view class="cu-item flex-sub text-black text-bold cuIcon-search" bindtap="onTapToSearch" style="height:100%">
+    搜索
+  </view>
 </scroll-view>
 <view style="position:fixed;top:{{CustomBar+45}}px;width:{{windowWidth}}px;bottom:0">
   <swiper current="{{current}}" bindchange="onSwiperChange" style="height:100%">
@@ -25,6 +27,7 @@
         <view class="cu-card case no-card">
           <block wx:for="{{suggestion}}" wx:key="_id">
             <template is="articleItem" data="{{...item}}"></template>
+            <view class="margin-bottom-xs"></view>
           </block>
         </view>
         <view class="cu-load bg-gray {{loadMore_suggestion?'loading':'over'}}"></view>
@@ -35,6 +38,7 @@
         <view class="cu-card case no-card">
           <block wx:for="{{demand}}" wx:key="_id">
             <template is="articleItem" data="{{...item}}"></template>
+            <view class="margin-bottom-xs"></view>
           </block>
         </view>
         <view class="cu-load bg-gray {{loadMore_demand?'loading':'over'}}"></view>
@@ -45,6 +49,7 @@
         <view class="cu-card case no-card">
           <block wx:for="{{technology}}" wx:key="_id">
             <template is="articleItem" data="{{...item}}"></template>
+            <view class="margin-bottom-xs"></view>
           </block>
         </view>
         <view class="cu-load bg-gray {{loadMore_technology?'loading':'over'}}"></view>
