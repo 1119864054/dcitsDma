@@ -10,16 +10,11 @@
         </view>
         <view class="text-cut text-df text-grey padding-lr-lg">{{content}}</view>
         <view class="flex justify-start">
-            <view class="flex-sub text-gray text-sm text-left padding">
+            <view class="line3 text-cut text-df text-grey padding-lr-lg padding-tb-sm flex align-center">
                 <wux-timeago to="{{timeStamp}}" lang="zh_CN" refreshable />
-            </view>
-            <view class="flex-sub text-gray text-sm text-right padding">
-                <text class="cuIcon-attentionfill margin-lr-xs" />
-                {{visitCount}}
-                <text class="cuIcon-messagefill margin-lr-xs" />
-                {{commentCount}}
-                <text class="cuIcon-favorfill margin-lr-xs" />
-                {{favorCount}}
+                <view class="text-grey padding-left-sm">浏览 {{visitCount}}</view>
+                <view class="text-grey padding-lr-sm">评论 {{commentCount}}</view>
+                <view class="text-grey">收藏 {{favorCount}}</view>
             </view>
         </view>
     </view>

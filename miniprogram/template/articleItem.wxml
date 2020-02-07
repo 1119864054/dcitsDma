@@ -1,5 +1,5 @@
 <template name="articleItem">
-    <view class="cu-item solid-bottom" bind:longpress="onTapToNewArticle" bindtap="onTapToArticle" data-article-id="{{_id}}" data-article-type="{{articleType}}" data-title="{{title}}">
+    <view class="cu-item solid-bottom shadow-warp" bind:longpress="onTapToNewArticle" bindtap="onTapToArticle" data-article-id="{{_id}}" data-article-type="{{articleType}}" data-title="{{title}}">
         <view class="line1 text-black text-bold padding-lr-lg padding-bottom-sm padding-top-sm">
             {{title}}
         </view>

@@ -165,6 +165,7 @@ Page({
       search: '',
       isSearch: false
     })
+    myData.articleIdList=[]
     this.getNewData()
   },
 

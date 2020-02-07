@@ -44,7 +44,7 @@ class DBArticle {
         .get()
         .then(res => {
           console.log('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', res.data)
-          log.info('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', res.data)
+          log.info('[DBArticle] [' + storageKeyName + '] [查询数据库记录] 成功: ', res.data.count, "currentPage", currentPage)
           resolve(res.data)
         })
         .catch(err => {
@@ -156,8 +156,8 @@ class DBArticle {
     //   }
     // }
 
-    console.log('[DBArticle] [' + articleType + '] [更新文章] 返回信息: ', res)
-    log.info('[DBArticle] [' + articleType + '] [更新文章] 返回信息: ', res)
+    console.log('[DBArticle] [' + articleId + '] [更新文章] 返回信息: ', res)
+    log.info('[DBArticle] [' + articleId + '] [更新文章] 返回信息: ', res)
   }
 
   //更新文章（收藏）

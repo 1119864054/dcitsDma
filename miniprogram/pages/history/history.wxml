@@ -1,6 +1,5 @@
-<cu-custom bgColor="bg-gradual-pink" bgImage="https://image.weilanwl.com/color2.0/plugin/cjkz2329.jpg" isBack="{{true}}">
-    <view slot="backText">返回</view>
-    <view slot="content">{{title}}</view>
+<cu-custom bgColor="bg-white" isBack="{{true}}">
+    <view slot="backText"></view>
 </cu-custom>
 <view wx:if="{{removed}}" class="bg-white padding-lr">
     <view class="solids-bottom padding-xs flex align-center">
@@ -15,24 +14,24 @@
 <block wx:else>
     <view class="cu-card dynamic no-card" style="margin-bottom:50px">
         <view class="cu-item shadow">
-            <view class="cu-list menu-avatar">
-                <view class="cu-item">
-                    <view class="cu-avatar round lg shadow-blur" style="background-image:url({{avatar}});"></view>
-                    <view class="content flex-sub">
+            <view class="cu-bar bg-white">
+                <view class="action border-title">
+                    <text class="text-xl text-bold text-black" style="font-size:42rpx">
+                        {{title}}
+                    </text>
+                </view>
+            </view>
+            <view class="padding-lr text-sm text-gray">{{date}}</view>
+            <view class="bg-white">
+                <view class="flex padding-sm align-center solid-bottom margin">
+                    <view class="cu-avatar round" style="background-image:url({{avatar}});"></view>
+                    <view class="content flex-sub padding-lr-sm" style="font-size:12px">
                         <view>{{username}}</view>
-                        <view class="text-grey text-sm flex justify-between">{{date}}</view>
+                        <view class="text-gray flex justify-between">待定</view>
                     </view>
                 </view>
             </view>
-            <view class="cu-bar bg-white">
-                <view class="action border-title">
-                    <text class="text-xl text-bold text-black text-shadow">{{title}}</text>
-                    <!-- <text class="bg-gray" style="width:3rem"></text> -->
-                </view>
-            </view>
-            <!-- <block wx:for="{{content}}" wx:for-index="idx" wx:key="idx"> -->
             <view class="text-left padding-xs padding-lr">{{content}}</view>
-            <!-- </block> -->
             <view class="grid flex-sub padding-lr col-1">
                 <block wx:for="{{articleImg}}" wx:key="*this">
                     <view class="padding-tb-xs">
@@ -42,27 +41,29 @@
             </view>
             <view class="text-grey text-lg text-left padding">
                 <view class="cu-tag radius">浏览·{{visitCount}}</view>
-                <view class="cu-tag radius">评论·{{commentCount}}</view>
-                <view class="cu-tag radius">收藏·{{favorCount}}</view>
-            </view>
-            <block wx:if="{{history.length}}">
-                <view class="cu-bar bg-white solids-bottom">
-                    <view class='action'>
-                        <text class="cuIcon-titles text-black"></text>
-                        <text class="text-lg text-bold">历史版本</text>
+                <view class="cu-tag radius">评论·{{comment.length}}</view>
+                <block wx:if="{{isFavor}}">
+                    <view class="cu-tag bg-red radius" catch:tap="onTapUnFavor" data-favor-id='{{favorId}}'>
+                        取消收藏·{{favorCount}}
                     </view>
-                </view>
-                <view class="padding-sm bg-white">
-                    <block wx:for="{{history}}" wx:key="_id">
-                        <view wx:if="{{historyId==item._id}}" class="text-bold text-left padding-bottom-sm text-shadow text-black">
-                            - {{item.date}}
-                        </view>
-                        <view wx:else class="text-left padding-bottom-sm" style="color:#576B95" data-history-id='{{item._id}}' catch:tap="onTapToHistory">
-                            - {{item.date}}
-                        </view>
-                    </block>
-                </view>
-            </block>
+                </block>
+                <block wx:else>
+                    <view class="cu-tag radius" catch:tap="onTapFavor">收藏·{{favorCount}}</view>
+                </block>
+            </view>
         </view>
+        <block wx:if="{{history.length}}">
+            <view class="padding-lr-sm margin-top-sm line3">
+                <view class="text-left padding-bottom-sm text-gray">历史版本</view>
+                <block wx:for="{{history}}" wx:key="_id">
+                    <view wx:if="{{historyId==item._id}}" class="text-bold text-left padding-bottom-sm text-shadow text-black line1">
+                        - {{item.date}}
+                    </view>
+                    <view wx:else class="text-left padding-bottom-sm line1" style="color:#576B95" data-history-id='{{item._id}}' catch:tap="onTapToHistory">
+                        - {{item.date}}
+                    </view>
+                </block>
+            </view>
+        </block>
     </view>
 </block>

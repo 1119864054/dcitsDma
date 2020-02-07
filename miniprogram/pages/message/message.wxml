@@ -1,7 +1,7 @@
-<cu-custom bgColor="bg-gradual-pink" bgImage="https://image.weilanwl.com/color2.0/plugin/cjkz2329.jpg" isBack="{{true}}">
+<cu-custom bgColor="bg-white" isBack="{{true}}">
     <view slot="backText">返回</view>
     <view wx:if="{{!isLoad}}" slot="content">加载中</view>
-    <view wx:else slot="content">我的消息</view>
+    <view wx:else slot="content">消息列表</view>
     <view class="action" slot="right">
         <view class="cu-load load-icon {{!isLoad?'loading':'over'}}"></view>
     </view>
@@ -16,31 +16,21 @@
         </view>
     </view>
 </view>
-<view wx:else class="cu-card dynamic">
+<view wx:else class="cu-card dynamic no-card">
     <block wx:for="{{message}}" wx:key="_id">
-        <view class="cu-item shadow-warp" data-message-id='{{item._id}}' bind:tap="onTapCheck">
-            <view class="cu-list menu-avatar">
-                <view class="cu-item">
-                    <view class="cu-avatar round lg" style="background-image:url({{item.avatar}});">
-                        <view wx:if="{{!item.checked}}" class="cu-tag badge">未读</view>
-                    </view>
-                    <view class="content flex-sub">
-                        <view>{{item.username}}</view>
-                        <view class="text-gray text-sm flex justify-between">
-                            <wux-timeago to="{{item.date}}" lang="zh_CN" refreshable />
-                        </view>
-                    </view>
-                </view>
-            </view>
-            <view class="text-content">
-                写的
-                <view class="cu-tag radius" data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' bind:tap="onTapToArticle">
-                    <text class="text-bold text-sm" style="color:#576B95;{{item.removed?'text-decoration:line-through':''}}">{{item.article}}</text>
-                </view>
+        <view class="cu-item solid-bottom" data-message-id='{{item._id}}' bind:tap="onTapCheck">
+            <view class="line2 text-df text-grey padding-lr-lg flex align-center padding-top padding-bottom-sm">
+                {{item.username}} 写的
+                <option data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' bind:tap="onTapToArticle" class="text-bold text-sm" style="color:#576B95;{{item.removed?'text-decoration:line-through':''}}">
+                    {{item.article}}
+                </option>
                 关联了我的
-                <view class="cu-tag radius" data-article-id='{{item.myArticleId}}' data-article-type='{{item.myArticleType}}' bind:tap="onTapToArticle">
-                    <text class="text-bold text-sm" style="color:#576B95;{{item.myArticleRemoved?'text-decoration:line-through':''}}" >{{item.myArticle}}</text>
-                </view>
+                <option data-article-id='{{item.myArticleId}}' data-article-type='{{item.myArticleType}}' bind:tap="onTapToArticle" class="text-bold text-sm" style="color:#576B95;{{item.myArticleRemoved?'text-decoration:line-through':''}}">
+                    {{item.myArticle}}
+                </option>
+            </view>
+            <view class="line3 text-cut text-df text-gray padding-lr-lg padding-bottom-sm flex align-center">
+                <wux-timeago to="{{item.date}}" lang="zh_CN" refreshable />
             </view>
         </view>
     </block>

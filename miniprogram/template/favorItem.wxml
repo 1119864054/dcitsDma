@@ -1,30 +1,27 @@
 <template name="favorItem">
     <view class="cu-item shadow-warp" catch:tap="onTapToArticle" data-article-id="{{_id}}" data-article-type="{{articleType}}">
-        <view wx:if="{{!removed}}" class="text-black text-bold padding-lr-lg padding-bottom-sm padding-top-lg">
-            {{title}}
-        </view>
-        <view wx:else style="text-decoration:line-through" class="text-black text-bold padding-lr-lg padding-bottom-sm padding-top-lg">
-            {{title}}（已失效）
-        </view>
-        <view style="{{removed?'text-decoration:line-through':''}}" class="text-cut text-df text-grey padding-lr-lg">
-            {{content}}
-        </view>
-        <view class="cu-list menu-avatar">
-            <view class="cu-item">
-                <view class="cu-avatar round lg" style="background-image:url({{avatar}});" />
-                <view class="content flex-sub">
-                    <view class="text-grey">{{username}}</view>
-                    <view class="text-gray text-sm flex justify-between">
-                        <wux-timeago to="{{timeStamp}}" lang="zh_CN" refreshable />
-                        <view class="text-gray text-df" data-favor-id='{{favorId}}' data-article-id="{{_id}}" data-article-type="{{articleType}}" catch:tap="onTapToUnfavor" hidden="{{false}}">
-                            <view class="cu-tag radius">
-                                <text class="cuIcon-deletefill text-red" />
-                                <text class="text-red margin-lr">取消收藏</text>
-                            </view>
-                        </view>
-                    </view>
+        <view class="flex flex-wrap text-black text-bold padding-lr-lg padding-bottom-sm padding-top-lg">
+            <view wx:if="{{!removed}}" class="basis-xl">
+                {{title}}
+            </view>
+            <view wx:else style="text-decoration:line-through" class="basis-xl">
+                {{title}}
+            </view>
+            <view class="cu-tag radius" data-favor-id='{{favorId}}' data-article-id="{{_id}}" data-article-type="{{articleType}}" catch:tap="onTapToUnfavor" hidden="{{false}}">
+                <view class="basis-xs text-shadow cuIcon-delete text-right" style="color:#576b95">
+                    移除
                 </view>
             </view>
+        </view>
+        <view class="line2 text-cut text-df text-grey padding-lr-lg" style="{{removed?'text-decoration:line-through':''}}">
+            {{content}}
+        </view>
+        <view class="line3 text-cut text-df text-grey padding-lr-lg padding-tb-sm flex align-center">
+            <view class="cu-avatar round" style="background-image:url({{avatar}});height:20px;width:20px" />
+            <view class="text-grey padding-lr-sm">{{username}}</view>
+            <wux-timeago to="{{timeStamp}}" lang="zh_CN" refreshable />
+            <view class="text-grey padding-left-sm">浏览 {{visitCount}}</view>
+            <view class="text-grey padding-lr-sm">评论 {{commentCount}}</view>
         </view>
     </view>
 </template>

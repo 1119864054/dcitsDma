@@ -1,5 +1,4 @@
 {
-  "navigationBarTitleText": "文章详情",
   "usingComponents": {
     "wux-timeago": "../../dist/timeago/index"
   },

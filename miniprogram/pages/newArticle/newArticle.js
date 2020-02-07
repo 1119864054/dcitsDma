@@ -127,6 +127,11 @@ Page({
                 title: '正文不能为空',
                 icon: 'none',
             })
+        } else if (myData.articleType != 'suggestion' && this.data.relation.length<=0) {
+            wx.showToast({
+                title: '关联关系不能为空',
+                icon: 'none',
+            })
         } else {
             wx.showModal({
                 title: '提示',

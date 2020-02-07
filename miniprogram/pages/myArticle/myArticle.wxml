@@ -1,5 +1,5 @@
 <import src="../../template/myArticleItem.wxml" />
-<cu-custom bgColor="bg-gradual-pink" bgImage="https://image.weilanwl.com/color2.0/plugin/cjkz2329.jpg" isBack="{{true}}">
+<cu-custom bgColor="bg-white" isBack="{{true}}">
   <view slot="backText">返回</view>
   <view wx:if="{{!isLoad}}" slot="content">加载中</view>
   <view wx:else slot="content">我的需求</view>
@@ -7,7 +7,7 @@
     <view class="cu-load load-icon {{!isLoad?'loading':'over'}}"></view>
   </view>
 </cu-custom>
-<scroll-view scroll-x class="bg-white nav fixed" style="top:{{CustomBar}}px;height:45px">
+<scroll-view scroll-x class="bg-white nav fixed shadow" style="top:{{CustomBar}}px;height:45px">
   <view class="flex text-center" style="height:100%">
     <view class="cu-item flex-sub {{current==0?'text-black cur text-bold':''}}" bindtap="tabSelect" data-id="0" style="height:100%">
       我的需求
@@ -24,7 +24,7 @@
   <swiper current="{{current}}" bindchange="onSwiperChange" style="height:100%">
     <swiper-item>
       <scroll-view scroll-y style="height:100%" bindscrolltolower='loadMore'>
-        <view class="cu-card dynamic">
+        <view class="cu-card dynamic no-card">
           <block wx:for="{{suggestion}}" wx:key="_id">
             <template is="myArticleItem" data="{{...item}}"></template>
           </block>
@@ -34,7 +34,7 @@
     </swiper-item>
     <swiper-item>
       <scroll-view scroll-y style="height:100%" bindscrolltolower='loadMore'>
-        <view class="cu-card dynamic">
+        <view class="cu-card dynamic no-card">
           <block wx:for="{{demand}}" wx:key="_id">
             <template is="myArticleItem" data="{{...item}}"></template>
           </block>
@@ -44,7 +44,7 @@
     </swiper-item>
     <swiper-item>
       <scroll-view scroll-y style="height:100%" bindscrolltolower='loadMore'>
-        <view class="cu-card dynamic">
+        <view class="cu-card dynamic no-card">
           <block wx:for="{{technology}}" wx:key="_id">
             <template is="myArticleItem" data="{{...item}}"></template>
           </block>
