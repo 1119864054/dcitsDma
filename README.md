@@ -1,1 +1,2 @@
 # 需求管理小程序
+![小程序图标](https://636f-com-proj-154312-1259780485.tcb.qcloud.la/images/%E9%9C%80%E6%B1%82%E7%AE%A1%E7%90%86%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%9B%BE%E6%A0%87_b_%E7%94%BB%E6%9D%BF%201.png?sign=2d0ae90a6db40ba4c0192a2df4b526bf&t=1581051705)
