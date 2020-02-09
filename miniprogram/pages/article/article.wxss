@@ -1,11 +1,58 @@
+.main_ctent{
+    color: black;
+    font-size: 34rpx;
+    font-weight: bold;
+}
+
+.uname{
+    color: #6f6f71;
+    font-size: 28rpx;
+    font-weight: bold;
+}
+
+.ctent{
+    color: black;
+    font-size: 30rpx;
+}
+
+.sub1{
+    font-size: 24rpx;
+    color: rgb(160, 160, 160);
+}
+
+.sub2{
+    font-size: 24rpx;
+    color: #0081ff;
+}
+
+.require{
+    color: #6f6f71;
+    font-size: 26rpx;
+}
+
+.require_item{
+    padding-bottom: 34rpx;
+}
+
+.require_title{
+    color: black;
+    font-size: 32rpx;
+    font-weight: bold;
+}
+
+.require_title_sub{
+    color: grey;
+    font-size: 24rpx;
+}
+
 .line1{
-    font-size: 14px;
+    font-size: 30rpx;
 }
 
 .line2{
-    font-size: 13px;
+    font-size: 28rpx;
 }
 
 .line3{
-    font-size: 12px;
+    font-size: 26rpx;
 }
