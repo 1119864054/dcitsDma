@@ -19,7 +19,7 @@
 <view wx:else class="cu-card dynamic no-card">
     <block wx:for="{{message}}" wx:key="_id">
         <view class="cu-item solid-bottom" data-message-id='{{item._id}}' bind:tap="onTapCheck">
-            <view class="line2 text-df text-grey padding-lr-lg flex align-center padding-top padding-bottom-sm">
+            <view class="line2 text-content text-grey padding-lr-lg padding-top padding-bottom-sm">
                 {{item.username}} 写的
                 <option data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' bind:tap="onTapToArticle" class="text-bold text-sm" style="color:#576B95;{{item.removed?'text-decoration:line-through':''}}">
                     {{item.article}}
@@ -28,8 +28,9 @@
                 <option data-article-id='{{item.myArticleId}}' data-article-type='{{item.myArticleType}}' bind:tap="onTapToArticle" class="text-bold text-sm" style="color:#576B95;{{item.myArticleRemoved?'text-decoration:line-through':''}}">
                     {{item.myArticle}}
                 </option>
+                <text wx:if="{{!item.checked}}" class="cuIcon-title text-red"></text>
             </view>
-            <view class="line3 text-cut text-df text-gray padding-lr-lg padding-bottom-sm flex align-center">
+            <view class="line3 text-gray padding-lr-lg padding-bottom-sm flex align-center">
                 <wux-timeago to="{{item.date}}" lang="zh_CN" refreshable />
             </view>
         </view>
