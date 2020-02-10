@@ -31,7 +31,7 @@
                     </view>
                 </view>
             </view>
-            <view class="text-left padding-xs padding-lr">{{content}}</view>
+            <view class="text-left padding-xs padding-lr main_ctent">{{content}}</view>
             <view class="grid flex-sub padding-lr col-1">
                 <block wx:for="{{articleImg}}" wx:key="*this">
                     <view class="padding-tb-xs">
@@ -55,32 +55,99 @@
         <view class="cu-list menu-avatar comment margin-top-sm">
             <block wx:if="{{comment.length>0}}">
                 <block wx:for="{{comment}}" wx:key="_id" wx:for-index="idx">
-                    <view class="cu-item solid-bottom" data-comment-id="{{item._id}}" catch:tap="reply" style="padding:20rpx 30rpx 10rpx 120rpx">
+                    <view class="cu-item solids-bottom" data-comment-id="{{item._id}}" catch:tap="reply" style="padding:20rpx 30rpx 10rpx 120rpx">
                         <view class="cu-avatar round" style="background-image:url({{item.avatar}});"></view>
                         <view class="content">
-                            <view class="text-grey">{{item.username}}</view>
-                            <view class="text-black text-content text-df" style="word-break: break-all">
-                                {{item.content}}
+                            <view>
+                                <text class="uname">{{item.username}}</text>
                             </view>
-                            <view class="flex text-gray text-df line3">
-                                <wux-timeago to="{{item.timeStamp}}" lang="zh_CN" refreshable />
-                                <text class="margin-lr">回复</text>
+                            <view class="text-content" style="word-break: break-all">
+                                <text class="ctent">{{item.content}}</text>
                             </view>
-                            <view wx:if="{{item.replyCount>0}}" class="flex justify-between text-blue text-df line3">
-                                <text>查看全部回复({{item.replyCount}})</text>
+                            <view class="flex">
+                                <wux-timeago class="sub1" to="{{item.timeStamp}}" lang="zh_CN" refreshable />
+                                <text class="margin-lr sub1">回复</text>
+                            </view>
+                            <view wx:if="{{item.replyCount>0}}" class="flex justify-between">
+                                <text class="sub2">查看全部回复（{{item.replyCount}}）</text>
                             </view>
                         </view>
                     </view>
                 </block>
             </block>
-            <block wx:else>
-                <view class="padding-lr-sm margin-top-sm line3">
-                    <view class="text-left padding-bottom-sm text-gray">暂无评论</view>
-                </view>
-            </block>
         </view>
         <view class="margin-top-sm"></view>
-        <view class="cu-timeline">
+        <view class="bg-white padding-xs padding-lr">
+            <view class="padding-tb-xs">
+                <text class="cuIcon-title require"></text>
+                <text class="require">关联的基础需求</text>
+            </view>
+            <view wx:if="{{articleType=='suggestion'}}">
+                <!-- <text class="require_title">{{title}}</text> -->
+                <text class="require_title">当前需求</text>
+            </view>
+            <block wx:if="{{articleType=='demand'}}" wx:for="{{relationDetail}}" wx:key="_id">
+                <view data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' catch:tap="onTapToRelate">
+                    <view class="require_item" style="{{item.removed?'text-decoration:line-through':''}}">
+                        <text class="require_title">{{item.title}}</text>
+                        <text class="require_title_sub flex">{{item.username}}  {{item.date}}</text>
+                    </view>
+                </view>
+            </block>
+            <block wx:if="{{articleType=='technology'}}" wx:for="{{_relationDetail}}" wx:key="_id">
+                <view data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' catch:tap="onTapToRelate">
+                    <view class="require_item" style="{{item.removed?'text-decoration:line-through':''}}">
+                        <text class="require_title">{{item.title}}</text>
+                        <text class="require_title_sub flex">{{item.username}}  {{item.date}}</text>
+                    </view>
+                </view>
+            </block>
+            <view class="padding-tb-xs margin-top-xl solid-top">
+                <text class="cuIcon-title require"></text>
+                <text class="require">关联的业务需求</text>
+            </view>
+            <view wx:if="{{articleType=='demand'}}">
+                <!-- <text class="require_title">{{title}}</text> -->
+                <text class="require_title">当前需求</text>
+            </view>
+            <block wx:if="{{articleType=='suggestion'||articleType=='technology'}}">
+                <view wx:if="{{!relationDetail.length>0}}">
+                    <text class="require_title_sub">暂无关联业务需求</text>
+                </view>
+                <block wx:for="{{relationDetail}}" wx:key="_id">
+                    <view data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' catch:tap="onTapToRelate">
+                        <view class="require_item" style="{{item.removed?'text-decoration:line-through':''}}">
+                            <text class="require_title">{{item.title}}</text>
+                            <text class="require_title_sub flex">{{item.username}}  {{item.date}}</text>
+                        </view>
+                    </view>
+                </block>
+            </block>
+            <view wx:if="{{articleType=='demand'||articleType=='technology'}}">
+                <view class="padding-tb-xs margin-top-xl solid-top">
+                    <text class="cuIcon-title require"></text>
+                    <text class="require">关联的项目需求</text>
+                </view>
+                <view wx:if="{{articleType=='technology'}}">
+                <!-- <text class="require_title">{{title}}</text> -->
+                <text class="require_title">当前需求</text>
+                </view>
+                <block wx:if="{{articleType=='demand'}}">
+                    <view class="cu-item" wx:if="{{!_relationDetail.length>0}}">
+                        <text class="require_title_sub">暂无关联项目需求</text>
+                    </view>
+                    <block wx:for="{{_relationDetail}}" wx:key="_id">
+                        <view data-article-id='{{item.articleId}}' data-article-type='{{item.articleType}}' catch:tap="onTapToRelate">
+                            <view class="require_item" style="{{item.removed?'text-decoration:line-through':''}}">
+                                <text class="require_title">{{item.title}}</text>
+                                <text class="require_title_sub flex">{{item.username}}  {{item.date}}</text>
+                            </view>
+                        </view>
+                    </block>
+                </block>
+            </view>
+        </view>
+        <!-- <view class="cu-timeline">
             <view class="cu-time">
                 <view class="line3 text-gray">我的需求</view>
             </view>
@@ -141,7 +208,7 @@
                     </view>
                 </block>
             </block>
-        </view>
+        </view> -->
         <block wx:if="{{history.length}}">
             <view class="padding-lr-sm margin-top-sm line3">
                 <view class="text-left padding-bottom-sm text-gray">历史版本</view>

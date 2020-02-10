@@ -278,6 +278,7 @@ Page({
             cache.setCache(relation[i].demandId, article)
           }
           temp.title = article.title
+          temp.date = article.date
           temp.articleId = article._id
           temp.articleType = article.articleType
           temp.removed = article.removed
@@ -299,6 +300,7 @@ Page({
               cache.setCache(relation[i].suggestionId, article)
             }
             temp.title = article.title
+            temp.date = article.date
             temp.articleId = article._id
             temp.articleType = article.articleType
             temp.removed = article.removed
@@ -317,6 +319,7 @@ Page({
               cache.setCache(relation[i].technologyId, article)
             }
             temp.title = article.title
+            temp.date = article.date
             temp.articleId = article._id
             temp.articleType = article.articleType
             temp.removed = article.removed
@@ -338,6 +341,7 @@ Page({
             cache.setCache(relation[i].demandId, article)
           }
           temp.title = article.title
+          temp.date = article.date
           temp.articleId = article._id
           temp.articleType = article.articleType
           let user = cache.getCache(article.userId)
@@ -358,6 +362,7 @@ Page({
                 cache.setCache(relation_sd[j].suggestionId, article)
               }
               temp.title = article.title
+              temp.date = article.date
               temp.articleId = article._id
               temp.articleType = article.articleType
               temp.removed = article.removed

@@ -12,7 +12,9 @@
                 </view>
             </view>
         </view>
-        <view class="text-left padding-xs padding-lr">{{content}}</view>
+        <view class="text-left padding-xs padding-lr">
+            <text class="ctent">{{content}}</text>
+        </view>
         <view class="text-grey text-lg text-left padding">
             <view class="padding-lr text-sm text-gray">{{date}}</view>
         </view>
@@ -23,13 +25,15 @@
                 <view class="cu-item solid-bottom" data-username="{{item.username}}" catch:tap="reply" style="padding:20rpx 30rpx 10rpx 120rpx">
                     <view class="cu-avatar round" style="background-image:url({{item.avatar}});"></view>
                     <view class="content">
-                        <view class="text-grey">{{item.username}}</view>
-                        <view class="text-black text-content text-df" style="word-break: break-all">
-                            {{item.content}}
+                        <view>
+                            <text class="uname">{{item.username}}</text>
                         </view>
-                        <view class="flex text-gray text-df line3">
-                            <wux-timeago to="{{item.timeStamp}}" lang="zh_CN" refreshable />
-                            <text class="margin-lr">回复</text>
+                        <view class="text-content" style="word-break: break-all">
+                            <text class="ctent">{{item.content}}</text>
+                        </view>
+                        <view class="flex">
+                            <wux-timeago class="sub1" to="{{item.timeStamp}}" lang="zh_CN" refreshable />
+                            <text class="margin-lr sub1">回复</text>
                         </view>
                     </view>
                 </view>

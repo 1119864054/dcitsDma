@@ -69,6 +69,11 @@
         <text class="text-black text-bold">日志</text>
       </view>
     </navigator>
+    <button class="cu-item arrow" open-type="feedback">
+      <view class="content text-left">
+        <text class="text-black text-bold">意见反馈</text>
+      </view>
+    </button>
   </view>
   <view class="box margin">
     <view class="cu-bar btn-group">

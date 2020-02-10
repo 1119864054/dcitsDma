@@ -1,0 +1,15 @@
+.uname{
+    color: #6f6f71;
+    font-size: 28rpx;
+    font-weight: bold;
+}
+
+.ctent{
+    color: black;
+    font-size: 30rpx;
+}
+
+.sub1{
+    font-size: 24rpx;
+    color: rgb(160, 160, 160);
+}
