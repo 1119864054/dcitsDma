@@ -1,2 +1,2 @@
 # 需求管理小程序
-![小程序图标](https://mp.weixin.qq.com/wxopen/qrcode?action=show&type=2&fakeid=3840130052&token=1126076265)
+![小程序图标](https://raw.githubusercontent.com/1119864054/staticRes/master/dcitsDma/gh_e7e723fd7818_258.jpg)
